@@ -1,0 +1,71 @@
+{\rtf1\mac\ansicpg10000\cocoartf102
+{\fonttbl\f0\fnil\fcharset77 Monaco;\f1\fswiss\fcharset77 Helvetica-Bold;\f2\fswiss\fcharset77 Helvetica;
+}
+{\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red0\green0\blue0;\red0\green0\blue191;
+\red191\green0\blue0;\red96\green96\blue96;\red0\green115\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\fs18 \cf2 //This file is part of The BBCut Library. Copyright (C) 2001  Nick M.Collins distributed under the terms of the GNU General Public License full notice in file BBCutLibrary.help\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1\b\fs36 \cf0 \
+BBCutBlock
+\f2\b0\fs24 \
+\
+Rendering in BBCut occurs a block at a time. What is a block? You can think of it as a roll where all events share a common buffer starting position. The BBCutBlock holds all messages and functions to be rendered for that roll. These will enter the scheduling queue when renderBlock is called, all being converted to Events that know how to play themselves (each is at least (play:\{"do something".postln\})  ).  \
+\
+A BBCutBlock object is created for each block passed back by the cut procedure, in the main BBCut2 class. \
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\fs18 \cf0 BBCut2-getBlock
+\f2\fs24 \
+\
+You will not directly need to manipulate the BBCutBlock, except:\
+\
+If you write your own CutSynths, you must provide a renderBlock function that converts the block data into specific rendering messages / functions. See the existing CutSynth class files for examples. \
+\
+If you write arbitrary function inputs to some cutsynths, they get passed block as one argument. This means you can look at any of the information about the current block/roll via that variable. The most useful are listed below:\
+\
+
+\f0\fs18 \cf3 	\cf4 var\cf3  <>blocknum; 	\cf5 //number within a phrase, would indicate a phrase start by 0\cf3 \
+	\cf4 var\cf3  <>length;		\cf5 //total length of block in beats\cf3 \
+	\cf4 var\cf3  <>cuts; 		\cf5 //cut info, an array over cuts where each cut has [ioi, dur, offset, amp]\cf3 \
+	\cf4 var\cf3  <>iois;		\cf5 //iois between each cut, \cf3 \
+	\cf4 var\cf3  <>cumul;		\cf5 //cumulative ioi over cuts\cf3 \
+	\cf4 var\cf3  <>offset; 	\cf5 //if there is an offset set by the cut procedure\cf3 \
+	\cf4 var\cf3  <>phrasepos;	\cf5 //beats within the current phrase\cf3 \
+	\cf4 var\cf3  <>isroll;		\cf5 //flag if a fast roll is represented (for instance, set by WarpCutProc1)\cf3 \
+	\cf4 var\cf3  <>phraseprop;	\cf5 //proportional position (0.0 to 1.0) through current phrase\cf3 \
+\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f2\fs24 \cf0 In this example, note how the function is called, not at the time you hear specific cut event, but when new events are rendered and added to the scheduling queue. The scheduler needs to have a queue of events created in advance if it is accurately to sync to an external clock- render at play time does not take account of Server latency, perceptual attack time etc:
+\f0\fs18 \cf3 \
+\
+b=\cf4 BBCutBuffer\cf3 (\cf6 "sounds/break"\cf3 ,8);\
+\
+(\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf4 BBCut2\cf3 (\cf4 CutBuf2\cf3 (b, dutycycle:\{\cf4 arg\cf3  i, block; \
+\cf4 Post\cf3  << \
+[\
+\cf7 \\cutnum\cf3 , i,\
+\cf7 \\blocknum\cf3 , block.blocknum,\
+\cf7 \\length\cf3 , block.length,\
+\cf7 \\ioi\cf3 , block.iois[i],\
+\cf7 \\dur\cf3 , block.cuts[i][1],\
+\cf7 \\phrasepos\cf3 , block.phrasepos,\
+]\
+<< nl; \
+\
+0.5\
+\})).play(2);\
+)\
+\
+\
+\
+\
+\
+}

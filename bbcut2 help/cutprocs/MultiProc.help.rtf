@@ -1,0 +1,170 @@
+{\rtf1\mac\ansicpg10000\cocoartf102
+{\fonttbl\f0\fnil\fcharset77 Monaco;\f1\fswiss\fcharset77 Helvetica-Bold;\f2\fswiss\fcharset77 Helvetica;
+}
+{\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red0\green0\blue0;\red191\green0\blue0;
+\red0\green0\blue191;\red96\green96\blue96;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\fs18 \cf2 //This file is part of The BBCut Library. Copyright (C) 2001  Nick M.Collins distributed under the terms of the GNU General Public License full notice in file BBCutLibrary.help\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1\b\fs30 \cf0 \
+MultiProc
+\f2\b0\fs24 \
+\
+
+\f1\b Superclass: 
+\fs30 BBCutProc
+\f2\b0\fs24 \
+\
+With this class you may select which of a number of cut procedures to use on the fly. The selection is from an array of BBCutProc derived objects (which might include a further MultiProc!). The index is chosen on a per phrase, or per block basis, by passed valid index returning functions. If a blockfunc is provided, then the selection is always per block. Otherwise it is per phrase. Note that for convoluted switches between many cut procedures at block rate it becomes very unpredictable when phrases start and end, since multiple phrases are bundled together at once.\
+  \
+
+\f1\b \ul Class Methods
+\f2\b0 \ulnone \
+\
+*
+\f1\b new(procs, phrasefunc, blockfunc)
+\f2\b0    \
+\
+
+\f1\b procs
+\f2\b0  - An array of cut procedure objects.\
+
+\f1\b phrasefunc
+\f2\b0 - a function that returns a valid index into the procs array. \
+
+\f1\b blockfunc
+\f2\b0 - a function that returns a valid index into the procs array.\
+\
+phrasefunc and blockfunc may be set to nil if unneeded. The default behaviour with all \
+nil is a phrasefunc that randomly selects any index up to procs.size.\
+\
+
+\f1\b \ul Instance Methods
+\f2\b0 \ulnone \
+\
+
+\f1\b initMultiProc(p,pf,bf) 
+\f2\b0 Arguments as for new.\
+\
+All other methods override the base to pass messages to the currently selected procedure, and update that procedure based on\
+the phrase or block func. \
+\
+Examples- \
+\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\fs18 \cf3 ( \cf4 //test- default behaviour (random choice between cutprocs after each phrase)\cf3 \
+\cf5 var\cf3  sf, clock, cutsynth, cutproc;\
+\
+clock= \cf5 ExternalClock\cf3 (\cf5 TempoClock\cf3 (2.7725));			\
+clock.play;		\
+		\
+\cf5 Routine\cf3 .run(\{\
+			\
+sf= \cf5 BBCutBuffer\cf3 (\cf6 "sounds/break2"\cf3 ,4);\
+\
+s.sync; \cf4 //this forces a wait for the Buffer to load\cf3 \
+\
+cutsynth= \cf5 CutBuf2\cf3 (sf);\
+cutproc=\cf5 MultiProc\cf3 .new([\cf5 WarpCutProc1\cf3 .new,\cf5 BBCutProc11\cf3 .new]);\
+\
+g=\cf5 BBCut2\cf3 (cutsynth,cutproc).play(clock);\
+\});\
+\
+)
+\f2\fs24 \
+\
+\
+
+\f0\fs18 ( \cf4 //test- block speed choice of procedure\cf3 \
+\cf5 var\cf3  sf, clock, cutsynth, cutproc;\
+\
+clock= \cf5 ExternalClock\cf3 (\cf5 TempoClock\cf3 (2.7725));			\
+clock.play;		\
+		\
+\cf5 Routine\cf3 .run(\{\
+			\
+sf= \cf5 BBCutBuffer\cf3 (\cf6 "sounds/break2"\cf3 ,4);\
+\
+s.sync; \cf4 //this forces a wait for the Buffer to load\cf3 \
+\
+cutsynth= \cf5 CutBuf2\cf3 (sf);\
+cutproc=\cf5 MultiProc\cf3 .new([\cf5 BBCPPermute\cf3 (4.0,8,\{\cf5 |i,n|\cf3  (i**(i+1))%n\},\{[1,2].choose\}),\cf5 SQPusher1\cf3 (0.7,2,0.5)],\cf5 nil\cf3 ,\{2.rand\});\
+\
+g=\cf5 BBCut2\cf3 (cutsynth,cutproc).play(clock);\
+\});\
+\
+)
+\f2\fs24 \
+\
+\
+
+\f0\fs18 ( \cf4 //fill every 4th bar- plain loop otherwise\cf3 \
+\cf5 var\cf3  sf, clock, cutsynth, cutproc, pseq;\
+\
+pseq=\cf5 Pseq\cf3 ([0,0,0,1],\cf5 inf\cf3 ).asStream;\
+\
+clock= \cf5 ExternalClock\cf3 (\cf5 TempoClock\cf3 (2.7725));			\
+clock.play;		\
+		\
+\cf5 Routine\cf3 .run(\{\
+			\
+sf= \cf5 BBCutBuffer\cf3 (\cf6 "sounds/break2"\cf3 ,4);\
+\
+s.sync; \cf4 //this forces a wait for the Buffer to load\cf3 \
+\
+cutsynth= \cf5 CutBuf1\cf3 (sf);\
+cutproc=\cf5 MultiProc\cf3 .new([\cf5 BBCutProc\cf3 .new,\cf5 WarpCutProc1\cf3 (phraselength:4.0)],\{pseq.next\});\
+\
+g=\cf5 BBCut2\cf3 (cutsynth,cutproc).play(clock);\
+\});\
+\
+)\
+\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f2\fs24 \cf3 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\fs18 \cf3 ( \cf4 //fills 2- more complex pattern \cf3 \
+\cf5 var\cf3  sf, clock, cutsynth, cutproc, pseq;\
+\cf5 var\cf3  x,y;\
+\
+pseq=\cf5 Pseq\cf3 ([0,0,0,1,0,0,0,2],\cf5 inf\cf3 ).asStream;\
+\
+clock= \cf5 ExternalClock\cf3 (\cf5 TempoClock\cf3 (2.7725));			\
+clock.play;		\
+		\
+\cf5 Routine\cf3 .run(\{\
+			\
+sf= \cf5 BBCutBuffer\cf3 (\cf6 "sounds/break2"\cf3 ,4);\
+\
+s.sync; \cf4 //this forces a wait for the Buffer to load\cf3 \
+\
+cutsynth= \cf5 CutBuf1\cf3 (sf);\
+cutproc=\cf5 MultiProc\cf3 .new([\
+\cf5 BBCutProc\cf3 .new, \cf4 //for plain play\cf3 \
+\cf5 WarpCutProc1\cf3 (\{0.5\},phraselength:4.0),		\cf4 //for obvious fill\cf3 \
+\cf5 BBCPPermute\cf3 (4.0,8,\{\cf5 arg\cf3  i,n; ((i*y)%n).asInteger\},\{z\})\
+],\{\
+\
+z=[2,4,8].choose; y= rrand(3,12.3);\
+\
+pseq.next\});\
+\
+g=\cf5 BBCut2\cf3 (cutsynth,cutproc).play(clock);\
+\});\
+\
+)
+\f2\fs24 \
+
+\f0\fs18 \
+\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f2\fs24 \cf0 \
+}

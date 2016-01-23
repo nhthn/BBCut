@@ -1,0 +1,380 @@
+{\rtf1\mac\ansicpg10000\cocoartf824
+{\fonttbl\f0\fnil\fcharset77 Monaco;\f1\fswiss\fcharset77 Helvetica;\f2\fswiss\fcharset77 Helvetica-Bold;
+}
+{\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red0\green0\blue191;\red0\green115\blue0;
+\red96\green96\blue96;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\fs18 \cf2 //This file is part of The BBCut Library. Copyright (C) 2001  Nick M.Collins distributed under the terms of the GNU General Public License full notice in file BBCutLibrary.help\cf0 \
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1\fs24 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f2\b \cf0 AnalyseEventsDatabase
+\f1\b0 \
+\
+Database that will store any events discovered in an audio signal using the AnalyseEvents UGen. This works on-the-fly, and you can switch the target input bus. \
+\
+Discovered events are recorded in the database as an array of information of the form: \
+\
+[timecollected, startPos (buffer sample position), length (in seconds), ... (features of event)]\
+\
+Note that the event analyser works at a delay of at least the length of each event it discovers. The database is thus often around half a second lagging behind the musical state of play. This is a fundamental limitation- you as a human also post analyse, it's just that predictive processes (like beat tracking, stylistic expectancies) give you the illusion of knowing in advance what things may occur. \
+\
+Applications: use the collection times to extract rhythms, combine with known beat (perhaps from beat tracking- see AutoTrack) to quantise inputs, assess expressive timing, have a memory fading histogram of event locations, schedule any events in any way that plays with time etc...  \
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f2\b \cf0 \ul \ulc0 Class Methods
+\f1\b0 \ulnone \
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f2\b \cf0 *new(length, numChannels, server)\
+\
+length- 
+\f1\b0 Length in seconds of circular buffer for storing the audio stream.
+\f2\b \
+\
+numChannels- 
+\f1\b0 The stream can have 1 to 2 channels, not modulatable after creation.
+\f2\b \
+\
+server- 
+\f1\b0 Which to run on.
+\f2\b  \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\b0\fs18 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f2\b\fs24 \cf0 \ul Instance Methods
+\f1\b0 \ulnone \
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f2\b \cf0 *analyse(inbus,trigID, group, threshold, clock)\
+\
+inbus- 
+\f1\b0 Bus number for input
+\f2\b \
+\
+trigID- 
+\f1\b0 Trigger ID number used for passing data between the UGen analyser and the database
+\f2\b \
+\
+group- 
+\f1\b0 Group to run the analysis synth within
+\f2\b \
+\
+threshold- 
+\f1\b0 Parameter for the analyser, see AnalyseEvents help file. 
+\f2\b \
+\
+clock- 
+\f1\b0 An ExternalClock. This clock will be used to determine the beat time of any received events, with associated quantisation properties as set for this class. \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\fs18 \cf0 \
+\
+\
+s=\cf3 Server\cf0 .default;
+\f1\fs24 \
+
+\f0\fs18 \
+a=\cf3 AnalyseEventsDatabase\cf0 (10, 1, s);\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf2 //on my system bus 8 is the first audio in\cf0 \
+a.analyse(8, 77); \
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf3 Post\cf0  << a.list << nl; \
+\
+a.pause;\
+a.resume;\
+\
+a.list.first\
+\
+\
+(\
+\cf3 var\cf0  data;\
+\
+data= a.list.first;\
+\cf3 Synth\cf0 (\cf4 \\AEPlayBuf\cf0 ++(a.numChannels),[\cf4 \\outbus\cf0 ,0, \cf4 \\bufnum\cf0 , a.soundbuf.bufnum, \cf4 \\startPos\cf0 , data[1], \cf4 \\length\cf0 , data[2]]);\
+)\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf2 //using the List in a Task\cf0 \
+(\
+t=\cf3 Task\cf0 (\{	\
+	\cf3 var\cf0  data;\
+	\
+	\cf3 inf\cf0 .do(\{	\
+		\
+		data= a.list.choose; \cf2 //use most recently collected\cf0 \
+		\
+		4.do \{if(data.notNil,\{\cf3 Synth\cf0 (\cf4 \\AEPlayBuf\cf0 ++(a.numChannels),[\cf4 \\bufnum\cf0 , a.soundbuf.bufnum, \cf4 \\startPos\cf0 , data[1], \cf4 \\length\cf0 , data[2]]);\}); 0.125.wait;\};\
+		\
+	\}); \
+\});\
+)\
+\
+t.start;\
+t.stop;\
+\
+\
+a.stop;\
+\
+\
+\
+\
+\cf2 //rhythm transcription, must pass in a clock\cf0 \
+s=\cf3 Server\cf0 .default;\
+\
+c=\cf3 ExternalClock\cf0 (2.3).play;\
+\
+a=\cf3 AnalyseEventsDatabase\cf0 (10,1,s);\
+\
+\cf2 //makes a Group for me\cf0 \
+a.analyse(8,77,\cf3 nil\cf0 ,0.34,c);\
+\
+a.findevents(c.lastBeat-4,c.lastBeat-1).postln;\
+\
+a.pause;\
+a.resume;\
+\
+\cf2 //look for events in range, convert them to an ioi rhythm in seconds\cf0 \
+\cf2 //could ask for events that just happened (Main.elapsedTime) but won't be any, since there is a delay of the length of an event\cf0 \
+\cf2 //for the UGen to tell the database to update \cf0 \
+\cf2 //note that the start time is further in the past, the endtime is more recent. Events are stored in the database by the absolute time of their discovery (onset time)\cf0 \
+\cf2 //the functions return data as [offset,[list of iois terminated by nil, empty if none in range]]\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf3 Post\cf0  << a.getAbsoluteRhythm(\cf3 Main\cf0 .elapsedTime-3.0, \cf3 Main\cf0 .elapsedTime-1.0) << nl;\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf2 //find rhythm for four beats before the most recent\cf0 \
+\cf2 //The first element in the IOI array will be the beat difference between the startbeat and the first event in the region, except where zero\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf3 Post\cf0  << a.getRhythm(c.lastBeat-5,c.lastBeat-1) << nl;\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf2 //find rhythm with respect to an arbitrary (phase, period).\cf0 \
+\cf2 //The first element in the IOI array will be the beat difference between the starttime and the first event in the region, except where zero\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf3 Post\cf0  << a.reconsiderRhythm(\cf3 Main\cf0 .elapsedTime-3.0, \cf3 Main\cf0 .elapsedTime-1.0, 0.25, 2, 0.25) << nl;\
+\
+\
+a.stop;\
+\
+\
+\
+\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf2 //example sing along to a 4 to the floor with your rhythm during some previous time becoming the next synth line\cf0 \
+\
+(\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf3 SynthDef\cf0 (\cf4 \\kicksynth\cf0 ,\{\
+\cf3 Out\cf0 .ar(0,\cf3 SinOsc\cf0 .ar(100,pi*0.5,0.5).clip2(0.2)*2*\cf3 Line\cf0 .kr(1,0,0.01,doneAction:2));\
+\}).store;\
+\
+\cf3 SynthDef\cf0 (\cf4 \\leadsynth\cf0 ,\{\
+\cf3 Out\cf0 .ar(0,\cf3 Resonz\cf0 .ar(\cf3 Saw\cf0 .ar(400,0.5).clip2(0.1)*4*\cf3 Line\cf0 .kr(1,0,0.1,doneAction:2),\cf3 Line\cf0 .kr(2000,400,0.1),0.2));\
+\}).load(s);\
+\
+)\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf2 //test Synths\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf3 Synth\cf0 (\cf4 \\kicksynth\cf0 );\
+\cf3 Synth\cf0 (\cf4 \\leadsynth\cf0 );\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf2 //setup \cf0 \
+(\
+s=\cf3 Server\cf0 .default;\
+\
+t=\cf3 TempoClock\cf0 (2);\
+\
+c=\cf3 ExternalClock\cf0 (t).play(quant:1.0);\
+\
+a=\cf3 AnalyseEventsDatabase\cf0 (10,1,s);\
+\
+\cf2 //makes a Group for me\cf0 \
+a.analyse(8,77,\cf3 nil\cf0 ,0.34,c);\
+)\
+\
+\cf2 //run click track so you know what the timing is\cf0 \
+(\
+t.schedAbs(t.beats.ceil+(1.0-(s.latency*t.tempo)), \{\
+	\
+		\cf2 //args.postln;\cf0 \
+		s.sendBundle(s.latency,[\cf5 "/s_new"\cf0 ,\cf4 \\kicksynth\cf0 , s.nextNodeID, 1, 1]);\
+		\
+		1.0;\
+\});\
+)\
+\
+\cf2 //this also works\cf0 \
+\cf2 //Pbind(\\dur, 1.0, \\instrument, \\kicksynth).playExt(c);\cf0 \
+\
+\
+\cf2 //rhythmic imitation canon at 4 beats- need to compensate for s.latency in scheduling so scheduled in time to the beat\cf0 \
+(\
+t.schedAbs(t.beats.ceil+(1.0-(s.latency*t.tempo)), \{\
+	\cf3 var\cf0  nextrhythm, seq;\
+	\
+	\cf2 //get nextrhythm from audio in analysis, this works out to 4 to 2 beats ago\cf0 \
+	nextrhythm= a.getRhythm(c.lastBeat-3,c.lastBeat-1, \cf3 false\cf0 ); \cf2 //no quantisation\cf0 \
+	\
+	nextrhythm.postln;\
+	\
+	if(nextrhythm[1].notEmpty,\{\
+		\
+		seq=\cf3 Pseq\cf0 (nextrhythm[1],1).asStream;\
+		\
+		t.sched(nextrhythm[0],\{\
+			\
+			s.sendBundle(s.latency,[\cf5 "/s_new"\cf0 ,\cf4 \\leadsynth\cf0 , s.nextNodeID, 1, 1]);\
+			\
+			seq.next;\
+		\});\
+		\
+	\});\
+	\
+	2.0\
+\});\
+)\
+\
+a.threshold_(0.5);\
+\
+\
+a.stop;\
+c.stop;\
+\
+\
+\
+\cf2 //with GUI display of histogram\cf0 \
+\cf2 //running histogram of events each bar used to make a probabilistic rhythm machine\cf0 \
+\
+\cf2 //setup \cf0 \
+(\
+s=\cf3 Server\cf0 .default;\
+\
+t=\cf3 TempoClock\cf0 (2);\
+\
+c=\cf3 ExternalClock\cf0 (t).play(quant:1.0);\
+\
+a=\cf3 AnalyseEventsDatabase\cf0 (10,1,s);\
+\
+\cf2 //makes a Group for me\cf0 \
+a.analyse(8,77,\cf3 nil\cf0 ,0.34,c);\
+)\
+\
+\cf2 //run click track so you know what the timing is\cf0 \
+(\
+t.schedAbs(t.beats.ceil+(1.0-(s.latency*t.tempo)), \{\
+	\
+		s.sendBundle(s.latency,[\cf5 "/s_new"\cf0 ,\cf4 \\kicksynth\cf0 , s.nextNodeID, 1, 1]);\
+		\
+		1.0;\
+\});\
+)\
+\
+\cf2 //update decaying histogram each 4 beats to form an idea of when to strike\cf0 \
+(\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf3 var\cf0  grid, decayfactor, count;\
+\cf3 var\cf0  w, msview;\
+grid=\cf3 Array\cf0 .fill(16, \{0.0\});\
+\
+count=0;\
+\
+decayfactor=0.5;\
+\
+w=\cf3 SCWindow\cf0 (\cf5 "rhythm histogram"\cf0 ,\cf3 Rect\cf0 (100,500,170,160));\
+\
+msview=\cf3 SCMultiSliderView\cf0 (w,\cf3 Rect\cf0 (5,5,160,150));\
+\
+msview.value_(grid);\
+msview.thumbSize_(10.0);\
+msview.strokeColor_(\cf3 Color\cf0 .blue);\
+msview.fillColor_(\cf3 Color\cf0 .blue);\
+msview.drawLines(\cf3 false\cf0 );\
+msview.gap_(0);\
+\
+w.front;\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf2 //-0.1 so always updates ahead of next scheduler, but not so much as to impinge on last semiquaver of previous cycle\cf0 \
+t.schedAbs(t.beats.ceil+(1.0-(s.latency*t.tempo)-0.1), \{\
+	\cf3 var\cf0  nextrhythm, newgrid, cumul, iois, index;\
+	\
+	\cf2 //get nextrhythm from audio in analysis, this works out to 6 to 2 beats ago\cf0 \
+	nextrhythm= a.getRhythm(c.lastBeat-5,c.lastBeat-1, \cf3 true\cf0 ); \cf2 //with quantisation\cf0 \
+	\
+	newgrid=\cf3 Array\cf0 .fill(16, \{0.0\});\
+\
+	iois= nextrhythm[1];\
+	\
+	\cf2 //get event locations in a grid of 16\cf0 \
+	if(iois.notEmpty,\{\
+		\
+		cumul=nextrhythm[0];\
+		\
+		\cf2 //[cumul,iois].postln;\cf0 \
+		\
+		iois.do(\{\cf3 arg\cf0  val;\
+		\
+		\cf2 //quantise is every 0.25 by default\cf0 \
+		index= min((cumul*4).round(1.0).asInteger,15);\
+		\
+		\cf2 //[cumul,index].postln;\cf0 \
+		\
+		newgrid[index]=1.0;\
+		\
+		if(val.notNil,\{cumul=cumul+val;\});\
+		\
+		\});\
+				\
+	\});\
+	\
+	grid=(0.5*newgrid)+(decayfactor*grid);\
+	\
+	\{msview.value_(grid);\}.defer;\
+	\
+	4.0\
+\});\
+\
+\
+\cf2 //another process to spawn events from the current grid, delayed by a bar to sync up correctly \cf0 \
+t.schedAbs(t.beats.ceil+(3.0-(s.latency*t.tempo)), \{\
+\
+\cf2 //[\\grid,grid[count], count].postln;\cf0 \
+\
+if(grid[count].coin,\{\
+\
+	s.sendBundle(s.latency,[\cf5 "/s_new"\cf0 ,\cf4 \\leadsynth\cf0 , s.nextNodeID, 1, 1]);\
+			\
+\});\
+\
+count=(count+1)%16;\
+\
+0.25\
+\});\
+\
+)\
+\
+\
+a.threshold_(0.5);\
+\
+a.stop;\
+c.stop;\
+\
+\
+}

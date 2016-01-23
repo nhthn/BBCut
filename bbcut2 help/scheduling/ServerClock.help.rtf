@@ -1,0 +1,188 @@
+{\rtf1\mac\ansicpg10000\cocoartf102
+{\fonttbl\f0\fnil\fcharset77 Monaco;\f1\fswiss\fcharset77 Helvetica;\f2\fswiss\fcharset77 Helvetica-Bold;
+}
+{\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red0\green0\blue191;\red0\green115\blue0;
+\red96\green96\blue96;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\fs18 \cf2 //This file is part of The BBCut Library. Copyright (C) 2001  Nick M.Collins distributed under the terms of the GNU General Public License full notice in file BBCutLibrary.help\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1\fs24 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f2\b \cf0 ServerClock
+\f1\b0 \
+\
+(subclass of ExternalClock)\
+\
+A scheduling clock driven from OSC Triggers from the Server. Allows the use of a UGen as a beat tracker controlling scheduling. This class assumes a UGen running on the Server, sending OSC trig messages at each beat. \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\fs18 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f2\b\fs24 \cf0 \ul \ulc0 Instance Methods\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1\b0 \cf0 \ul \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f2\b \cf0 \ulnone play(trigID,s)
+\f1\b0 \
+\
+
+\f2\b trigID
+\f1\b0 - Trigger OSC message ID number. \
+
+\f2\b s
+\f1\b0 - Server. \
+\
+
+\f2\b stop
+\f1\b0  A ServerClock must be stopped to remove the OSC responder that reacts to triggers sent from the Server. \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\fs18 \cf0 \
+\
+\
+s=\cf3 Server\cf0 .default;\
+s.latency=0.05; \cf2 //must be small compared to half beat size in tempo\cf0 \
+\
+(\
+\cf2 //react to an Impulse driven clock on the Server, SendTrig with ID of 100\cf0 \
+\cf3 SynthDef\cf0 (\cf4 \\help_ServerClock\cf0 ,\{\cf3 arg\cf0  tempo=2.3, beepvol=0.0, trigID=100;\
+	\cf3 var\cf0  clocktick, beep;\
+	\
+	clocktick=\cf3 Impulse\cf0 .ar(tempo);\
+	\
+	beep= \cf3 SinOsc\cf0 .ar(440,0,0.1)*\cf3 Decay\cf0 .ar(clocktick,0.1);\
+	\
+	\cf3 Out\cf0 .ar(0,\cf3 Pan2\cf0 .ar(beepvol*beep,0.0));\
+	\
+	\cf2 //trig from clock, trigID 100, always pass current tempo as parameter \cf0 \
+	\cf3 SendTrig\cf0 .ar(clocktick,trigID,tempo);	\cf2 //sends with ID of 100 matching what clock expects\cf0 \
+\}).send(s);\
+)\
+\
+a=\cf3 Synth\cf0 (\cf4 \\help_ServerClock\cf0 );\
+\
+\cf2 //set up a ServerClock running off of these triggers\cf0 \
+c=\cf3 ServerClock\cf0 .new.play(100,s);\
+\
+\cf2 //run a bbcut from it\cf0 \
+b=\cf3 BBCutBuffer\cf0 (\cf5 "sounds/break"\cf0 ,8);\
+\
+d=\cf3 BBCut2\cf0 (\cf3 CutBuf2\cf0 (b)).play(c);\
+\
+a.set(\cf4 \\tempo\cf0 ,2.5);\
+a.set(\cf4 \\tempo\cf0 ,1.7);\
+\
+\cf2 //triggers stop\cf0 \
+a.free;\
+\
+\cf2 //continue triggers\cf0 \
+a=\cf3 Synth\cf0 (\cf4 \\help_ServerClock\cf0 )\
+\
+c.stop; \cf2 //stop and free OSC responder.\cf0 \
+\
+d.free; \cf2 //free resources\cf0 \
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf2 //frees clock\cf0 \
+a.free;\
+\
+\
+\
+\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf2 //now a beat tracking example\cf0 \
+\cf2 //change the ~source line with a path to some song file you want to track to load from your hard drive\cf0 \
+\
+(\
+\cf3 var\cf0  trackbus, trackgroup;\
+\
+s.latency=0.05;\
+\
+\cf2 //clear any existing OSCresponder\cf0 \
+\cf3 OSCresponder\cf0 .all.do(\{\cf3 arg\cf0  val; if(val.cmdName==\cf4 '/tr'\cf0 ,\{\cf3 OSCresponder\cf0 .remove(val)\}); \});\
+\
+\cf2 //run a line at a time\cf0 \
+~clock= \cf3 ServerClock\cf0 .new;	\
+	\
+~clock.play(100,s); \cf2 //will wait on trigID 100\cf0 \
+\
+\cf3 Routine\cf0 .run(\{\
+			\
+~buffers= \cf3 BBCutBuffer\cf0 .array([\cf5 "sounds/break"\cf0 ,\cf5 "sounds/break2"\cf0 ],[8,4]);\
+\
+\cf2 //choose some file you want to track off your hard drive\cf0 \
+~source=\cf3 Buffer\cf0 .read(s,\cf5 "/Volumes/data/stevebeattrack/samples/100.wav"\cf0 );\
+ \
+~trackbus=\cf3 Bus\cf0 .audio(s,1);\
+\
+trackgroup= \cf3 Group\cf0 .before(\cf3 Node\cf0 .basicNew(s,1));\
+\
+\cf2 //run a beat tracker on the Server which sends the appropriate OSC message\cf0 \
+~tracksynth= \cf3 SynthDef\cf0 (\cf4 \\help_bbinduct\cf0 ,\{\cf3 arg\cf0  vol=1.0, beepvol=0.0, lock=0;\
+\cf3 var\cf0  trackb,trackh,trackq,tempo;\
+\cf3 var\cf0  source, beep;\
+\
+source= \cf3 PlayBuf\cf0 .ar(1,~source.bufnum,1.0,1,0,1);\
+\
+\cf2 //see AutoTrack help file\cf0 \
+#trackb,trackh,trackq,tempo=\cf3 AutoTrack\cf0 .kr(source, lock);\
+\
+beep= \cf3 SinOsc\cf0 .ar(1000,0.0,\cf3 Decay\cf0 .kr(trackb,0.1));\
+\
+\cf3 Out\cf0 .ar(~trackbus.index,source);\
+\
+\cf3 Out\cf0 .ar(0,\cf3 Pan2\cf0 .ar((vol*source)+(beepvol*beep),0.0));\
+\
+\cf3 SendTrig\cf0 .kr(trackb,100,tempo);	\cf2 //sends with ID of 100 matching what clock expects\cf0 \
+\
+\}).play(trackgroup);\
+\
+\});\
+\
+)\
+\
+\cf2 //cutters will run by default in Node.basicNew(s,1), so rendering order safe\cf0 \
+\
+\cf2 //will be added to run on this clock as soon as made, you'll hear from the next beat\cf0 \
+a=\cf3 BBCut2\cf0 (\cf3 CutBuf2\cf0 (~buffers[0],0.3), \cf3 ChooseCutProc\cf0 (1,2)).play(~clock);\
+\
+b=\cf3 BBCut2\cf0 (\cf3 CutBuf2\cf0 (~buffers[1],0.5, dutycycle:0.3), \cf3 BBCutProc11\cf0 .new).play(~clock);\
+\
+~tracksynth.set(\cf4 \\vol\cf0 ,0.1);\
+\
+~tracksynth.set(\cf4 \\beepvol\cf0 ,0.0);\
+\
+~store=\cf3 Buffer\cf0 .alloc(\cf3 Server\cf0 .default,44100,1);\
+\
+\cf2 //stream cut the source with respect to the inferred beat\cf0 \
+c=\cf3 BBCut2\cf0 (\cf3 CutStream1\cf0 (~trackbus.index,~store), \cf3 ChooseCutProc\cf0 (0.25,4)).play(~clock);\
+\
+//lock in to a state that is working\
+~tracksynth.set(\cf4 \\lock\cf0 ,1.0);\
+\
+//remove lock (ie track again)\
+~tracksynth.set(\cf4 \\lock\cf0 ,0.0);\
+\
+\
+\
+a.end;\
+b.end;\
+c.stop;\
+\
+~store.free;\
+\
+\cf2 //remove everything and terminate clock\cf0 \
+~clock.stop;\
+\
+~tracksynth.free;\
+\
+\
+\
+}

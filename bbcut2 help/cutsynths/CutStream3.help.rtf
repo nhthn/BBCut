@@ -1,0 +1,203 @@
+{\rtf1\mac\ansicpg10000\cocoartf102
+{\fonttbl\f0\fnil\fcharset77 Monaco;\f1\fswiss\fcharset77 Helvetica;\f2\fswiss\fcharset77 Helvetica-Bold;
+}
+{\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red0\green0\blue191;\red96\green96\blue96;
+\red0\green115\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\fs18 \cf2 //This file is part of The BBCut Library. Copyright (C) 2001  Nick M.Collins distributed under the terms of the GNU General Public License full notice in file BBCutLibrary.help\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1\fs24 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f2\b \cf0 CutStream3
+\f1\b0 \
+\
+Playback for a stream of audio which can be cut-up, with offsetting relative to the last beat marked by the clock. The stream can be any bus on the Server, so might be a file streamed off disk, a current audio input or some synthesised data. \
+\
+Each grain may have associated parameters for playback speed, enveloping and dutycycle (ratio of duration to inter-onset-interval).  \
+\
+Note that CutStream3 uses In.ar rather than InFeedback.ar, for reaction speed, so execution order is important. you cannot cut-up a stream created later in the execution order. Change the SynthDefs in the class file to InFeedback if you want no execution order worries, at the expense of an audio block's delay (usually 64 samples). \
+\
+
+\f2\b \ul Class Methods
+\f1\b0 \ulnone \
+\
+
+\f2\b *new(aed, offset, swing, numbeats, deviationmult, pretrim, posttrim, pbsfunc, dutycycle, atkprop, relprop, curve)\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1\b0 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f2\b \cf0 aed
+\f1\b0 - a running AnalyseEventsDatabase object, using the same ExternalClock as the cutter.\
+    \
+
+\f2\b offset
+\f1\b0 - value to offset from the last recorded beat of the clock. 0 keeps this reference point, 2 would be a reference start time of three beats ago (last recorded, then back another 2). The default is 1. However, the meaning of this parameter changes when setoffset is applied by certain cut procedures; here it determines the region of offsetting in beats. \
+\
+
+\f2\b pbsfunc
+\f1\b0 - Manipulate playback speed, would usually be 1.0. \
+\
+
+\f2\b swing
+\f1\b0 - Number of beats of delay to apply for offbeat semiquavers, ie 0.0 is no swing, 0.08 is UK garage swing. For strict quantisation on-the-fly deviationmult must also be 0.0.  \
+\
+
+\f2\b deviationmult
+\f1\b0 - Multiplies the groove based time deviations of events. Set to 0.0 for rigid quantise based playback, 1.0 for full original timing properties. \
+\
+
+\f2\b pretrim
+\f1\b0 - If playing back a cut, play any events within the cut even if there tming deviation puts them ahead of the cut start. Ie, play anticipatory events. \
+\
+
+\f2\b posttrim
+\f1\b0 - The same for events whose deviation puts them after the end of the cut, but whose quantised position is within the cut. \
+\
+
+\f2\b dutycycle
+\f1\b0 - Ratio of duration to inter-onset-interval (IOI). 0.5 would mean that the duration of grains is only half the length between cut start times. \
+\
+
+\f2\b atkprop
+\f1\b0 - Enveloping parameter for attack speed. Rated as a proportion of the overall envelope (0.0 to 1.0) \
+\
+
+\f2\b relprop
+\f1\b0 - Enveloping parameter for release speed. Rated as a proportion of the overall envelope (0.0 to 1.0) \
+\
+
+\f2\b curve
+\f1\b0 - Envelope curve\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\fs18 \cf0 \
+\
+s=\cf3 Server\cf0 .default;\
+\
+c=\cf3 ExternalClock\cf0 (2.3).play;\
+\
+e=\cf3 AnalyseEventsDatabase\cf0 .new;\
+\
+e.analyse(clock:c);\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf2 //must be same clock	\cf0 \
+a=\cf3 BBCut2\cf0 (\cf3 CutStream3\cf0 (e,1,0.0), \cf3 ChooseCutProc\cf0 (0.5,2)).play(c);\
+\
+a.end;\
+\
+e.stop;\
+\
+c.stop;\
+\
+\
+\cf2 //sing along to the beat and have the events found in the audio stream in time, auto quantised\cf0 \
+(\
+\cf3 var\cf0  b,buf,e, clock;\
+\
+clock= \cf3 ExternalClock\cf0 (\cf3 TempoClock\cf0 (2.1));	\
+		\
+clock.play;		\
+		\
+e=\cf3 AnalyseEventsDatabase\cf0 .new;\
+\
+e.analyse(clock:clock);\
+				\
+\cf3 Routine\cf0 .run(\{\
+	\
+b=\cf3 BBCutBuffer\cf0 (\cf4 "sounds/break"\cf0 ,8);	\
+\
+s.sync; \cf2 //this forces a wait for the Buffer to be allocated\cf0 \
+\
+\cf2 //3 beats into the past\cf0 \
+\cf3 BBCut2\cf0 (\cf3 CutStream3\cf0 (e,3,0.0,0.0, \cf3 false\cf0 , \cf3 false\cf0 ), \cf3 ChooseCutProc\cf0 (\{[1.5,1.0].choose\},2)).play(clock);\
+\
+\cf3 BBCut2\cf0 (\cf3 CutBuf1\cf0 (b), \cf3 BBCutProc11\cf0 .new).play(clock);\
+\});\
+\
+)\
+\
+\
+\
+\cf2 //beat induction and event capture on an existing track\cf0 \
+(\
+\cf3 var\cf0  trackbus, trackgroup;\
+\
+s.latency=0.05;\
+\
+\cf2 //clear any existing OSCresponder\cf0 \
+\cf3 OSCresponder\cf0 .all.do(\{\cf3 arg\cf0  val; if(val.cmdName==\cf5 '/tr'\cf0 ,\{\cf3 OSCresponder\cf0 .remove(val)\}); \});\
+\
+\cf2 //run a line at a time\cf0 \
+~clock= \cf3 ServerClock\cf0 .new;	\
+	\
+~clock.play(100,s); \cf2 //will wait on trigID 100\cf0 \
+	\
+~database=\cf3 AnalyseEventsDatabase\cf0 .new;	\
+	\
+\cf3 Routine\cf0 .run(\{\
+\
+\cf2 //choose some file you want to track off your hard drive\cf0 \
+~source=\cf3 Buffer\cf0 .read(s,\cf4 "/Volumes/data/stevebeattrack/samples/100.wav"\cf0 );\
+ \
+s.sync;\
+ \
+~trackbus=\cf3 Bus\cf0 .audio(s,1);\
+\
+trackgroup= \cf3 Group\cf0 .before(\cf3 Node\cf0 .basicNew(s,1));\
+\
+\cf2 //run a beat tracker on the Server which sends the appropriate OSC message\cf0 \
+~tracksynth= \cf3 SynthDef\cf0 (\cf5 \\help_cutstream3\cf0 ,\{\cf3 arg\cf0  vol=1.0, beepvol=0.0, lock=0;\
+\cf3 var\cf0  trackb,trackh,trackq,tempo;\
+\cf3 var\cf0  source, beep;\
+\
+source= \cf3 PlayBuf\cf0 .ar(1,~source.bufnum,1.0,1,0,1);\
+\
+\cf2 //see AutoTrack help file\cf0 \
+#trackb,trackh,trackq,tempo=\cf3 AutoTrack\cf0 .kr(source, lock);\
+\
+beep= \cf3 SinOsc\cf0 .ar(1000,0.0,\cf3 Decay\cf0 .kr(trackb,0.1));\
+\
+\cf3 Out\cf0 .ar(~trackbus.index,source);\
+\
+\cf3 Out\cf0 .ar(0,\cf3 Pan2\cf0 .ar((vol*source)+(beepvol*beep),0.0));\
+\
+\cf3 SendTrig\cf0 .kr(trackb,100,tempo);	\cf2 //sends with ID of 100 matching what clock expects\cf0 \
+\
+\}).play(trackgroup);\
+\
+\cf2 //creates at tail of trackgroup\cf0 \
+~database.analyse(~trackbus.index, 101, trackgroup, 0.34, ~clock); \cf2 //trigID 101 is default\cf0 \
+\
+\});\
+\
+)\
+\
+\cf2 //default is add to head of group at Node 1 CutGroup\cf0 \
+a=\cf3 BBCut2\cf0 (\cf3 CutStream3\cf0 (~database, 4, 0.0, 0.0,\cf3 false\cf0 ,\cf3 false\cf0 ), \cf3 ChooseCutProc\cf0 (1,2)).play(~clock);\
+\
+b=\cf3 BBCut2\cf0 (\cf3 CutStream3\cf0 (~database, 4, 0.0, 0.0,\cf3 false\cf0 ,\cf3 false\cf0 ), \cf3 BBCutProc11\cf0 .new).play(~clock);\
+\
+c=\cf3 BBCut2\cf0 ([\cf3 CutMod1\cf0 .new,\cf3 CutRev1\cf0 .new,\cf3 CutStream3\cf0 (~database, 4, 0.0, 0.0,\cf3 false\cf0 ,\cf3 false\cf0 )], \cf3 ChooseCutProc\cf0 (0.5,4)).play(~clock);\
+\
+~tracksynth.set(\cf5 \\vol\cf0 ,0.0);\
+\
+~tracksynth.set(\cf5 \\beepvol\cf0 ,1.0);\
+\
+~database.threshold_(0.1); \cf2 //make it more event trigger happy\cf0 \
+\
+a.end;\
+b.end;\
+c.end;\
+\
+~clock.stop;\
+~database.stop;\
+\
+\
+}

@@ -1,0 +1,349 @@
+{\rtf1\mac\ansicpg10000\cocoartf102
+{\fonttbl\f0\fnil\fcharset77 Monaco;\f1\fswiss\fcharset77 Helvetica;\f2\fswiss\fcharset77 Helvetica-Bold;
+\f3\fswiss\fcharset77 Helvetica-Oblique;}
+{\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red0\green0\blue191;\red96\green96\blue96;
+\red0\green115\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\fs18 \cf2 //This file is part of The BBCut Library. Copyright (C) 2001  Nick M.Collins distributed under the terms of the GNU General Public License full notice in file BBCutLibrary.help\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1\fs24 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f2\b \cf0 BBCut2
+\f1\b0 \
+\
+BBCut2 is experimental but backwards compatible with BBCut. \
+\
+BBCut2 provides the central scheduling mechanisms for algorithmic audio cutting running on an external clock. \
+ \
+BBCut2 is passed a cut renderer, an algorithmic cutting routine, and an optional quantisation routine. The clock is then passed in via play. \
+\
+BBCut2 sends OSC messages ahead of rendering time to the Server so as to maintain perfect time lock without the jitter caused by variable network latency. This is superior to BBCut's 'send message at moment of decision' paradigm. The price is that the events during the next beat are determined a beat in advance and thus interaction with the cutting routines may show a beat or more's delay in response. \
+\
+
+\f2\b \ul Class Methods
+\f1\b0 \ulnone \
+\
+
+\f2\b *new( cutgroups, proc, quantiser)\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1\b0 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f2\b \cf0 cutgroups
+\f1\b0  - an Array of CutGroups, though this argument can also cope with being passed a CutSynth directly, a single CutGroup, an Array of CutSynths and an Array of Arrays of CutSynths. Now, a proc can have multiple renderers. The CutGroup is a necessary abstraction to select the execution graph and bus requirements of SC3, and you can think of BBCut2 making Group Nodes on the Server for each distinct CutGroup (=cut synthesiser chain).\
+    \
+
+\f2\b proc
+\f1\b0  - an instance of a class derived from BBCutProc. This is the algorithmic composition routine that will generate cuts. \
+\
+
+\f2\b quantiser
+\f1\b0 - An optional quantisation class which imposes a template on the output of the algorithmic cutter. Leave this nil for default behaviour. \
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f2\b\fs22 \cf0 \ul \ulc0 Instance Methods\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1\b0\fs24 \cf0 \ulnone \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f2\b \cf0 free
+\f1\b0  Frees any group and bus resources. If you passed in explicit Group and Bus objects they will not be deleted and are your own responsibility (see CutGroup).\
+\
+
+\f2\b pause
+\f1\b0  Pause the bbcut2- it will not send further messages to the Server (but may have scheduled some already which can't be taken back).\
+\
+
+\f2\b resume
+\f1\b0  Restart after a pause.\
+\
+
+\f2\b stop
+\f1\b0  Stop playing, removing the cutter from the current clock. \
+\
+
+\f2\b end 
+\f1\b0 Stop and free.
+\f2\b  
+\f1\b0 \
+\
+
+\f2\b play (clock) 
+\f1\b0 Start playing on a given clock.
+\f2\b \
+\
+clock-
+\f1\b0  A clock class derived from ExternalClock for the event scheduling. ExternalClock is a base class which wraps a TempoClock in SCLang. ServerClock is used for beat induction control from Server side UGens. If a TempoClock is passed in, it gets wrapped in an ExternalClock. If a bps is passed in (eg .play(2)) then a TempoClock is created at that bps and wrapped in an ExternalClock. \
+\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f3\i \cf0 Examples- please use your own sample sources\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1\i0 \cf0 \
+\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\fs18 \cf0 s=\cf3 Server\cf0 .default;\
+\
+\cf2 //shortest possible example, defaults to BBCutProc11 cut procedure, generates a default clock for you at 2 bps\cf0 \
+\cf2 //will cut up the first audio input stream on your system (use with headphones to avoid feedback)\cf0 \
+\cf3 b=BBCut2\cf0 (\cf3 CutStream1\cf0 .new).play\
+\
+b.pause; \cf2 //silent mode\cf0 \
+\
+b.resume; \cf2 //hear again\cf0 \
+\
+b.stop; \cf2 //finish on clock\cf0 \
+\
+c=\cf3 ExternalClock\cf0 (\cf3 TempoClock\cf0 (2.7)).play;\
+\
+b.play(c); \cf2 //start on a new running clock\cf0 \
+\
+b.stop;\
+\
+b.free; \cf2 //free any resources left\cf0 \
+\
+\
+\cf2 //better use, explicit passing of clock, buffer\cf0 \
+(\
+\cf3 var\cf0  clock= \cf3 ExternalClock\cf0 (\cf3 TempoClock\cf0 (2));\
+\cf3 var\cf0  buffer= \cf3 Buffer\cf0 .alloc(s,44100,1);	\
+\
+clock.play;\
+	\
+\cf2 //runs on first available input channel	\cf0 \
+\cf3 BBCut2\cf0 (\cf3 CutStream1\cf0 (s.options.numOutputBusChannels,buffer),\cf3 BBCutProc11\cf0 .new).play(clock);\
+)\
+\
+\
+(	\cf2 //the same for a soundfile: you must allow time for the soundfile to load\cf0 \
+\cf3 var\cf0  sf;\
+		\
+\cf3 Routine\cf0 .run(\{\
+			\
+sf= \cf3 BBCutBuffer\cf0 (\cf4 "sounds/break"\cf0 ,8);\
+\
+s.sync; \cf2 //this forces a wait for the Buffer to load\cf0 \
+\
+\cf3 BBCut2\cf0 (\cf3 CutBuf1\cf0 (sf)).play; \cf2 //will use TempoClock.default so depends what tempo that is at\cf0 \
+\});\
+\
+)\
+\
+\cf3 TempoClock\cf0 .default.tempo_(2.3)\
+\
+\
+\cf2 //you would usually load soundfiles separately (perhaps before performing) before running cutters\cf0 \
+\
+\
+\cf2 //better practise, more explicit\cf0 \
+(\
+\cf3 var\cf0  sf, clock;\
+\
+clock= \cf3 ExternalClock\cf0 (\cf3 TempoClock\cf0 (2.5));	\
+		\
+clock.play;		\
+		\
+\cf3 Routine\cf0 .run(\{\
+			\
+sf= \cf3 BBCutBuffer\cf0 (\cf4 "sounds/break"\cf0 ,8);\
+\
+s.sync; \cf2 //this forces a wait for the Buffer to load\cf0 \
+\
+\cf3 BBCut2\cf0 (\cf3 CutBuf1\cf0 (sf), \cf3 BBCutProc11\cf0 .new).play(clock);\
+\});\
+\
+)\
+\
+\cf2 //sharing clocks, and demonstrating what happens with tempo changes\cf0 \
+\
+(\
+\cf3 var\cf0  sf, tempoclock, bbcutclock;\
+\
+\cf3 SynthDef\cf0 (\cf5 \\beep\cf0 ,\{\cf3 Out\cf0 .ar(0,\cf3 SinOsc\cf0 .ar(440,0,0.1)*\cf3 Line\cf0 .kr(1,0,0.1,doneAction:2))\}).load(s);\
+\
+tempoclock= \cf3 TempoClock\cf0 (2.3);\
+\
+bbcutclock= \cf3 ExternalClock\cf0 (tempoclock);	\
+		\
+\cf3 Routine\cf0 .run(\{\
+				\
+	sf= \cf3 BBCutBuffer\cf0 (\cf4 "sounds/break"\cf0 ,8);\
+	\
+	s.sync; \cf2 //this forces a wait for the Buffer to load\cf0 \
+	\
+	\cf3 BBCut2\cf0 ([\cf3 CutBuf1\cf0 (sf),\cf3 CutMixer\cf0 (0,1.0,1.0,1.0)], \cf3 BBCutProc11\cf0 .new).play(bbcutclock);\
+\});\
+		\
+bbcutclock.play;		\
+\
+\cf3 Task\cf0 (\{	\
+	\
+	\cf3 inf\cf0 .do(\{\
+	\
+	\cf3 Synth\cf0 (\cf5 \\beep\cf0 );\
+	\
+	if(0.1.coin,\{tempoclock.tempo_(rrand(1.7,2.7))\});\
+	\
+	1.0.wait;\
+	\});\
+	\
+\}).play(tempoclock);\
+\
+)\
+\
+\
+\
+\
+\
+\cf2 //creating CutGroup to choose rendering bus and Group, renders on bus 16 but output on bus 0 due to a hidden CutMixer\cf0 \
+(\
+\cf3 var\cf0  clock= \cf3 ExternalClock\cf0 (\cf3 TempoClock\cf0 (2));\
+\cf3 var\cf0  buffer= \cf3 Buffer\cf0 .alloc(s,44100,1);	\
+\cf3 var\cf0  group= \cf3 Group\cf0 .head(\cf3 Node\cf0 .basicNew(s,1));\
+\cf3 var\cf0  bus= \cf3 Bus\cf0 .audio(s,1); \cf2 //mono rendering bus\cf0 \
+\
+clock.play;\
+	\
+\cf2 //runs on first available input channel	\cf0 \
+\cf3 BBCut2\cf0 (\cf3 CutGroup\cf0 (\cf3 CutStream1\cf0 (\cf3 nil\cf0 ,buffer),group,bus),\cf3 BBCutProc11\cf0 .new).play(clock);\
+)\
+\
+\
+\cf2 //also specifying a CutMixer to choose volume and outbus, but CutGroup will allocate a rendering Bus for you \cf0 \
+(\
+\cf3 var\cf0  clock= \cf3 ExternalClock\cf0 (\cf3 TempoClock\cf0 (2));\
+\cf3 var\cf0  buffer= \cf3 Buffer\cf0 .alloc(s,44100,1);	\
+\cf3 var\cf0  group= \cf3 Group\cf0 .head(\cf3 Node\cf0 .basicNew(s,1));\
+\
+clock.play;\
+	\
+\cf3 BBCut2\cf0 (\cf3 CutGroup\cf0 ([\cf3 CutStream1\cf0 (\cf3 nil\cf0 ,buffer),\cf3 CutMixer\cf0 (0,0.5,1.0,\{1.0.rand2\})],group),\cf3 BBCutProc11\cf0 .new).play(clock);\
+)\
+\
+\
+\
+\
+\
+\
+\cf2 //showing off the five input possibilities for the cutgroup array argument\cf0 \
+\cf2 //five options for shortcuts- all work because of code in BBCut2-initBBCut2\cf0 \
+\
+\
+\
+\cf2 //run this first to load the samples:\cf0 \
+(\
+\cf3 var\cf0  filenames, bpsound;\
+\
+\cf2 //Put in the locations of your samples\cf0 \
+filenames= [\cf4 "sounds/break"\cf0 ,\cf4 "sounds/break2"\cf0 ];\
+\cf2 //how many beats in your samples?\cf0 \
+bpsound= [8,4];\
+\
+f= \cf3 BBCutBuffer\cf0 .array(filenames,bpsound);\
+)\
+\
+\cf2 //test soundfile parameters\cf0 \
+f.do(\{\cf3 arg\cf0  val; \cf3 Post\cf0  <<[val.path, val.numChannels, val.numFrames, val.sampleRate, val.bufnum]<<nl;\});\
+\
+\cf2 //start a BBCut scheduling clock\cf0 \
+c= \cf3 ExternalClock\cf0 (\cf3 TempoClock\cf0 (2)).play;\
+\
+\cf2 //run one line at a time, each BBCut instance\cf0 \
+a=\cf3 BBCut2\cf0 (\cf3 CutFunc\cf0 .new(blockfunc:\{\cf3 Synth\cf0 (\cf5 \\beep\cf0 )\}),\cf3 BBCutProc11\cf0 .new).play(c);\
+\
+a.end; \cf2 //end stops and frees the cutter\cf0 \
+\
+\cf2 //makes one running BBCutGroup containing two renderers\cf0 \
+a= \cf3 BBCut2\cf0 ([\cf3 CutBuf1\cf0 (f[0]),\cf3 CutBuf1\cf0 (f[1])],\cf3 BBCutProc11\cf0 .new).play(c);\
+\
+a.end;\
+\
+\cf2 //makes two running groups, first with default cut synth, second with sample based renderers\cf0 \
+a= \cf3 BBCut2\cf0 ([[\cf3 CutFunc\cf0 .new(blockfunc:\{\cf3 Synth\cf0 (\cf5 \\beep\cf0 )\})], [\cf3 CutBuf1\cf0 (f[0]),\cf3 CutBuf1\cf0 (f[1])]],\cf3 BBCutProc11\cf0 .new).play(c);\
+\
+a.end;\
+\
+\cf2 //create explicitly a single BBCutGroup (BBCG is a shortcut name for one)\cf0 \
+a= \cf3 BBCut2\cf0 (\cf3 CutGroup\cf0 (\cf3 CutBuf1\cf0 (f[0])),\cf3 BBCutProc11\cf0 .new).play(c);\
+\
+a.end;\
+\
+\cf2 //explicitly create an array of BBCutGroups, like the 'makes two running groups' option above but here more explicitly done\cf0 \
+a= \cf3 BBCut2\cf0 ([\cf3 CutGroup\cf0 (\cf3 CutFunc\cf0 .new(blockfunc:\{\cf3 Synth\cf0 (\cf5 \\beep\cf0 )\})), \cf3 CutGroup\cf0 ([\cf3 CutBuf1\cf0 (f[0]),\cf3 CutMixer\cf0 (0,0.7,1.0,\{1.0.rand2\})]),\cf3 CutGroup\cf0 (\cf3 CutBuf1\cf0 (f[1]))],\cf3 BBCutProc11\cf0 .new).play(c);\
+\
+c.tempoclock.tempo_(2.3);\
+\
+a.end;\
+\
+\
+\
+\cf2 //tempo ratio of 20 to 27\cf0 \
+(\
+\cf3 var\cf0  sf, clock1, clock2;\
+\
+clock1= \cf3 ExternalClock\cf0 (\cf3 TempoClock\cf0 (2));	\
+clock2= \cf3 ExternalClock\cf0 (\cf3 TempoClock\cf0 (2.7));	\
+	\
+\cf3 Routine\cf0 .run(\{\
+			\
+sf=\cf3 BBCutBuffer\cf0 .array([\cf4 "sounds/break"\cf0 ,\cf4 "sounds/break2"\cf0 ],[8,4]);\
+\
+s.sync; \cf2 //this forces a wait for the Buffer to load\cf0 \
+\
+\cf3 BBCut2\cf0 ([\cf3 CutBuf1\cf0 (sf[0]),\cf3 CutMixer\cf0 (0,0.5,1.0,-1.0)], \cf3 ChooseCutProc\cf0 (0.25,\{[4,2].choose\})).play(clock1);\
+\cf3 BBCut2\cf0 ([\cf3 CutBuf1\cf0 (sf[1]),\cf3 CutMixer\cf0 (0,0.5,1.0,1.0)], \cf3 ChooseCutProc\cf0 (0.25,\{[4,2].choose\})).play(clock2);\
+\});\
+\
+clock1.play;	\
+clock2.play;\
+)\
+\
+\
+\
+\
+\cf2 //adding/removing cutsynths\cf0 \
+\
+\cf2 //better practise, more explicit\cf0 \
+(\
+\cf3 var\cf0  sf, clock;\
+\
+clock= \cf3 ExternalClock\cf0 (\cf3 TempoClock\cf0 (2.5));	\
+		\
+clock.play;		\
+		\
+\cf3 Routine\cf0 .run(\{\
+			\
+sf= \cf3 BBCutBuffer\cf0 (\cf4 "sounds/break"\cf0 ,8);\
+\
+s.sync; \cf2 //this forces a wait for the Buffer to load\cf0 \
+\
+g=\cf3 CutGroup\cf0 (\cf3 CutBuf1\cf0 (sf));\
+\
+\cf3 a=BBCut2\cf0 (g, \cf3 BBCutProc11\cf0 .new).play(clock);\
+\});\
+\
+)\
+\
+\cf2 //run these one at a time\cf0 \
+g.cutsynths.postln; \cf2 //default CutMixer was added\cf0 \
+\
+g.add(\cf3 CutComb1\cf0 (\{arg i; (i.clip2(10)*0.005)+0.01\},0.5));\
+\
+g.cutsynths.postln;\
+\
+g.removeAt(2); 	\cf2 //remove comb\cf0 \
+\
+g.cutsynths.postln;\
+\
+a.end\
+}

@@ -1,0 +1,53 @@
+{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf330
+{\fonttbl\f0\fnil\fcharset77 Monaco;\f1\fswiss\fcharset77 Helvetica;\f2\fswiss\fcharset77 Helvetica-Bold;
+}
+{\colortbl;\red255\green255\blue255;\red191\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\fs18 \cf2 //This file is part of The BBCut Library. Copyright (C) 2001  Nick M.Collins distributed under the terms of the GNU General Public License full notice in file BBCutLibrary.help\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1\fs24 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f2\b \cf0 AnalyseEvents2
+\f1\b0 \
+\
+On-the-fly event analyser, based on onset detection/on-the-fly analysis described in my academic papers. Best for percussive events. Recommended that you go via the Segmentation (for one-pass) and AnalyseEventsDatabase (for on-the-fly) classes in standard usage, don't use this directly. \
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f2\b \cf0 \ul \ulc0 Class Methods
+\f1\b0 \ulnone \
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f2\b \cf0 *ar(in,bufnum, threshold, triggerid, circular, pitch)\
+\
+in- 
+\f1\b0 Audio input to track
+\f2\b \
+\
+bufnum- 
+\f1\b0 A buffer within which results of the analysis are place\
+\
+
+\f2\b threshold- 
+\f1\b0 A parameter acting as the onset detector threshold, default of 0.34 was determined as the best performing over a database of percussive onset, but you might want to change this to change the sensitivity (though you always increase the risk of false positives or false negatives)\
+\
+
+\f2\b triggerid- 
+\f1\b0 A trigger ID number used for communication from the UGen to the Lang to mark that a new event was received. Only passed for on-the-fly analysis.\
+\
+
+\f2\b circular- 
+\f1\b0 A flag to note on-the-fly analysis assuming a circular buffer. If you only need a one-pass analysis on a file, you won't use this. \
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f2\b \cf0 pitch- 
+\f1\b0 Can take a .kr pitch detection UGen as input. Will take the median fundamental frequency over a note event from values recorded from this pitch input. \
+\
+No examples are given, to discourage solo use. 
+\f0\fs18 \
+}

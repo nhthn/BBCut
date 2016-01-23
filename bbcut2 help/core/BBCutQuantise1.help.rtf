@@ -1,0 +1,60 @@
+{\rtf1\mac\ansicpg10000\cocoartf102
+{\fonttbl\f0\fnil\fcharset77 Monaco;\f1\fswiss\fcharset77 Helvetica;\f2\fswiss\fcharset77 Helvetica-Bold;
+\f3\fswiss\fcharset77 Helvetica-Oblique;}
+{\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red0\green0\blue191;\red96\green96\blue96;
+}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\fs18 \cf2 //This file is part of The BBCut Library. Copyright (C) 2001  Nick M.Collins distributed under the terms of the GNU General Public License full notice in file BBCutLibrary.help\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1\fs24 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f2\b \cf0 BBCutQuantise1
+\f1\b0 \
+\
+BBCutQuantise1 is experimental.\
+\
+The output of the cut procedure is filtered by the metric template of the quantiser. The current setup is to impose a swing groove. \
+\
+
+\f2\b \ul Class Methods
+\f1\b0 \ulnone \
+\
+
+\f2\b *new(swing)\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1\b0 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f2\b \cf0 swing
+\f1\b0  - straight semiquavers is the default (0.25). No values greater than 0.5. You cannot modulate this.\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f3\i \cf0 Examples- please use your own sample sources\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1\i0 \cf0 \
+\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\fs18 \cf0 s=\cf3 Server\cf0 .default;\
+\
+\
+b=\cf3 BBCutBuffer.array\cf0 ([\cf4 "sounds/break","sounds/break2"]\cf0 ,[8,4]); \cf2 //load me first\cf0 \
+\
+c=ExternalClock(2.4).play;\
+\
+k=\cf3 BBCut2\cf0 (\cf3 CutBuf1\cf0 (b[0],0.2),\cf3 ChooseCutProc\cf0 (0.25,4,rollchance:0.0),\cf3 BBCutQuantise1\cf0 (0.32)).play(c);\
+\
+k.end;\
+\
+\
+l=\cf3 BBCut2\cf0 (\cf3 CutBuf2\cf0 (b[1],0.4),\cf3 WarpCutProc1\cf0 .new,\cf3 BBCutQuantise1\cf0 (0.32)).play(c);\
+\
+l.end;\
+}

@@ -1,0 +1,264 @@
+{\rtf1\mac\ansicpg10000\cocoartf102
+{\fonttbl\f0\fnil\fcharset77 Monaco;\f1\fswiss\fcharset77 Helvetica-Bold;\f2\fswiss\fcharset77 Helvetica;
+\f3\fswiss\fcharset77 Helvetica-Oblique;}
+{\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red191\green0\blue0;\red0\green0\blue0;
+\red0\green0\blue191;\red96\green96\blue96;\red0\green0\blue191;\red0\green115\blue0;\red96\green96\blue96;
+}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\fs18 \cf2 //This file is part of The BBCut Library. Copyright (C) 2001  Nick M.Collins distributed under the terms of the GNU General Public License full notice in file BBCutLibrary.help\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1\b\fs30 \cf0 \
+BBCPPermute
+\f2\b0\fs24 \
+\
+
+\f1\b Superclass: BBCutProc
+\f2\b0 \
+\
+A relatively straight forward cut procedure supporting arbitrary user defined permutation of equally divided chunks of the target. \
+\
+
+\f1\b \ul Class Methods
+\f2\b0 \ulnone \
+\
+*
+\f1\b new(phraselength, subdivfunc, permutefunc, stutterfunc)
+\f2\b0    \
+Create a BBCPPermute object with the given parameters.\
+\
+
+\f1\b phraselength
+\f2\b0  - Choose a new phraselength. You can pass a function, which will be called at \
+each new phrase. Normally this would be equal to the size in beats of the source to be cut (assuming \
+some fixed signal buffer, sound file) \
+
+\f1\b subdivfunc 
+\f2\b0 - A function returning the number of equally spaced divisions in which to split a new phrase. \
+The new currphraselength is passed as an argument to your function. \
+
+\f1\b permutefunc 
+\f2\b0 - Some mapping function which permutes the normal playback order of slices. \
+If it returned the index passed in, there would be no swapping of chunks of the sample around. \
+Your arbitrary permutation function is passed the index to permute, the current number of subdivisions for the \
+phrase, and the current position in the phrase. If you return values out of range, they'll be put into range for you.\
+
+\f1\b stutterfunc 
+\f2\b0 - A function returning the number of subdivisions for the next 
+\f3\i block
+\f2\i0 . The default is one, giving no stuttering.\
+Arguments passed in are the index, the subdivisions , and the position in beats in the current phrase. \
+\
+
+\f1\b \ul Instance Methods
+\f2\b0 \ulnone \
+\
+
+\f1\b initBBCPPermute(pl, sdf, pf, sf) 
+\f2\b0 Called internally after a new.\
+\
+Other methods are overrides of BBCutProc base class behaviour. BBCPPermute will flag a roll when stuttering.\
+\
+Examples- You'll have to substitute your own break sample to hear the rhythmic aspects of this procedure\
+properly\
+\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\fs18 \cf3 //you must have run this line before any of the examples below\cf4 \
+f= \cf5 BBCutBuffer\cf4 (\cf6 "sounds/break"\cf4 ,8); \
+\cf0 \
+TempoClock.default.tempo_(2.3);
+\f2\fs24 \
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\fs18 \cf2 //default, getting back what you put in\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf7 a=BBCut2\cf0 (\cf7 CutBuf1\cf0 (f),\cf7 BBCPPermute\cf0 (8.0)).play;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\fs24 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\fs18 \cf0 a.end;\
+\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf2 //default, getting back what you put in, give or take some enveloping\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf7 a=BBCut2\cf0 (\cf7 CutBuf2\cf0 (f),\cf7 BBCPPermute\cf0 (8.0)).play;\
+\
+\
+a.pause\
+a.resume\
+a.stop;\
+a.free;\
+\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf2 //reverse slices, 16 slices over 8 beat sample= eighth note (0.5 beat) slices\cf0 \
+\
+a=\cf7 BBCut2\cf0 (\cf7 CutBuf1\cf0 (f),\cf7 BBCPPermute\cf0 .new(8.0, 16, \{\cf7 arg\cf0  index, n;  n-index-1\})).play(\cf7 ExternalClock\cf0 (\cf7 TempoClock\cf0 (2.5)).play);\
+\
+a.end\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\fs24 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\fs18 \cf0 (	\cf2 //swap strong and weak, with occasional stuttering every fourth block\cf0 \
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf7 BBCut2\cf0 (\cf7 CutBuf2\cf0 (f),\
+\cf7 BBCPPermute\cf0 .new(\
+8.0,	\cf2 //phrase length same as sample length \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf0 16, 	\cf2 //cut in eight notes- 8.0/16= 0.5...\
+\cf0 \{\cf7 arg\cf0  index, n;  if(index%2==0,\{index+1\},\{index-1\})\},	\cf2 //swap strong and weak\
+\cf0 \{\cf7 arg\cf0  index; if((index==4) || (index==7), 3, 1)\}\
+)).play\
+)\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\fs24 \cf0 \
+\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\fs18 \cf0 (	\cf2 //more random happenings\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf7 var\cf0  mult;\
+\
+\cf7 BBCut2\cf0 (\cf7 CutBuf2\cf0 (f),\
+\cf7 BBCPPermute\cf0 .new(\
+\{mult= [4.31, 1.29, \{rrand(5.01, 10.09)\}].choose.value;  8.0\}, \cf2 //this is called beginning of every phrase, so use the opportunity to select a new multiplier\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf0 \{[8, 16, 32].choose\}, \
+\{\cf7 arg\cf0  index, n;  index*mult\},\
+\{if(0.05.coin,\{rrand(2,5)\},1)\}\
+)).play;\
+)\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\fs24 \cf0 \
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\fs18 \cf0 (	\cf2 //granular mess\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf7 var\cf0  sf, pitch, when, now, duty;\
+\cf7 var\cf0  bbcs, bbcp, bbcutter;\
+\
+\cf7 Routine\cf0 .run(\{\
+\
+\cf7 SynthDef\cf0 (\cf8 \\fx\cf0 , \{\cf7 ReplaceOut\cf0 .ar(0,\cf7 Limiter\cf0 .ar(0.1*\cf7 CombN\cf0 .ar(\cf7 In\cf0 .ar(0, 2),0.3,\cf7 SinOsc\cf0 .kr(0.05, 0, 0.125, 0.15), \cf7 SinOsc\cf0 .kr(0.023, 0, 0.5, 0.6))))  \}).send(s);\
+\
+sf= \cf7 BBCutBuffer\cf0 (\cf9 "sounds/a11wlk01.wav"\cf0 ,4);\
+\
+s.sync;\
+\
+pitch=1.0;\
+when= 0;\
+now=0;\
+\
+bbcs= [\
+\cf7 CutBuf2\cf0 (sf, \
+pbsfunc: \{ if(now>=when,\{pitch= ([0.125, 1, 1.05].choose)+ (0.05.rand2)\}); pitch+(0.01.rand2)\}, \
+dutycycle:\{ if(now>=when, \{now=0; when= 300.rand; duty= rrand(0.2,10.0)*(rrand(0.5,1.0))\}); now=now+1; duty\}\
+),\
+\cf7 CutMixer\cf0 (0,1.0,1.0,\{1.0.rand2\}),\
+\cf7 CutBRF1\cf0 .new\
+];\
+\
+bbcp=\cf7 BBCPPermute\cf0 .new(\
+\{rrand(1.0,10.0)*(rrand(0.5, 1.0))\}, \cf2 //weird phrase lengths only\cf0 \
+\{rrand(1, 7)*8-1\}, \cf2 //subdivisions always odd\cf0 \
+\{\cf7 arg\cf0  index, n;  (2.7*n*n*index)+(12.2.rand2)\},\
+\{if(0.35.coin,\{rrand(2,5)\},1)\}\
+);\
+\
+bbcutter= \cf7 BBCut2\cf0 (bbcs,bbcp).play(2.4);\
+\
+\cf7 Synth\cf0 .tail(\cf7 Node\cf0 .basicNew(s,1),\cf9 "fx"\cf0 );\
+\
+\});\
+\
+)\
+\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf2 //ui controlling rotation and inversion of slices - ie, move within a rhythmic set class\
+//break2 is reference\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf0 (\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf7 var\cf0  w, rotate, invert, currrot, currinv;\
+\cf7 var\cf0  sf, clock;\
+\
+clock=\cf7 ExternalClock\cf0 (2.3).play;\
+\
+w = \cf7 SCWindow\cf0 (\cf9 "BBCPPermute demo N.M.Collins 5/08/05"\cf0 , \cf7 Rect\cf0 (100, 100, 200, 100));\
+\
+rotate= \cf7 SCSlider\cf0 (w, \cf7 Rect\cf0 (0,0,100,30), \cf9 "rotation"\cf0 ); \
+invert= \cf7 SCButton\cf0 (w, \cf7 Rect\cf0 (0,50,100,30), \cf9 "invert"\cf0 ); \
+\
+invert.states= [[\cf9 "invert"\cf0 ],[\cf9 "revert"\cf0 ]];\
+rotate.action_(\{currrot= rotate.value;\});\
+invert.action_(\{currinv= invert.value;\});\
+\
+currrot=0.0;currinv=0.0;\
+\
+w.front;\
+\
+\cf7 Routine\cf0 .run(\{\
+\cf7 var\cf0  cutter1, cutter2;\
+\
+sf= \cf7 BBCutBuffer\cf0 .array([\cf9 "sounds/break"\cf0 ,\cf9 "sounds/break2"\cf0 ],[8,4]);\
+\
+s.sync;\
+\
+cutter1= \cf7 BBCut2\cf0 ([\cf7 CutBuf2\cf0 (sf.at(0)),\cf7 CutMixer\cf0 (0,0.5,1.0,-1.0)],\cf7 BBCPPermute\cf0 .new(\
+8.0,16,\{\cf7 arg\cf0  i,n; \
+\cf7 var\cf0  t; \
+t=i+((currrot*16-0.001).asInteger);\
+\
+if((currinv)>0.1, \{t= n-t-1\});\
+\
+t%n;\
+\}\
+));\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf2 //reference break\cf0 \
+cutter2= \cf7 BBCut2\cf0 ([\cf7 CutBuf2\cf0 (sf.at(1)),\cf7 CutMixer\cf0 (0,0.3,1.0,1.0)],\cf7 BBCPPermute\cf0 .new);\
+\
+cutter1.play(clock);\
+cutter2.play(clock);\
+\
+\});\
+\
+)\
+\cf2 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf2 //live coding of new permutation functions as you go along\cf0 \
+(\
+~permutefunc=\{\cf7 arg\cf0  i,n; i%n\};\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf7 BBCut2\cf0 (\cf7 CutBuf2\cf0 (f),\cf7 BBCPPermute\cf0 (8.0, 16, \{\cf7 arg\cf0  i,n; ~permutefunc.value(i,n)\})).play(2.7);\
+)\cf2 \
+\
+//now change the permutation function as desired\cf0 \
+~permutefunc= \{\cf7 arg\cf0  i,n; (((i+5).rand)**(i.min(7)))%n\};\
+\
+~permutefunc= \{\cf7 arg\cf0  i,n; ((i+(i.rand))*(rrand(2,i)))%n\};\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f2\fs24 \cf0 \
+\
+}

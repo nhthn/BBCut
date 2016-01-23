@@ -1,0 +1,114 @@
+{\rtf1\mac\ansicpg10000\cocoartf102
+{\fonttbl\f0\fnil\fcharset77 Monaco;\f1\fswiss\fcharset77 Helvetica-Bold;\f2\fswiss\fcharset77 Helvetica;
+}
+{\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red0\green0\blue0;\red191\green0\blue0;
+\red0\green0\blue191;\red96\green96\blue96;\red0\green0\blue191;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\fs18 \cf2 //This file is part of The BBCut Library. Copyright (C) 2001  Nick M.Collins distributed under the terms of the GNU General Public License full notice in file BBCutLibrary.help\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1\b\fs30 \cf0 \
+OffsetCP1
+\f2\b0\fs24 \
+\
+
+\f1\b Superclass: BBCutProc
+\f2\b0 \
+\
+This cut procedure allows the user to specify the durations in a block and offset, one block at a time.\
+\
+
+\f1\b \ul Class Methods
+\f2\b0 \ulnone \
+\
+*
+\f1\b new(dofunc, offsetscale, durationscale, phraselength, bpsd)
+\f2\b0    \
+Create a ChooseBlockProc object with the given parameters.\
+\
+
+\f1\b dofunc
+\f2\b0  - Duration Offset function. \
+\
+
+\f1\b phraselength 
+\f2\b0 - Next length of phrase in beats.\
+
+\f1\b bpsd
+\f2\b0  - beats per sub division. Sets a primitive cut size resolution for choose offset messages. \
+\
+
+\f1\b \ul Instance Methods
+\f2\b0 \ulnone \
+\
+
+\f1\b initChooseBlockProc 
+\f2\b0 Called internally after a new.\
+\
+Examples- Substitute your own break sample to hear this properly\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\fs18 \cf3 \
+\cf4 //you must have run this line before any of the examples below\cf3 \
+f= \cf5 BBCutBuffer\cf3 .array([\cf6 "sounds/break"\cf3 ,\cf6 "sounds/break2"\cf3 ],[8,4]); \
+\cf0 \
+\
+(	\cf2 //defaults\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf7 BBCut2\cf0 (\cf7 CutBuf1\cf0 (f[0]),\cf7 OffsetCP1\cf0 .new).play(2.4);\
+)\
+\
+\
+(	\cf2 //your own func\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf7 BBCut2\cf0 (\cf7 CutBuf1\cf0 (f[0]),\cf7 OffsetCP1\cf0 .new(\
+\{\
+arg beatsleft, phraselength,block;\
+\
+if(block%2==0,\
+\{[[1.0],16.rand]\}, \{[[[0.5],[0.25,0.25]].choose,[4,8,12].choose]\});\
+\}, 0.0625\
+)\
+).play(2.1);\
+)
+\fs24 \
+\
+\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\fs18 \cf0 (	\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf7 BBCut2\cf0 (\cf7 CutBuf1\cf0 (f[1]),\cf7 OffsetCP1\cf0 .new(\
+\{\
+arg beatsleft, phraselength,block;\
+\
+if(block%2==0,\
+\{[[0.5],16.rand]\}, \{[[[0.25],[0.25,0.25]].choose,[4,8,12].choose]\});\
+\}, 0.0625\
+)\
+).play(2.8);\
+)
+\fs24 \
+\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\fs18 \cf0 (	\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf7 BBCut2\cf0 (\cf7 CutBuf1\cf0 (f[1]),\cf7 OffsetCP1\cf0 .new(\
+\{\
+arg beatsleft, phraselength,block;\
+\
+if(block%2==0,\
+\{[[0.5],16.rand]\}, \{[[[0.25],[0.25,0.25], [0.125, 0.125, 0.25]].choose,[4,8,12, 5].choose]\});\
+\}, 0.0625\
+)\
+).play(2.1);\
+)
+\fs24 \
+}
