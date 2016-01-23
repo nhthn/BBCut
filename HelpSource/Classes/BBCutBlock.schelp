@@ -30,7 +30,7 @@ var <>phraseprop;   //proportional position (0.0 to 1.0) through current phrase
 In this example, note how the function is called, not at the time you hear specific cut event, but when new events are rendered and added to the scheduling queue. The scheduler needs to have a queue of events created in advance if it is accurately to sync to an external clock- render at play time does not take account of Server latency, perceptual attack time etc:
 
 code::
-b=BBCutBuffer("sounds/break",8);
+b=BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff",8);
 
 (
 BBCut2(CutBuf2(b, dutycycle:{arg i, block; 

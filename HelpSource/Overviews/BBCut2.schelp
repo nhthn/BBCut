@@ -4,11 +4,15 @@ categories:: Libraries>BBCut2
 
 BBCut2 is a collection of SuperCollider UGens, classes and patches for automated event analysis, beat induction and algorithmic audio splicing. It is released as public open source under the GNU General Public License. It was developed by Nick M. Collins.
 
-You are reading a fork of BBCut2 which uses the new help system.
+This is not the original BBCut2, but a fork made by Nathan Ho. See below.
 
-warning:: Set code::s.latency = 0.05;:: when using BBCut2. The default of 0.2 seconds is dangerous and may interact adversely with scheduling especially for faster tempi and beat tracking. Only tempi in a standard range of around 1-4bps are supported. ::
+section:: Setup
 
-section:: Info
+Set code::s.latency = 0.05;:: when using BBCut2. The default of 0.2 seconds is dangerous and may interact adversely with scheduling especially for faster tempi and beat tracking. Only tempi in a standard range of around 1-4bps are supported.
+
+Copy break.aiff and break2.aiff from the BBCut source into code::Platform.userExtensionDir +/+ "sounds/"::. This is an optional step, but you will need this to run the examples.
+
+section:: Contents
 
 sc3-plugins is required.
 
@@ -84,6 +88,16 @@ list::
 ## link::Classes/BBCutBlock:: - Data for the current block is held in a BBCutBlock object
 ## link::Classes/BBCutQuantise1:: - (experimental) imposition of a metric template onto the cut procedure output
 ## link::Classes/BufSelector:: - swaps between an array of BBCutBuffers at phrase or block boundaries
+::
+
+section:: Changelog
+
+Here are the differences between this fork and the most recent "official" release:
+
+list::
+## Documentation has been moved to the new help system.
+## The ugens (AnalyseEvents2, AutoTrack, DrumTrack) have been removed. The old versions only worked on Mac. AnalyseEvents2 and DrumTrack are now in sc3-plugins.
+## code::action:: argument added to link::Classes/BBCutBuffer::.
 ::
 
 section:: History

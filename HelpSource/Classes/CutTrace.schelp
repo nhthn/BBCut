@@ -33,7 +33,7 @@ clock= ExternalClock(TempoClock(2.1)).play;
         
 Routine.run({
 
-sf= BBCutBuffer("sounds/break2",4);
+sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break2.aiff",4);
 
 s.sync;
 
@@ -58,7 +58,7 @@ clock.play;
 Routine.run({
 
 //given event positions         
-sf= BBCutBuffer("sounds/break2",4, [ 0, 16789, 28721, 37166, 41389, 49042, 56783 ]); 
+sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break2.aiff",4, [ 0, 16789, 28721, 37166, 41389, 49042, 56783 ]); 
 
 s.sync; //this forces a wait for the Buffer to load
 

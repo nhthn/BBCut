@@ -47,7 +47,7 @@ clock= ExternalClock(TempoClock(2.1)).play;
         
 Routine.run({
             
-sf= BBCutBuffer("sounds/break",8);
+sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff",8);
 
 s.sync; //this forces a wait for the Buffer to load
 
@@ -65,7 +65,7 @@ clock= ExternalClock(TempoClock(2.1)).play;
         
 Routine.run({
             
-sf= BBCutBuffer("sounds/break",8);
+sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff",8);
 
 s.sync; //this forces a wait for the Buffer to load
 
@@ -83,7 +83,7 @@ clock=ExternalClock(TempoClock(3.3)).play;
         
 Routine.run({
             
-sf= BBCutBuffer("sounds/break2",4);
+sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break2.aiff",4);
 
 s.sync; //this forces a wait for the Buffer to load
 
@@ -100,7 +100,7 @@ clock=ExternalClock(TempoClock(3.3)).play;
         
 Routine.run({
             
-sf= BBCutBuffer("sounds/break2",4);
+sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break2.aiff",4);
 
 s.sync; //this forces a wait for the Buffer to load
 

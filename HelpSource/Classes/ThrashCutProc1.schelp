@@ -54,7 +54,7 @@ code::
 var sf;
 
 Routine.run({
-sf= BBCutBuffer("sounds/break",8);
+sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff",8);
 
 s.sync;
 
@@ -70,7 +70,7 @@ BBCut2(CutBuf1(sf),ThrashCutProc1.new).play(3.33);
 var sf;
 
 Routine.run({
-sf= BBCutBuffer("sounds/break",8);
+sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff",8);
 
 s.sync;
 
@@ -85,7 +85,7 @@ BBCut2(CutBuf1(sf),ThrashCutProc1.new({[0.0,0.5].choose},{[0.125,0.625].choose},
 var sf;
 
 Routine.run({
-sf= BBCutBuffer("sounds/break",8);
+sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff",8);
 
 s.sync;
 
@@ -241,7 +241,7 @@ ThrashCutProc1(0.0,0.125,5.5,chooseriff:{arg last, num; (last+((num-1).rand))%nu
 (   //change database- see the class file for the format of the data
 var sf, proc;
 Routine.run({
-sf= BBCutBuffer("sounds/break",8);
+sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff",8);
 
 s.sync;
 proc= ThrashCutProc1(0,0.125, shuffles:0);

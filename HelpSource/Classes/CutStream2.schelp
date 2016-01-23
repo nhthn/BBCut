@@ -63,7 +63,7 @@ clock.play;
         
 Routine.run({
     
-b=BBCutBuffer("sounds/break",8);    
+b=BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff",8);    
             
 buf= BBCutBuffer.alloc(s,44100*4,1); //allow 4 seconds worth of buffer space, ie up to 8 beats at 120bpm
 
@@ -93,7 +93,7 @@ clock.play;
         
 Routine.run({
     
-b=BBCutBuffer("sounds/break2",4);   
+b=BBCutBuffer(Platform.resourceDir +/+ "sounds/break2.aiff",4);   
             
 buf1= BBCutBuffer.alloc(s,44100*4,1);
 buf2= BBCutBuffer.alloc(s,44100*4,2);

@@ -299,7 +299,7 @@ var sf;
 
 Routine.run({
             
-sf= BBCutBuffer("sounds/break", 8);
+sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff", 8);
 
 s.sync; //this forces a wait for the Buffer to load
 
@@ -311,7 +311,7 @@ BBCut2(CutBuf2(sf, 0), ChooseBlockProc(16, {[8, 12, 16, 32].wchoose([0.3, 0.1, 0
 
 //live coding style
 
-f= BBCutBuffer("sounds/break", 8);
+f= BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff", 8);
 
 (   //init settings
 ~plength= 1;
@@ -357,7 +357,7 @@ a.end
 
 
 
-f= BBCutBuffer("sounds/break", 8);
+f= BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff", 8);
 
 (   //init settings
 ~blockfunc= 1;
@@ -409,7 +409,7 @@ clock.play;
         
 Routine.run({
             
-sf= BBCutBuffer("sounds/break2",4);
+sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break2.aiff",4);
 
 s.sync; //this forces a wait for the Buffer to load
 
@@ -448,7 +448,7 @@ var sf,cutsynth1, cutsynth2, cutsynth3, cutproc;
 
 Routine.run({
     
-sf=BBCutBuffer("sounds/break2",4);
+sf=BBCutBuffer(Platform.resourceDir +/+ "sounds/break2.aiff",4);
 
 s.sync;
 
@@ -483,7 +483,7 @@ clock.play;
         
 Routine.run({
             
-sf= BBCutBuffer("sounds/break2",4);
+sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break2.aiff",4);
 
 s.sync; //this forces a wait for the Buffer to load
 
@@ -514,7 +514,7 @@ clock.play;
         
 Routine.run({
             
-sf= BBCutBuffer.array(["sounds/a11wlk01-44_1.aiff","sounds/break","sounds/break2"],[4,8,4]);
+sf= BBCutBuffer.array(["sounds/a11wlk01-44_1.aiff",Platform.resourceDir +/+ "sounds/break.aiff",Platform.resourceDir +/+ "sounds/break2.aiff"],[4,8,4]);
 
 s.sync; //this forces a wait for the Buffer to load
 

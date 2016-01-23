@@ -57,7 +57,7 @@ examples::
 code::
 
 //you must have run this line before any of the examples below
-f= BBCutBuffer("sounds/break",8); 
+f= BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff",8); 
 
 
 //default cutups at 144bpm

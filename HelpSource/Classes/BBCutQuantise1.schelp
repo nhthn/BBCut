@@ -22,7 +22,7 @@ code::
 s=Server.default;
 
 
-b=BBCutBuffer.array(["sounds/break","sounds/break2"],[8,4]); //load me first
+b=BBCutBuffer.array([Platform.resourceDir +/+ "sounds/break.aiff",Platform.resourceDir +/+ "sounds/break2.aiff"],[8,4]); //load me first
 
 c=ExternalClock(2.4).play;
 

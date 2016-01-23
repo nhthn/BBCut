@@ -35,7 +35,7 @@ examples::
 code::
 
 //you must have run this line before any of the examples below
-f= BBCutBuffer.array(["sounds/break","sounds/break2"],[8,4]); 
+f= BBCutBuffer.array([Platform.resourceDir +/+ "sounds/break.aiff",Platform.resourceDir +/+ "sounds/break2.aiff"],[8,4]); 
 
 
 (   //defaults

@@ -25,7 +25,7 @@ examples::
 code::
 
 //you must have run this line before any of the examples below
-f= BBCutBuffer("sounds/break",8); 
+f= BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff",8); 
 
 TempoClock.default.tempo_(2.3);
 

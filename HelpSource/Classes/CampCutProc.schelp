@@ -122,7 +122,7 @@ var f;
 var pdata,method,campstream;
 
 Routine.run({
-f= BBCutBuffer("sounds/break",8);
+f= BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff",8);
 
 s.sync;
 

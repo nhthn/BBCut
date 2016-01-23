@@ -90,7 +90,7 @@ var sf;
         
 Routine.run({
             
-sf= BBCutBuffer("sounds/break",8);
+sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff",8);
 
 s.sync; //this forces a wait for the Buffer to load
 
@@ -115,7 +115,7 @@ clock.play;
         
 Routine.run({
             
-sf= BBCutBuffer("sounds/break",8);
+sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff",8);
 
 s.sync; //this forces a wait for the Buffer to load
 
@@ -137,7 +137,7 @@ bbcutclock= ExternalClock(tempoclock);
         
 Routine.run({
                 
-    sf= BBCutBuffer("sounds/break",8);
+    sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff",8);
     
     s.sync; //this forces a wait for the Buffer to load
     
@@ -205,7 +205,7 @@ BBCut2(CutGroup([CutStream1(nil,buffer),CutMixer(0,0.5,1.0,{1.0.rand2})],group),
 var filenames, bpsound;
 
 //Put in the locations of your samples
-filenames= ["sounds/break","sounds/break2"];
+filenames= [Platform.resourceDir +/+ "sounds/break.aiff",Platform.resourceDir +/+ "sounds/break2.aiff"];
 //how many beats in your samples?
 bpsound= [8,4];
 
@@ -256,7 +256,7 @@ clock2= ExternalClock(TempoClock(2.7));
     
 Routine.run({
             
-sf=BBCutBuffer.array(["sounds/break","sounds/break2"],[8,4]);
+sf=BBCutBuffer.array([Platform.resourceDir +/+ "sounds/break.aiff",Platform.resourceDir +/+ "sounds/break2.aiff"],[8,4]);
 
 s.sync; //this forces a wait for the Buffer to load
 
@@ -283,7 +283,7 @@ clock.play;
         
 Routine.run({
             
-sf= BBCutBuffer("sounds/break",8);
+sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff",8);
 
 s.sync; //this forces a wait for the Buffer to load
 

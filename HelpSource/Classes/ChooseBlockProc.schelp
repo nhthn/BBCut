@@ -66,7 +66,7 @@ var fxgroup;
 fxgroup=Group.tail(Node.basicNew(s,1));
 
 Routine.run({
-sf= BBCutBuffer("sounds/break2",4);
+sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break2.aiff",4);
 
 s.sync;
 
@@ -121,7 +121,7 @@ slider= Array.fill(data.size, {arg i; DDSlider.performList(\new,[w, Rect(5,30*i,
 w.front;
 
 Routine.run({
-sf= BBCutBuffer("sounds/break",8);
+sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff",8);
 
 s.sync;
 

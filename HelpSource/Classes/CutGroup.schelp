@@ -56,7 +56,7 @@ clock.play;
         
 Routine.run({
             
-sf= BBCutBuffer("sounds/break",8);
+sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff",8);
 
 s.sync; //this forces a wait for the Buffer to load
 

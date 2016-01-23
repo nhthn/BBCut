@@ -53,7 +53,7 @@ code::
 var sf;
 
 Routine.run({
-sf= BBCutBuffer("sounds/break2",4);
+sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break2.aiff",4);
 
 s.sync;
 
@@ -67,7 +67,7 @@ BBCut2(CutBuf1(sf),SQPusher1.new).play(3.33);
 var sf;
 
 Routine.run({
-sf= BBCutBuffer("sounds/break",16);
+sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff",16);
 
 s.sync;
 
@@ -191,7 +191,7 @@ BBCut2([CutBuf2(sf, 0.3, dutycycle: 0.7), CutMixer(0,1.0,{if(0.2.coin,{0},{1})},
 var sf;
 
 Routine.run({
-sf= BBCutBuffer("sounds/break2",4);
+sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break2.aiff",4);
 
 s.sync;
 BBCut2([CutBuf2(sf,0.3,SQPushFXPitch2.new(0.96,pbchance:0.8)),CutMixer(0,1.0,SQPushFXAmp2.new(0.15),0.0)],SQPusher1(0.4, 3, 0.4)).play(3.4);
@@ -204,7 +204,7 @@ BBCut2([CutBuf2(sf,0.3,SQPushFXPitch2.new(0.96,pbchance:0.8)),CutMixer(0,1.0,SQP
 var sf;
 
 Routine.run({
-sf= BBCutBuffer("sounds/break2",4);
+sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break2.aiff",4);
 
 s.sync;
 

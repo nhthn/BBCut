@@ -58,7 +58,7 @@ properly
 code::
 
 //must have run this line before any of the examples
-f= BBCutBuffer("sounds/break",8); 
+f= BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff",8); 
 
 //default cutups
 BBCut2(CutBuf1(f),BBCutProc11.new).play(2.4);

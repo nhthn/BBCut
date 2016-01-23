@@ -49,7 +49,7 @@ q.unmute;
 p.stop;
 q.stop;
 
-~buffers= BBCutBuffer.array(["sounds/break","sounds/break2"],[8,4]);
+~buffers= BBCutBuffer.array([Platform.resourceDir +/+ "sounds/break.aiff",Platform.resourceDir +/+ "sounds/break2.aiff"],[8,4]);
     
 //will be added to run on this clock as soon as made    
 a=BBCut2(CutBuf2(~buffers[0],0.3), BBCutProc11.new).play(c);

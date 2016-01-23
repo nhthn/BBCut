@@ -33,7 +33,7 @@ clock= ExternalClock(TempoClock(2.1)).play;
         
 Routine.run({
 
-sf= BBCutBuffer.array(["sounds/break","sounds/break2"],[8,4]);
+sf= BBCutBuffer.array([Platform.resourceDir +/+ "sounds/break.aiff",Platform.resourceDir +/+ "sounds/break2.aiff"],[8,4]);
 
 s.sync;
 
@@ -55,7 +55,7 @@ clock= ExternalClock(TempoClock(2.1)).play;
         
 Routine.run({
 
-sf= BBCutBuffer.array(["sounds/a11wlk01-44_1.aiff","sounds/break","sounds/break2"],[4,8,4]);
+sf= BBCutBuffer.array(["sounds/a11wlk01-44_1.aiff",Platform.resourceDir +/+ "sounds/break.aiff",Platform.resourceDir +/+ "sounds/break2.aiff"],[4,8,4]);
 
 s.sync;
 

@@ -48,7 +48,7 @@ a=Synth(\help_ServerClock);
 c=ServerClock.new.play(100,s);
 
 //run a bbcut from it
-b=BBCutBuffer("sounds/break",8);
+b=BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff",8);
 
 d=BBCut2(CutBuf2(b)).play(c);
 
@@ -90,7 +90,7 @@ OSCresponder.all.do({arg val; if(val.cmdName=='/tr',{OSCresponder.remove(val)});
 
 Routine.run({
             
-~buffers= BBCutBuffer.array(["sounds/break","sounds/break2"],[8,4]);
+~buffers= BBCutBuffer.array([Platform.resourceDir +/+ "sounds/break.aiff",Platform.resourceDir +/+ "sounds/break2.aiff"],[8,4]);
 
 //choose some file you want to track off your hard drive
 ~source=Buffer.read(s,"/Volumes/data/stevebeattrack/samples/100.wav");

@@ -43,12 +43,12 @@ examples::
 code::
 
 //run one line at a time
-f= BBCutBuffer("sounds/break",8);
+f= BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff",8);
 
 Post << [\length,f.length, \beatlength, f.beatlength, \events, f.eventstarts] << nl;
 
 
-f= BBCutBuffer.array(["sounds/break","sounds/break2"],[8,4],[[0,10000],[3500,6700,9000]]);
+f= BBCutBuffer.array([Platform.resourceDir +/+ "sounds/break.aiff",Platform.resourceDir +/+ "sounds/break2.aiff"],[8,4],[[0,10000],[3500,6700,9000]]);
 
 f.do({ arg val; Post << [\length,val.length, \beatlength, val.beatlength, \events, val.eventstarts] << nl;});
 

@@ -84,7 +84,7 @@ e.analyse(clock:clock);
                 
 Routine.run({
     
-b=BBCutBuffer("sounds/break",8);    
+b=BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff",8);    
 
 s.sync; //this forces a wait for the Buffer to be allocated
 

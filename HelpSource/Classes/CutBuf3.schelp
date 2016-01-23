@@ -63,7 +63,7 @@ clock.play;
         
 Routine.run({
             
-sf= BBCutBuffer("sounds/break",8);
+sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff",8);
 
 s.sync; //this forces a wait for the Buffer to load
 
@@ -83,7 +83,7 @@ clock.play;
         
 Routine.run({
             
-sf= BBCutBuffer("sounds/break",8, 0.25); //segment into 16ths so 16th swing works
+sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff",8, 0.25); //segment into 16ths so 16th swing works
 
 s.sync; //this forces a wait for the Buffer to load
 
@@ -107,7 +107,7 @@ clock.play;
         
 Routine.run({
             
-sf= BBCutBuffer("sounds/break2",4, [ 0, 16789, 28721, 37166, 41389, 49042, 56783 ]);
+sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break2.aiff",4, [ 0, 16789, 28721, 37166, 41389, 49042, 56783 ]);
 
 s.sync; //this forces a wait for the Buffer to load
 
@@ -129,7 +129,7 @@ clock.play;
         
 Routine.run({
             
-sf= BBCutBuffer("sounds/break2",4, [ 0, 16789, 28721, 37166, 41389, 49042, 56783 ]); //segment into 16ths so 16th swing works
+sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break2.aiff",4, [ 0, 16789, 28721, 37166, 41389, 49042, 56783 ]); //segment into 16ths so 16th swing works
 
 s.sync; //this forces a wait for the Buffer to load
 
@@ -160,7 +160,7 @@ clock.play;
         
 Routine.run({
             
-sf= BBCutBuffer("sounds/break",8, ~data);
+sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff",8, ~data);
 
 s.sync; //this forces a wait for the Buffer to load
 
@@ -172,7 +172,7 @@ BBCut2(CutBuf3(sf,0.3,1.0, false, true), BBCutProc11.new).play(clock);
 /////////////////////////////////////////////////////////////////////
 //test code for finding events for wraparound cuts 
 //default segmentation into eighth note events applied to the buffer 
-f= BBCutBuffer("sounds/break",8);
+f= BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff",8);
 a=f.findevents(7,8.4).postln;
 b=f.trimevents(7,8.4,a,true, true,2);
 //////////////////////////////////////////////////////////////////////
