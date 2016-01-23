@@ -2,6 +2,8 @@ To install, copy this directory into Platform.userExtensionDir. sc3-plugins is r
 
 The main help page is the file BBCut2Wiki.help.rtf. Explore the help files by clicking and trying examples.
 
+Optionally, you can also copy the sound files in sounds/ to the sounds directory in Platform.resourceDir.
+
 == Using both bbcut1 and 2 ==
 
 If you already have bbcut1 you can use both bbcut and bbcut2 on one machine, but must avoid a few class duplications:
