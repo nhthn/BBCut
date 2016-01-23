@@ -47,10 +47,10 @@ stringrect= Rect(bounds.left+temp-1,bounds.top,(bounds.width)-temp,temp2-1);
 slidrect= Rect(bounds.left,bounds.top+(temp2-1),(bounds.width),(bounds.height)-temp2);
 
 
-SCStaticText( w, namerect).string_(name).stringColor_(frontcol).background_(backcol);
-string=SCStaticText( w, stringrect).string_(lastval).stringColor_(frontcol).background_(backcol);
+StaticText( w, namerect).string_(name).stringColor_(frontcol).background_(backcol);
+string=StaticText( w, stringrect).string_(lastval).stringColor_(frontcol).background_(backcol);
 
-slider=SCSlider.new( w, slidrect).knobColor_(frontcol).background_(backcol);
+slider=Slider.new( w, slidrect).knobColor_(frontcol).background_(backcol);
 //set slider to default value, else will default to 0.0
 slider.value_(spec.unmap(lastval));
 

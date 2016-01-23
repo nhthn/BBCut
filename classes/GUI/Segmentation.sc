@@ -43,9 +43,9 @@ Segmentation {
 		
 		viewsize=800;
 		
-		w=  SCWindow("onset detection GUI", Rect(50,500,viewsize+50,200));
+		w=  Window("onset detection GUI", Rect(50,500,viewsize+50,200));
 		
-		overview=  SCSoundFileView.new(w, Rect(5,5, viewsize, 90));
+		overview=  SoundFileView.new(w, Rect(5,5, viewsize, 90));
 
 		f = SoundFile.new;
 
@@ -58,7 +58,7 @@ Segmentation {
 		
 		overview.drawsWaveForm_(true);
 	
-		eventview = SCEnvelopeView(w, Rect(5, 105, viewsize, 30));
+		eventview = EnvelopeView(w, Rect(5, 105, viewsize, 30));
 		
 		eventview.thumbWidth_(3.0); //setProperty(\thumbWidth, 3.0);
 		eventview.thumbHeight_(30.0); //setProperty(\thumbHeight, 30.0);
@@ -67,14 +67,14 @@ Segmentation {
 		eventview.strokeColor_(Color.red);
 		eventview.selectionColor_(Color.blue);
 		
-		nametext= SCStaticText(w, Rect(5, 155, 400,30)).font_(Font(\HelveticaNeue, 12)).string_(" ");
+		nametext= StaticText(w, Rect(5, 155, 400,30)).font_(Font(\HelveticaNeue, 12)).string_(" ");
 		
-		loadb= SCButton(w, Rect(405, 155, 70,30));
+		loadb= Button(w, Rect(405, 155, 70,30));
 		loadb.states= [["load",Color.blue]];
 		
 		loadb.action_({
 		
-		CocoaDialog.getPaths({arg paths; 
+		Dialog.getPaths({arg paths; 
 		
 		//no checking safety, just tries to load as best it can
 		this.load(paths[0]);
@@ -83,7 +83,7 @@ Segmentation {
 		
 		});
 		
-		analysisb= SCButton(w, Rect(475, 155, 70,30));
+		analysisb= Button(w, Rect(475, 155, 70,30));
 		analysisb.states= [["analyse",Color.blue]];
 		
 		analysisb.action_({ if(loadflag,{this.analyse;}); });
@@ -93,7 +93,7 @@ Segmentation {
 //		
 //		analysisNRTb.action_({if(loadflag,{this.analyseNRT;});});
 //		
-		postb= SCButton(w, Rect(625, 155, 70,30));
+		postb= Button(w, Rect(625, 155, 70,30));
 		postb.states= [["post",Color.blue]];
 		
 		//output in format required by bbcut2 for CutBuf3
