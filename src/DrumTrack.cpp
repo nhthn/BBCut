@@ -139,9 +139,6 @@ struct DrumTrack : Unit {
 
 	scfft *m_scfft;
 	
-	//vDSP
-	unsigned long m_vlog2n;
-	
 	//time positions
 	long m_frame;
 	
