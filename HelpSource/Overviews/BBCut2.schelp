@@ -103,7 +103,8 @@ Here are the differences between this fork and the most recent "official" releas
 
 list::
 ## Documentation has been moved to the new help system.
-## The ugens (AnalyseEvents2, AutoTrack, DrumTrack) have been removed. The old versions only worked on Mac. AnalyseEvents2 and DrumTrack are now in sc3-plugins.
+## The ugens AnalyseEvents2 and AutoTrack have been removed since they are now in sc3-plugins.
+## DrumTrack is now cross-platform.
 ## code::action:: argument added to link::Classes/BBCutBuffer::.
 ::
 
