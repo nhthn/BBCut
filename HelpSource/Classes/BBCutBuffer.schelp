@@ -1,0 +1,58 @@
+class:: BBCutBuffer
+summary:: A buffer in BBCut2
+categories:: Libraries>BBCut2
+related:: Overviews/BBCut2
+
+description::
+
+Holds data on a buffer including any segmentation (event positions). Derived from the Buffer class and has methods for choosing playback segments.
+ 
+
+classmethods::
+
+method:: new
+
+argument:: filename
+File location of a soundfile to load. Default path is to the SC3 source folder. 
+    
+argument:: beatlength
+Number of beats in the soundfile, also used to estimate the source tempo in beats per second. 
+
+argument:: eventlist
+Array giving a segmentation of the sound file measured in sample frames. The class can construct one for you if you pass in a granularity, ie 0.5 for eighth note cuts imposed throughout the soundfile length- see below. If left nil the default is an even segmentation in eighth notes. 
+
+method:: array
+
+argument:: filenames
+Array of sound file locations to load
+    
+argument:: beatlengths
+Number of beats in the soundfile, also used to estimate the source tempo in beats per second. 
+
+argument:: eventlists
+Array of Arrays of event positions. 
+
+examples::
+
+code::
+
+//run one line at a time
+f= BBCutBuffer("sounds/break",8);
+
+Post << [\length,f.length, \beatlength, f.beatlength, \events, f.eventstarts] << nl;
+
+
+f= BBCutBuffer.array(["sounds/break","sounds/break2"],[8,4],[[0,10000],[3500,6700,9000]]);
+
+f.do({ arg val; Post << [\length,val.length, \beatlength, val.beatlength, \events, val.eventstarts] << nl;});
+
+
+//will only select playback positions from the events list given above, using an offset choice function
+(   
+BBCut2(CutGroup([CutBuf1(f[1],{arg buffer; buffer.eventstarts.choose}), CutBPF1(1000,drqfunc:0.5)]), ChooseCutProc(0.125,4)).play(2)
+)
+
+//change the event positions allowed
+f[1].events_([10000,20000,40000]);
+
+::

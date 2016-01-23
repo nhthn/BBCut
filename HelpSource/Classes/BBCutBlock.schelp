@@ -1,0 +1,51 @@
+class:: BBCutBlock
+summary:: A block of audio in BBCut2
+categories:: Libraries>BBCut2
+related:: Overviews/BBCut2
+
+description::
+
+Rendering in BBCut occurs a block at a time. What is a block? You can think of it as a roll where all events share a common buffer starting position. The BBCutBlock holds all messages and functions to be rendered for that roll. These will enter the scheduling queue when renderBlock is called, all being converted to Events that know how to play themselves (each is at least (play:{"do something".postln})  ).  
+
+A BBCutBlock object is created for each block passed back by the cut procedure, in the main BBCut2 class. 
+
+You will not directly need to manipulate the BBCutBlock, except:
+
+If you write your own CutSynths, you must provide a renderBlock function that converts the block data into specific rendering messages / functions. See the existing CutSynth class files for examples. 
+
+If you write arbitrary function inputs to some cutsynths, they get passed block as one argument. This means you can look at any of the information about the current block/roll via that variable. The most useful are listed below:
+
+code::
+var <>blocknum;     //number within a phrase, would indicate a phrase start by 0
+var <>length;       //total length of block in beats
+var <>cuts;         //cut info, an array over cuts where each cut has [ioi, dur, offset, amp]
+var <>iois;     //iois between each cut, 
+var <>cumul;        //cumulative ioi over cuts
+var <>offset;   //if there is an offset set by the cut procedure
+var <>phrasepos;    //beats within the current phrase
+var <>isroll;       //flag if a fast roll is represented (for instance, set by WarpCutProc1)
+var <>phraseprop;   //proportional position (0.0 to 1.0) through current phrase
+::
+
+In this example, note how the function is called, not at the time you hear specific cut event, but when new events are rendered and added to the scheduling queue. The scheduler needs to have a queue of events created in advance if it is accurately to sync to an external clock- render at play time does not take account of Server latency, perceptual attack time etc:
+
+code::
+b=BBCutBuffer("sounds/break",8);
+
+(
+BBCut2(CutBuf2(b, dutycycle:{arg i, block; 
+Post << 
+[
+\cutnum, i,
+\blocknum, block.blocknum,
+\length, block.length,
+\ioi, block.iois[i],
+\dur, block.cuts[i][1],
+\phrasepos, block.phrasepos,
+]
+<< nl; 
+
+0.5
+})).play(2);
+)
+::

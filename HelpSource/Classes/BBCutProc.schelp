@@ -1,0 +1,65 @@
+class:: BBCutProc
+summary:: Base class for cutting procedures in BBCut2
+categories:: Libraries>BBCut2
+related:: Overviews/BBCut2
+
+description::
+
+An essential base class for the BBCut library. derive from this respecting the interface to create your own cut procedures. The library assumes an abstraction for cuts as a hierachy with three components - from largest to smallest in duration, phrases, blocks and repeats.
+
+   A phrase is a sequence of blocks, perhaps lasting a few measures of 4/4. A block works from a single cut source in the audio, say a particular offset in a sample, though the block can be composed of a number of repeats, into which its assigned duration is split. A special type of block might be a roll or stutter, say a one beat block cut into a 0.125 beat source repeated eight times in total. The cut procedure does its own accounting for phrases (and may not care about phrases, or can add its own extra layers of hierachy that it tracks itself) but must work with the blocks/repeats paradigm.
+
+   The critical instance method is chooseblock, during which the instance variable cuts must be set with an array of cuts, and the blocklength parameter with the length of this next block to render. The aspiring class writer is advised to thoroughly check out an existing cut procedure so they know what is expected of them to maintain accurate accounting. The phrase/block/repeat paradigm is matched by the bbcutsynth, which can update effects parameters based on knowledge of the whereabouts of the cutting. 
+   The default behaviour is to make blocks of one repeat that make up each phrase. 
+
+classmethods::
+
+method:: new
+
+argument:: bpsd
+beats per sub division. Passed to the BBCutSynth object for offset calculations. Defaults to 0.5 beats (that is, cutting in eighth notes or quavers).
+
+argument:: phraselength
+value called on this to choose the next phraselength at the start of a new phrase.
+
+instancemethods::
+
+method:: chooseblock 
+Calculate the next cut sequence.
+
+method:: updateblock
+
+This method can be left as is, it is here for convenience. It must be called at some stage in the 
+chooseblock method however. It allows the bbcutsynth to update itself on a block level.
+If you don't care about phrases and want infinite phrases you'll have to do this update call
+yourself without calling this method. See the base class code.
+
+argument:: isroll
+the default flag is 0, but pass a 1 to define a particular block as a roll. This allows
+BBCutSynths like RollAmplitude to distinguish what they do on rolls from normal blocks.
+
+method:: attachsynth
+
+Called by the master BBCut procedure as part of initialisation. Allows the BBCutProc derived object 
+to see the BBCutSynth derived object doing the cut synthesis.
+
+argument:: bbcs
+the (reference to the) passed bbcutsynth.
+
+method:: phraseover
+
+A method required by the MultiProc class to test for a completed phrase so as to know when to 
+allow a switch of method. Derived classes can ignore this base method unless they know a better 
+implementation.
+
+method:: endBlockAccounting
+
+Method provided to help avoid repeated code for updating statistics of the base class.
+
+method:: startPhraseAccounting
+
+Method provided to help avoid repeated code for updating statistics of the base class.
+
+examples::
+
+see the derived classes of this super class

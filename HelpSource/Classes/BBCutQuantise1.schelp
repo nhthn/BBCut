@@ -1,0 +1,37 @@
+class:: BBCutQuantise1
+summary:: Adds a swing rhythm in BBCut2
+categories:: Libraries>BBCut2
+related:: Overviews/BBCut2
+
+description::
+
+BBCutQuantise1 is experimental.
+
+The output of the cut procedure is filtered by the metric template of the quantiser. The current setup is to impose a swing groove. 
+
+classmethods::
+
+method:: new
+
+argument:: swing
+straight semiquavers is the default (0.25). No values greater than 0.5. You cannot modulate this.
+
+examples::
+
+code::
+s=Server.default;
+
+
+b=BBCutBuffer.array(["sounds/break","sounds/break2"],[8,4]); //load me first
+
+c=ExternalClock(2.4).play;
+
+k=BBCut2(CutBuf1(b[0],0.2),ChooseCutProc(0.25,4,rollchance:0.0),BBCutQuantise1(0.32)).play(c);
+
+k.end;
+
+
+l=BBCut2(CutBuf2(b[1],0.4),WarpCutProc1.new,BBCutQuantise1(0.32)).play(c);
+
+l.end;
+::

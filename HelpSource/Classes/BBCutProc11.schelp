@@ -1,0 +1,198 @@
+class:: BBCutProc11
+summary:: Automatic breakbeat cutting algorithm
+categories:: Libraries>BBCut2
+related:: Overviews/BBCut2
+
+description::
+
+The original automatic breakbeat cutting algorithm as refined in the BreakBeatx series of classes. This cut procedure favours small odd number length cuts with respect to some subdiv integer for a phrase. A block consists of an original cut plus some number of repeats. A special fast 'stutter' or 'roll' can occur only to finish off a given phrase.
+
+As is normal for cut procedures and synths, the value message is used to get the current value of any input parameter, so functions can be passed.  Defaults are provided for all arguments.
+
+For additional data on the algorithm see
+
+Nick Collins, "Algorithmic Composition Methods for BreakBeat Science",
+
+Proceedings of Music Without Walls, ISBN 1857213319
+
+reproduced at http://www.cus.cam.ac.uk/~nc272
+
+classmethods::
+
+method:: new
+Create a BBCutProc11 object with the given parameters.
+
+argument:: sdiv
+sub division.  A single measure is cut up into sdiv primitive units. So sdiv=8 over 4 beats gives
+eighth note resolution cutting.
+argument:: barlength
+Normally set to 4.0 beats, for 4/4 bars, this can be altered to allow cuts over a different 
+number of beats. So barlength= 3 gives cuts respecting 3/4. 
+argument:: phrasebars
+The length of the current phrase is barlength*phrasebars. 
+argument:: numrepeats
+Total number of repeats for normal cuts. So 2 corresponds to a particular size cut 
+at one offset plus one exact repetition.
+argument:: stutterchance
+the tail of a phrase has this chance of becoming a repeating one unit cell stutter
+(0.0 to 1.0)
+argument:: stutterspeed
+the stutter can be an integer multiple of the subdivision speed. For instance, if subdiv is
+8 (quavers) and stutterspeed is 2, then the stutter is in semiquavers (subdiv 16).
+argument:: stutterarea
+a stutter is permissible within this proportion of the last bar of a phrase. Use values larger than
+1 for stutters across multiple bars. The default is 0.5, for a half bar at 4/4.
+
+instancemethods::
+
+method:: initBBCutProc11
+Called internally after a new.
+
+Other methods are overrides of BBCutProc base class behaviour. BBCutProc11 will flag a roll when stuttering.
+
+examples::
+
+You'll have to substitute your own break sample to hear the rhythmic aspects of this procedure
+properly
+
+code::
+
+//must have run this line before any of the examples
+f= BBCutBuffer("sounds/break",8); 
+
+//default cutups
+BBCut2(CutBuf1(f),BBCutProc11.new).play(2.4);
+
+
+
+(   //demonstrating tempo following from Server Clock control
+var bbcut, pulse, clock;
+
+clock= ServerClock.new.play(100);
+
+bbcut= BBCut2(CutBuf1(f),BBCutProc11.new(8,4.0,2,3,0.5,3,1.0));
+
+pulse= SynthDef(\pulse, {
+var rate, impulse;
+
+rate= MouseX.kr(2,3);
+
+impulse= Impulse.kr(rate);
+
+SendTrig.kr(impulse, 100, rate);
+
+Out.ar(0,Decay.kr(impulse,0.1)*SinOsc.ar(440,0,0.5))
+
+}).play;
+
+bbcut.play(clock); 
+
+)
+
+
+
+
+(
+    //showing use of all parameters
+var w;
+var slider,string;
+var num;
+var names,data, specs, lastval;
+var bbcutter, clock;
+
+names= ["tempo","cut","phrasebars","stutterchance","stutterspeed","restchance","ampvariation","panvariation","numrepeats","beatsperbar","randomoffset"];
+
+data=   //control spec data for ui controls
+[
+[2.0,3.0,\exp, 0.0,2.5],    //tempo
+[4,16,\lin,1,8],            //cuts
+[1,5,\lin,1,2],         //phrasebars
+[0.0,1.0,\lin,0.0,0.2],     //stutterchance
+[1,3,\lin,1,2],         //stutterspeed
+[0.0,1.0,\lin, 0.0,0.0],    //restchance
+[0.0,1.0,\amp, 0.0,1.0],    //ampvariation
+[0.0,1.0,\lin, 0.0,0.0],    //panvariation
+[1,5,\lin,1,2],         //numrepeats
+[2.0,6.0,\lin,1.0, 4.0],    //subdivision over x beats
+[0.0,1.0,\lin,0.0, 0.0]     //offsetchance 
+];
+
+specs= Array.fill(data.size, {arg i; ControlSpec.performList(\new, data.at(i))});
+
+num= names.size;
+
+w = SCWindow("BBCutProc11 demo N.M.Collins 23/08/03", Rect.new(100, 500, 500, (30*num)));
+
+string= Array.fill(num);
+slider= Array.fill(num);
+//Fill with defaults. This array will hold the updated last value of any GUI element
+lastval= Array.fill(num, {arg i; data.at(i).at(4);}); 
+
+num.do(
+{
+arg i;
+
+SCStaticText( w, Rect.new(5, (30*i)+5, 95,20)).string_(names.at(i));
+slider.put(i,SCSlider.new( w, Rect.new(105, (30*i)+5, 95,20)));
+//set slider to default value, else will default to 0.0
+slider.at(i).value_(specs.at(i).unmap(data.at(i).at(4)));
+string.put(i, SCStaticText( w, Rect.new(205, (30*i)+5, 95,20)).string_(data.at(i).at(4)));
+
+slider.at(i).action_({arg sl; 
+var val; val = specs.at(i).map(sl.value);  string.at(i).string_(val); 
+lastval.put(i, val);  //set associated variable to this value, bbcut code will poll this rather than the slider directly
+});
+
+});
+
+w.front;
+
+bbcutter=BBCut2([
+CutBuf2(f,{lastval.at(10)}),
+CutMixer(0,1.0,{
+if(lastval.at(5).coin,  //restchance
+{0},
+{
+rrand(lastval.at(6),1.0)} //amp variation
+)}, 
+{rrand(-1.0*(lastval.at(7)),lastval.at(7))}) //panvariation
+],
+BBCutProc11.new(
+{lastval.at(1)},    //cut
+{lastval.at(9)},    //sdbeats
+{lastval.at(2)},    //phrasebars
+{lastval.at(8)},    //numrepeats
+{lastval.at(3)},    //stutterchance
+{lastval.at(4)} //stutterspeed
+));
+
+clock=ExternalClock(TempoClock(lastval[0])).play;
+
+bbcutter.play(clock);
+
+//update tempo ten times a second
+SystemClock.sched(0.0,{clock.tempoclock.tempo_(lastval.at(0)); 0.1});
+
+)
+
+
+
+//If you want fast varying time signatures set phrasebars=1, 
+//and provide interconnected functions updating barlength and sdiv. 
+(   //default eighth note cutups
+var sf,newbarl,phrasecount;
+
+phrasecount=0;
+
+BBCut2(CutBuf1(f),BBCutProc11.new(
+{
+newbarl=[4.0,3.0,3.5].wrapAt(phrasecount);      //4/4 then 3/4 then 7/8 looping
+phrasecount=phrasecount+1;
+newbarl*2   //always eighth note cuts
+},
+{newbarl},
+1
+)).play(2.4);
+
+)
+::

@@ -1,0 +1,91 @@
+class:: CutGroup
+summary:: A group in BBCut2
+categories:: Libraries>BBCut2
+related:: Overviews/BBCut2
+
+description::
+
+The CutGroup class deals with the execution graph and rendering busses on the Server. By default, a Group.new and a Bus.audio(Server.default,44100,1) will be created for you, but you may explicitly pass in Group and Bus instances. Automatically created Bus and Group objects will be freed on .free, but any passed in Group and Bus objects are the user's responsibility.   
+
+The Array of CutSynths will be rendered to the group in the order they are in the array. However, CutGroup makes subgroups for you for the source renderers (ie CutBuf1, CutStream1), the fx units (ie CutComb1, CutBRF1) and the CutMixer, to try to avoid execution order problems. It is good practise to try to anticipate problems however and put things in the order they would run from left to right. 
+
+A default CutMixer will be created automatically when one is not passed in in the array of cutsynths. The default is full volume central pan stereo rendering to output bus 0 and 1.  
+
+There are .add and .remove instance methods to add and remove cutsynths from the cutgroup on the fly- see example below.
+
+classmethods::
+
+method:: new
+
+argument:: cutsynths
+an Array of CutSynths, though this argument can also cope with being passed a CutSynth directly.
+  
+argument:: group
+A Group instance.
+
+argument:: bus
+A Bus instance.
+
+argument:: numChannels
+If 1, rendering is mono until the final CutMixer. If 2, rendering is stereo, and there is no pan functionality in the final CutMixer. The CutMixer will automatically be configured appropriately based on the numChannels variable in the CutGroup. 
+
+examples::
+
+code::
+
+(   
+BBCut2(CutGroup([CutStream1.new,CutBPF1(1000,drqfunc:0.5)]), ChooseCutProc(0.25,4)).play(2)
+)
+
+//also works, but bad exemplar of execution order! source should be calculated before an fx unit
+//however subgroups sort this out for you.
+(   
+BBCut2(CutGroup([CutBPF1(1000,drqfunc:0.5),CutStream1.new]), ChooseCutProc(0.25,4)).play(3)
+)
+
+
+
+
+//adding/removing cutsynths
+(
+var sf, clock;
+
+clock= ExternalClock(TempoClock(2.5));  
+        
+clock.play;     
+        
+Routine.run({
+            
+sf= BBCutBuffer("sounds/break",8);
+
+s.sync; //this forces a wait for the Buffer to load
+
+g=CutGroup(CutBuf1(sf));
+
+BBCut2(g, WarpCutProc1.new).play(clock);
+});
+
+)
+
+//run these one at a time
+g.cutsynths.postln; //default CutMixer was added
+
+g.add(CutComb1({arg i; 0.025-(i.clip2(20)*0.001)},0.5));
+
+g.cutsynths.postln;
+
+g.add(CutBRF1({rrand(1000,5000)},{rrand(0.1,0.9)},{rrand(1.01,1.05)}));
+
+g.cutsynths.postln;
+
+g.removeAt(2);  //remove comb
+
+g.cutsynths.postln;
+
+g.removeAt(0);  //remove cutbuf
+
+g.add(CutStream1.new) //add in a new source, audio in
+
+g.cutsynths.postln;
+
+::
