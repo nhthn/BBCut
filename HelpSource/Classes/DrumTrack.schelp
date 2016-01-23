@@ -5,8 +5,6 @@ related:: Overviews/BBCut2
 
 description::
 
-warning:: This ugen is currently not supported in this fork of BBCut2. This help file is here for the sake of preserving the original documentation. ::
-
 Crosscorrelation search and drum pattern matching beat tracker, as described in:
 
 N Collins. Drum Track: Beat Induction from an Acoustic Drum Kit with Synchronised Scheduling. Proceedings of the International Computer Music Conference (ICMC), Barcelona, Sept 4-9, 2005
