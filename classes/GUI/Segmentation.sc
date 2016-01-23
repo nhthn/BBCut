@@ -74,10 +74,10 @@ Segmentation {
 		
 		loadb.action_({
 		
-		Dialog.getPaths({arg paths; 
+		Dialog.openPanel({arg path; 
 		
 		//no checking safety, just tries to load as best it can
-		this.load(paths[0]);
+		this.load(path);
 		
 		});
 		
