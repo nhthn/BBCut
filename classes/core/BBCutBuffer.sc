@@ -29,19 +29,34 @@ BBCutBuffer : Buffer {
 	//shortcut function
 	*new {arg filename, beatlength=8, eventlist, action;
 
-        ^super.read(Server.default,filename, action:{
-            arg buf;
-            buf.beatlength_(beatlength);
-            buf.events_(eventlist);
-            action.value(buf);
-        });
+		^super.read(Server.default,filename, action: {
+			arg buf;
+			buf.beatlength_(beatlength);
+			buf.events_(eventlist);
+			action.value(buf);
+		});
 	}
 
-	*array {arg filenames, beatlengths, eventlists;
+	*array {arg filenames, beatlengths, eventlists, action;
+		var remaining, result;
 
-	beatlengths= beatlengths ?? {Array.fill(filenames.size,{1})};
+		beatlengths= beatlengths ?? {Array.fill(filenames.size,{1})};
 
-	^filenames.collect({arg val,i; BBCutBuffer(val,beatlengths[i], if(eventlists.notNil, {eventlists[i]},{nil});)});
+		remaining = filenames.size;
+
+		result = filenames.collect({
+			arg val,i;
+			BBCutBuffer(
+				val,
+				beatlengths[i],
+				if(eventlists.notNil, {eventlists[i]}, {nil}),
+				action: {
+					remaining = remaining - 1;
+					if(remaining <= 0, { action.value(result); });
+				}
+			);
+		});
+		^result;
 	}
 
 	beatlength_ {arg b=4;

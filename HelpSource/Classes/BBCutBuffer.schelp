@@ -35,6 +35,9 @@ Number of beats in the soundfile, also used to estimate the source tempo in beat
 argument:: eventlists
 Array of Arrays of event positions. 
 
+argument:: action
+A function to be evaluated when all buffers are done loading. This instance of BBCutBuffer is passed as an argument.
+
 examples::
 
 code::
