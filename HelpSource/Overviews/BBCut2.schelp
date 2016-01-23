@@ -25,7 +25,7 @@ list::
 ## link::Classes/AutoTrack:: - beat tracking UGen
 ## link::Classes/AnalyseEvents2:: - on-the-fly event analysis UGen
 ## link::Classes/AnalyseEventsDatabase:: - form a database of events on-the-fly
-## DrumTrack is not yet supported in this fork of BBCut2.
+## link::Classes/DrumTrack:: - experimental beat tracking UGen, tries to spot typical 4/4 drum patterns
 ::
 
 Cut Procedures (CutProcs)
