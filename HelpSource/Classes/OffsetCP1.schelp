@@ -1,0 +1,86 @@
+class:: OffsetCP1
+summary:: Manual breakbeat specification
+categories:: Libraries>BBCut2
+related:: Overviews/BBCut2
+
+description::
+
+This cut procedure allows the user to specify the durations in a block and offset, one block at a time.
+
+classmethods::
+
+method:: new
+Create a ChooseBlockProc object with the given parameters.
+
+argument:: dofunc
+Duration Offset function. 
+
+argument:: offsetscale
+
+argument:: durationscale
+
+argument:: phraselength
+Next length of phrase in beats.
+
+argument:: bpsd
+beats per sub division. Sets a primitive cut size resolution for choose offset messages. 
+
+instancemethods::
+
+method:: initOffsetCP
+Called internally after a new.
+
+examples::
+
+code::
+
+//you must have run this line before any of the examples below
+f= BBCutBuffer.array(["sounds/break","sounds/break2"],[8,4]); 
+
+
+(   //defaults
+BBCut2(CutBuf1(f[0]),OffsetCP1.new).play(2.4);
+)
+
+
+(   //your own func
+
+BBCut2(CutBuf1(f[0]),OffsetCP1.new(
+{
+arg beatsleft, phraselength,block;
+
+if(block%2==0,
+{[[1.0],16.rand]}, {[[[0.5],[0.25,0.25]].choose,[4,8,12].choose]});
+}, 0.0625
+)
+).play(2.1);
+)
+
+
+
+(   
+BBCut2(CutBuf1(f[1]),OffsetCP1.new(
+{
+arg beatsleft, phraselength,block;
+
+if(block%2==0,
+{[[0.5],16.rand]}, {[[[0.25],[0.25,0.25]].choose,[4,8,12].choose]});
+}, 0.0625
+)
+).play(2.8);
+)
+
+
+(   
+BBCut2(CutBuf1(f[1]),OffsetCP1.new(
+{
+arg beatsleft, phraselength,block;
+
+if(block%2==0,
+{[[0.5],16.rand]}, {[[[0.25],[0.25,0.25], [0.125, 0.125, 0.25]].choose,[4,8,12, 5].choose]});
+}, 0.0625
+)
+).play(2.1);
+)
+
+::

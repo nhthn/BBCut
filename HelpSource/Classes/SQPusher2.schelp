@@ -1,0 +1,218 @@
+class:: SQPusher2
+summary:: Squarepusher-inspired breakbeat cutting
+categories:: Libraries>BBCut2
+related:: Overviews/BBCut2
+
+description::
+
+This cut procedure was created by an automated analysis of track 'Come on my Selector' by Squarepusher, aka Tom Jenkinson. 
+
+classmethods::
+
+method:: new
+Create a SQPusher1 object with the given parameters.
+
+Note that this cut procedure always works in 4/4 with one bar phrases. 
+
+argument:: barfunc
+Function that selects a bar from SQPusher2.seqdata (all 160 bars of Come On My Selector)
+
+argument:: repetitionfunc
+Function that determines how to group events in blocks (repetition groups)
+
+argument:: scramble
+chance of a bar being scrambled, rather than played back exactly as stored. 
+
+argument:: bpsd
+beats per sub division. Sets a primitive cut size resolution for choose offset messages. 
+
+examples::
+
+code::
+
+(   //defaults
+var sf;
+
+Routine.run({
+sf= BBCutBuffer("sounds/break2",4);
+
+s.sync;
+
+//3.33bps= 200 bpm
+BBCut2(CutBuf1(sf),SQPusher2.new).play(2.9);
+
+});
+)
+
+
+(   //quantise to semiquavers
+var sf;
+
+Routine.run({
+sf= BBCutBuffer("sounds/break2",4);
+
+s.sync;
+
+//3.33bps= 200 bpm
+BBCut2(CutBuf1(sf),SQPusher2(quant:0.25)).play(2.5);
+
+});
+)
+
+
+(   //fast cuts, half speed sample
+var sf;
+
+Routine.run({
+sf= BBCutBuffer("sounds/break",16);
+
+s.sync;
+
+//3.33bps= 200 bpm
+BBCut2(CutBuf1(sf),SQPusher2.new).play(3.33);
+
+});
+)
+
+
+
+
+
+
+//UI controls
+(
+var sf;
+var w,curdle, scramble,quant;
+    
+w = SCWindow("panel", Rect.new(200,200,230,180));
+curdle=DDSlider( w, Rect.new(0,0,200,40), "curdle", 0.0, 1.0, 'linear', 0.01, 0.0);
+scramble=DDSlider( w, Rect.new(0,50,200,40), "scramble", 0.0, 1.0, 'linear', 0.01, 0.0);
+quant=DDSlider( w, Rect.new(0,100,200,40), "quant", 0.0, 1.0, 'linear', 0.01, 0.0);
+
+w.front;    
+
+Routine.run({
+sf= BBCutBuffer("sounds/Sounds/BOGDAN/dillbeat1",8);
+
+s.sync;
+
+//3.33bps= 200 bpm
+BBCut2(CutBuf1(sf, 0.2),SQPusher2(nil,{arg bar; bar.curdle(curdle.value)},{scramble.value},{quant.value})).play(3.33);
+
+});
+
+
+)
+
+
+
+//preserved original pitch via CutBuf3
+(
+var sf;
+
+Routine.run({
+sf= BBCutBuffer("sounds/Sounds/BOGDAN/dillbeat1",8);
+
+s.sync;
+
+//3.33bps= 200 bpm
+BBCut2(CutBuf3(sf),SQPusher2.new).play(3.33);
+});
+)
+
+
+
+
+(   //two at once- sounds great on my machine at least! 
+var sf, clock;
+
+clock= ExternalClock(3.4).play;
+
+Routine.run({
+sf=BBCutBuffer.array(["sounds/Sounds/bogdan/dillbeat1","sounds/Sounds/bogdanunused/bogdanbeat1"],[8,8]);
+
+s.sync;
+
+BBCut2([CutBuf1(sf[0],0.3), CutMixer(panfunc:{[0.0,-1.0].wchoose([0.9,0.1])})],SQPusher2(quant:{[0.25,0.0].wchoose([0.9,0.1])})).play(clock);
+BBCut2([CutBuf1(sf[1],0.45),CutMixer(panfunc:{[0.0,1.0].wchoose([0.9,0.1])})],SQPusher2(quant:{[0.25,0.0].wchoose([0.9,0.1])})).play(clock);
+
+});
+
+)
+
+
+//SQPusher2.seqdata.size=160
+
+(   //two run off same routine, go through source rhythms in order, always make blocks of two
+var sf, clock, counter;
+
+counter=159;
+
+clock= ExternalClock(3.4).play;
+
+Routine.run({
+sf=BBCutBuffer.array(["sounds/Sounds/bogdan/dillbeat1","sounds/Sounds/bogdanunused/bogdanbeat1"],[8,8]);
+
+s.sync;
+BBCut2([CutBuf2(sf[0],0.3,dutycycle:0.5),CutBuf2(sf[1],0.45,dutycycle:0.5)],SQPusher2({arg data; counter=counter+1; data.wrapAt(counter)},{arg bar; bar.clump(2)})).play(clock);
+
+});
+
+)
+
+
+
+(   //SQPusher FX
+var sf, clock, counter;
+
+counter=159;
+
+Routine.run({
+sf= BBCutBuffer("sounds/break2",4);
+
+s.sync;
+BBCut2([CutBuf2(sf,0.3,SQPushFXPitch2.new(0.975,pbchance:0.7)),CutFXSwap1(3,0.3,0.4), CutMixer(0,1.0,SQPushFXAmp2.new(0.15),0.0)],SQPusher2({arg data; counter=counter+1; data.wrapAt(counter**2-64)},{arg bar; bar.clump(3)},scramble:0.25,quant:0.25)).play(3.4);
+
+});
+)
+
+
+(   //SQPusher fx at original pitch of sample using BBCSKnownOffsets
+var sf;
+
+Routine.run({
+sf= BBCutBuffer("sounds/break2",4);
+
+s.sync;
+
+BBCut2([CutBuf3(sf,0.3,pbsfunc:SQPushFXPitch2.new(0.96,pbchance:0.8)),CutMixer(0,1.0,SQPushFXAmp2.new(0.15),0.0)],SQPusher2(scramble:0.7)).play(3.4);
+
+});
+
+)
+
+
+
+(   //two run off same routine, go through source rhythms in order, always make blocks of two
+var sf, clock, counter, amp,amp2;
+
+counter=159;
+amp=0.5;
+amp2=0.5;
+
+clock= ExternalClock(3.4).play;
+
+Routine.run({
+sf=BBCutBuffer.array(["sounds/SCsamp/colloquium/beethoven1.wav","sounds/Sounds/bogdanunused/bogdanbeat1"],[36,8]);
+
+s.sync;
+BBCut2([[CutBuf2(sf[0],0.5,dutycycle:1.0),CutMixer(ampfunc:{if(counter%5==0,{amp=[0.5,0.1,1.0].wchoose([0.5,0.3,0.2])}); amp})],[CutBuf2(sf[1],0.45,dutycycle:0.75),CutMixer(ampfunc:{if(counter%4==0,{amp2=[0.25,0.05,0.5].wchoose([0.5,0.3,0.2])}); amp2})]],SQPusher2({arg data; counter=counter+1; data.wrapAt(counter)},{arg bar; bar.clump(4)})).play(clock);
+
+
+{Pan2.ar(Limiter.ar(5*(SinOsc.ar(LFNoise0.kr(3.4*0.25,30,50), 0, LFNoise0.kr(3.4*2,0.5,0.5)*SinOsc.kr(3.4*0.125,0,0.5,0.5))**5).clip2(0.7).distort,0.5),SinOsc.kr(3.4*0.125,0,0.2))}.play;
+
+});
+
+)
+
+::

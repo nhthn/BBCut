@@ -1,0 +1,257 @@
+class:: ThrashCutProc1
+summary:: Breakbeat cutting inspired by thrash guitar playing
+categories:: Libraries>BBCut2
+related:: Overviews/BBCut2
+
+description::
+
+A cut procedure which uses the idea of fast roll figures like demisemiquavers or triplet sixteenth notes
+(as in thrash guitar playing) to form blocks for breakbeat cutting. 
+
+classmethods::
+
+method:: new
+
+Create a ThrashCutProc1 object with the given parameters.
+
+This cut procedure usually works in 4/4 bar phrases, but should survive other phraselengths.  
+
+argument:: kickoffset
+Function returning kick offset positions, offsets being in the range 0.0 to 1.0. So for random
+beats of a 4/4 source, try {([0,1,2,3]/4).choose}
+
+argument:: snareoffset
+choose snare offset positions. 
+
+argument:: phraselength
+Typically 4.0 or 8.0.
+
+argument:: blockdiv
+The way to do the fast ostinato thrash figure. [0.34,0.33,0.33] for triplets, [0.25,0.25,0.25,0.25]
+for sixteenth/thirtytwoth, [0.25,0.25,0.5] for an irregular figure.
+
+argument:: chooseriff
+Function giving choice of a new rhythmic riff from the database each bar:
+ {arg previous, howmany; if(0.1.coin,{howmany.rand},{previous});}
+
+argument:: shuffles
+Number of involutions of the source cut sequences to perform, to give some randomisation
+for each play. 
+
+argument:: filltest
+chance of a fill pattern this bar. fills are the inverse of the normal patterns, in that rolls become straight
+and straight become rolls, and kicks becomes snares and snares kicks...
+
+argument:: stopchance
+chance of a zero amplitude block, ie, rest. Only one can happen per bar and the probability 
+tested on every block until it does happen or a new phrase begins.
+
+examples::
+
+code::
+
+(   //defaults
+var sf;
+
+Routine.run({
+sf= BBCutBuffer("sounds/break",8);
+
+s.sync;
+
+//3.33bps= 200 bpm
+BBCut2(CutBuf1(sf),ThrashCutProc1.new).play(3.33);
+});
+)
+
+
+
+(   //kick and snare offsetting choices- you may need to choose appropriate 
+    //ones for your break
+var sf;
+
+Routine.run({
+sf= BBCutBuffer("sounds/break",8);
+
+s.sync;
+
+BBCut2(CutBuf1(sf),ThrashCutProc1.new({[0.0,0.5].choose},{[0.125,0.625].choose},chooseriff:1 )).play(3.33);
+
+});
+
+)
+
+
+(   //changing bar to bar more
+var sf;
+
+Routine.run({
+sf= BBCutBuffer("sounds/break",8);
+
+s.sync;
+
+BBCut2(CutBuf1(sf),ThrashCutProc1.new(0.0,0.125,8.0,{[0.25,0.25,0.5]},
+chooseriff: {arg previous, howmany; if(0.5.coin,{howmany.rand;},{previous});},
+shuffles:{2.rand},
+filltest:{0.25.coin}    //inverts role of kick and snare
+)).play(2);
+
+});
+
+)
+
+
+
+(   //kick and snare offsetting choices- you may need to choose appropriate 
+    //ones for your break
+var sf, clock;
+
+clock=ExternalClock(3.33).play;
+
+Routine.run({
+sf= BBCutBuffer.array(["sounds/Sounds/bogdan/dillbeat1","sounds/Sounds/bogdan/wrbreak(4)"],[8,2]);
+
+s.sync;
+
+BBCut2(CutBuf2(sf[0], pbsfunc:CutPBS1(0.9)),
+ThrashCutProc1({[0.0,0.5].choose},{[0.125,0.625].choose},8.0,chooseriff:1)
+).play(clock);
+
+BBCut2(CutBuf2(sf[1], dutycycle:CutPBS1(0.9,-1)),
+ThrashCutProc1({[0.0,0.5].choose},{[0.25,0.75].choose},10.0,chooseriff:2)
+).play(clock);
+
+});
+
+)
+
+
+
+(       //quintuplet figure for blockdiv
+var sf;
+
+Routine.run({
+sf= BBCutBuffer("sounds/a11wlk01.wav",8);
+
+s.sync;
+
+BBCut2(CutBuf2(sf,pbsfunc:CutPBS1(0.95)),
+ThrashCutProc1.new({[0.7,0.2].choose},{[0.125,0.5].choose}, 
+7, {[0.2,0.2,0.1,0.1,0.2,0.2]},{2.rand+2},{5.rand})
+).play(3);
+
+});
+
+)
+
+
+//groove in UK Garage style- [0.32,0.18]
+(   
+var sf;
+
+Routine.run({
+sf= BBCutBuffer("sounds/Sounds/bogdan/dillbeat1",8);
+
+s.sync;
+
+//3.33bps= 200 bpm
+BBCut2(CutBuf2(sf,pbsfunc:CutPBS1(0.98)),
+ThrashCutProc1.new({[0,0.25,0.5,0.75].choose},{[0.125,0.375,0.625,0.875].choose}, 
+8, {[0.32,0.18]},//groove passed as blockdiv function
+{4.rand},{5.rand})
+).play(2.4);
+
+});
+
+)
+
+
+
+//UI controls
+(
+var sf;
+var w,chooseriff, shuffles, fillchance, stopchance;
+    
+w = SCWindow("ThrashCutProc1 demo", Rect.new(200,200,300,150));
+chooseriff=DDSlider( w, Rect.new(0,0,150,40), "chooseriff", 0, 3, 'linear', 1, 0);
+shuffles=DDSlider( w, Rect.new(0,50,150,40), "shuffles", 0, 10, 'linear', 1, 0);
+fillchance=DDSlider( w, Rect.new(150,0,150,40), "fillchance", 0.0, 1.0, 'linear', 0.01, 0.0);
+stopchance=DDSlider( w, Rect.new(150,50,150,40), "stopchance", 0.0, 1.0, 'linear', 0.01, 0.0);
+
+w.front;    
+
+Routine.run({
+sf= BBCutBuffer("sounds/Sounds/feb21/public9.aif",8);
+
+s.sync;
+
+BBCut2(CutBuf1(sf),
+ThrashCutProc1.new(0.0,0.125,8.0,[0.25,0.25,0.25,0.25],
+{chooseriff.value.round(1.0).asInteger},
+{shuffles.value.round(1.0).asInteger},
+{fillchance.value.coin},
+stopchance
+)
+).play(3.33);
+});
+
+)
+
+
+
+
+(   //panning trick
+var sf;
+
+Routine.run({
+sf= BBCutBuffer("sounds/a11wlk01.wav",8);
+
+s.sync;
+
+BBCut2(
+[[CutBuf2(sf,0.2,dutycycle: 0.2), CutMixer(0,0.7,1.0,-0.8)],
+[CutBuf2(sf,0.5,dutycycle: 0.7), CutMixer(0,0.4,1.0,0.8)]],
+ThrashCutProc1(0.0,0.3,7.5,chooseriff:{arg last, num; num.rand}, stopchance:0.5)
+).play(4.5);
+
+});
+
+)
+
+
+
+(   //always fills
+var sf;
+
+Routine.run({
+sf= BBCutBuffer("sounds/Sounds/bogdan/dillbeat1",8);
+
+s.sync;
+
+BBCut2([CutBuf2(sf, 0.3, dutycycle: 0.7),CutMixer(0,1.0,{if(0.2.coin,{0},{1})})],
+ThrashCutProc1(0.0,0.125,5.5,chooseriff:{arg last, num; (last+((num-1).rand))%num},filltest:true, stopchance:1.0)
+).play(3.5);
+
+});
+
+)
+
+
+
+
+(   //change database- see the class file for the format of the data
+var sf, proc;
+Routine.run({
+sf= BBCutBuffer("sounds/break",8);
+
+s.sync;
+proc= ThrashCutProc1(0,0.125, shuffles:0);
+
+proc.database=[[[0.5,2],[0.5,2],[0.5,0],[0.5,1],[0.5,3],[0.5,1],[0.5,2],[0.5,0]]];
+
+BBCut2([CutBuf1(sf), CutMixer(0,1.0,RollAmplitude.new)],proc).play(2);
+
+});
+
+)
+
+::

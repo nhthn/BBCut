@@ -1,0 +1,71 @@
+class:: TimelineCut
+summary:: Additive meter breakbeat cutting
+categories:: Libraries>BBCut2
+related:: Overviews/BBCut2
+
+description::
+
+A cut procedure inspired by (particularly African or South American clave) use of timelines, or additive meters. The functionality is somewhat confounded herein, but I don't think there is any point just reproducing the existing modes precisely- much better to bounce off in new directions. 
+
+Justin London notes (J. London. (2004) Hearing in Time (psychological aspects of musical meter), OUP: New York, himself referencing some wider literature on this) the existence of other psychological meters based on certain partitions (the beat-cycle) of an n-cycle. Where the subdivisions are not arranged exactly evenly (but are typically maximally even with respect to n or within some tolerance of this) he calls these Non Isochronous Meters. 
+
+So let's explore taking them as guides to our cutting. I don't follow the whole psychological ramifications of the hierarchical sturctures and the suggested durations (ie keeping 100mS as the shortest possible usable subdivision) but just make an open system for experimentation.  
+
+classmethods::
+
+method:: new
+Create a CageCut object with the given parameters.
+
+argument:: phraselength
+Choose a new phraselength. You can pass a function, which will be called at 
+each new phrase. 
+argument:: timelinefunc
+Anything that returns an array of subdivisions when .value is called on it. (This array is normalizeSummed so it always adds up to 1.0). These subdivisions will be applied to the phraselength.
+argument:: blockfunc
+A function which takes a blocksize and turns it into an array of cuts
+argument:: freeze
+A flag to freeze the current timeline if true. Else, keep calling timeline func once per phrase. 
+
+examples::
+
+code::
+
+//you must have run this line before any of the examples below
+f= BBCutBuffer("sounds/break",8); 
+
+TempoClock.default.tempo_(2.3);
+
+//defaults to 3+3+2
+a=BBCut2(CutBuf2(f,1.0, dutycycle:0.5),TimelineCut.new).play;
+
+a.end;
+
+
+//provide timeline creation function, with blockfunc which subdivides it into repeated eighths
+//done to make the core timelines obvious
+(
+a=BBCut2([CutBuf2(f,1.0, dutycycle:0.2),CutComb1.new],TimelineCut(8.0,{[[3,3,3,3,2,2],[3,2,3,2,3,3],[5,5,3,3]].wchoose([0.5,0.4,0.1])},
+{arg dur; Array.fill((dur*2).round(1),{0.5})})).play;
+)
+
+a.end;
+
+
+//weirder and more interesting generative patterns
+(
+a=BBCut2([CutBuf2(f,1.0, dutycycle:0.2),CutComb1.new],TimelineCut(8.0,{Array.fill(rrand(3,7),{rrand(1,3)})},
+{arg dur; dur*[0.5,0.25,0.25]})).play;
+)
+
+a.end;
+
+
+//75% chance of freezing on the current pattern
+(
+a=BBCut2([CutBuf2(f,0.3, pbsfunc:{[1,1.5].wchoose([0.9,0.1])}),CutBRF1(3000,0.2,1.5)],TimelineCut(4.0,{Array.series(rrand(3,19),1,rrand(1,3)).reverse},
+{arg dur; var num= (rrand(1,7)*rrand(1,7)).div(7).max(1); Array.fill(num,dur/num)},{0.75.coin})).play;
+)
+
+a.end;
+
+::
