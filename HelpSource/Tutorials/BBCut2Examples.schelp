@@ -1,0 +1,531 @@
+title:: BBCut2 Examples
+summary:: Example code using the BBCut2 library
+categories:: Libraries>BBCut2
+
+All examples are part of The BBCut Library, Copyright (C) 2001  Nick M.Collins distributed under the terms of the GNU General Public License.
+
+section:: Automated FX unit swapping
+
+code::
+//FXUnit swapper, up to seven fx units automatically dropping in and out (some n_set failure messages unavoidable, don't worry about it...)
+
+//to obtain the source sample, take the first 48 beats as a loop from track 8 of kid a
+(
+var sf, clock;
+
+clock= ExternalClock(TempoClock(2.5));  
+        
+clock.play;     
+        
+Routine.run({
+
+//adding a Limiter before pressing s.record
+SynthDef(\limiter,{ReplaceOut.ar(0,Limiter.ar(In.ar(0,2),0.99))}).play(Group.after(Node.basicNew(s,1)));
+            
+sf= BBCutBuffer("/Users/nickcollins/Desktop/bbcut2demoes/idiosource.wav",48);
+
+s.sync; //this forces a wait for the Buffer to load
+
+//0.3.coin chance of random offset starting position for cut playback
+BBCut2(CutGroup([CutBuf3(sf,0.3),CutMixer(0,0.9),CutFXSwap1(7,0.9,0.7)],numChannels:2), 
+WarpCutProc1.new).play(clock);
+
+
+});
+
+)
+::
+
+section:: sqpush on sqpush
+
+code::
+//sqpush on sqpush- used to make the SQPusher1 demo, changing FX plus SQPusher1 cutter, on a source which I'd transcribed as part of devising the cutting database- so a recursive sqpushularity...
+
+(
+var sf, clock;
+
+clock= ExternalClock(TempoClock(3.3333));   
+        
+clock.play;     
+        
+Routine.run({
+
+//adding a Limiter to the output before record
+SynthDef(\limiter,{ReplaceOut.ar(0,Limiter.ar(In.ar(0,2),0.99))}).play(Group.after(Node.basicNew(s,1)));
+            
+sf= BBCutBuffer("/Volumes/data/audio/gospastic8bar.aif",64);
+
+s.sync; //this forces a wait for the Buffer to load
+
+BBCut2(CutGroup([CutBuf2(sf,0.8,SQPushFXPitch2(0.99,pbchance:0.9)),CutMixer(0,0.9,SQPushFXAmp2(0.05)),CutFXSwap1(2,0.5,0.5)],numChannels:2), 
+SQPusher1(0.4,5,0.4)).play(clock);
+
+});
+
+)
+
+
+//sqpushertango (you need a tango source file)
+(
+var sf, clock;
+
+clock= ExternalClock(TempoClock(2.1979076268267));  
+        
+clock.play;     
+        
+Routine.run({
+
+//adding a Limiter to the output before record
+SynthDef(\limiter,{ReplaceOut.ar(0,Limiter.ar(In.ar(0,2),0.99))}).play(Group.after(Node.basicNew(s,1)));
+            
+sf= BBCutBuffer("sounds/SCsamp/atmos/tango.wav",80);
+
+s.sync; //this forces a wait for the Buffer to load
+
+BBCut2(CutGroup([CutBuf2(sf,0.5,SQPushFXPitch2(0.96,pbchance:0.8)),CutMixer(0,0.9,SQPushFXAmp2(0.01))],numChannels:2), 
+SQPusher1(0.4,3,0.4)).play(clock);
+
+});
+
+)
+::
+
+section:: simultaneous beat tracking and event analysis
+
+code::
+//beat induction and event capture from audio in- you set the tempo and provide the source material- beat box away, play an instrument etc
+//warning- because the beat tracker can take some time to adjust to your input (up to 6 seconds) you may have to play against conflicting material at times. 
+
+(
+var trackbus, trackgroup;
+
+s.latency=0.05;
+
+//clear any existing OSCresponder
+OSCresponder.all.do({arg val; if(val.cmdName=='/tr',{OSCresponder.remove(val)}); });
+
+//run a line at a time
+~clock= ServerClock.new;    
+    
+~clock.play(100,s); //will wait on trigID 100
+    
+~database=AnalyseEventsDatabase.new;    
+    
+Routine.run({
+
+//adding a Limiter to the output before record
+SynthDef(\limiter,{ReplaceOut.ar(0,Limiter.ar(In.ar(0,2),0.99))}).play(Group.after(Node.basicNew(s,1)));
+
+~trackbus=Bus.audio(s,1);
+
+trackgroup= Group.before(Node.basicNew(s,1));
+
+//run a beat tracker on the Server which sends the appropriate OSC message
+~tracksynth= SynthDef(\help_cutstream3,{arg vol=1.0, beepvol=0.0, lock=0;
+var trackb,trackh,trackq,tempo;
+var source, beep;
+
+source= AudioIn.ar(1);
+
+//see AutoTrack help file
+#trackb,trackh,trackq,tempo=AutoTrack.kr(source, lock);
+
+beep= SinOsc.ar(1000,0.0,Decay.kr(trackb,0.1));
+
+Out.ar(~trackbus.index,source);
+
+Out.ar(0,Pan2.ar((vol*source)+(beepvol*beep),0.0));
+
+SendTrig.kr(trackb,100,tempo);  //sends with ID of 100 matching what clock expects
+
+}).play(trackgroup);
+
+//creates at tail of trackgroup
+~database.analyse(~trackbus.index, 101, trackgroup, 0.34, ~clock); //trigID 101 is default
+
+});
+
+)
+
+//default is add to head of group at Node 1 CutGroup
+a=BBCut2(CutStream3(~database, 4, 0.0, 0.0,false,false), ChooseCutProc(1,2)).pan_(0.0).amp_(0.3).play(~clock);
+
+b=BBCut2(CutStream3(~database, 4, 0.0, 0.0,false,false), BBCutProc11.new).pan_(0.5).amp_(0.3).play(~clock);
+
+c=BBCut2(CutStream3(~database, 4, 0.0, 0.0,false,false), ChooseCutProc(0.5,4)).pan_(-0.5).amp_(0.3).play(~clock);
+
+//these other two use alternative CutStream objects, no event marked up database here, just whatever gets recorded direct
+d=BBCut2([CutBRF1.new,CutStream1(~trackbus.index)], ChooseBlockProc(1.0,{[1,2,4,8].choose})).pan_(-0.6).amp_(0.3).play(~clock);
+
+e=BBCut2([CutRev1.new,CutStream2(~trackbus.index,offset:3)], BBCutProc11.new).pan_(0.6).amp_(0.3).play(~clock);
+
+
+~tracksynth.set(\vol,0.0);
+
+~tracksynth.set(\beepvol,1.0);
+
+~tracksynth.set(\lock,1);
+
+
+a.end;
+b.end;
+c.end;
+d.end;
+e.end;
+
+~clock.stop;
+~database.stop;
+::
+
+section:: beat tracking stereo remix
+
+code::
+//beat induction and event capture on an existing stereo track using CutStream3
+(
+var trackbus, trackgroup;
+
+s.latency=0.05;
+
+//clear any existing OSCresponder
+OSCresponder.all.do({arg val; if(val.cmdName=='/tr',{OSCresponder.remove(val)}); });
+
+//run a line at a time
+~clock= ServerClock.new;    
+    
+~clock.play(100,s); //will wait on trigID 100
+    
+~database=AnalyseEventsDatabase(10,2,s);    
+    
+Routine.run({
+
+//adding a Limiter before pressing s.record
+SynthDef(\limiter,{ReplaceOut.ar(0,Limiter.ar(In.ar(0,2),0.99))}).play(Group.after(Node.basicNew(s,1)));
+
+//choose a stereo file you want to track
+~source=Buffer.read(s,"/Users/nickcollins/Music/iTunes/iTunes Music/Unknown Artist/Unknown Album/conscious.wav");
+ 
+s.sync;
+ 
+~trackbus=Bus.audio(s,2);
+
+trackgroup= Group.before(Node.basicNew(s,1));
+
+//run a beat tracker on the Server which sends the appropriate OSC message
+~tracksynth= SynthDef(\beattrackingstereoremix,{arg vol=1.0, beepvol=0.0, lock=0;
+var trackb,trackh,trackq,tempo;
+var source, beep;
+
+source= PlayBuf.ar(2,~source.bufnum,1.0,1,0,1);
+
+//see AutoTrack help file
+#trackb,trackh,trackq,tempo=AutoTrack.kr(Mix(source), lock);
+
+beep= SinOsc.ar(1000,0.0,Decay.kr(trackb,0.1));
+
+Out.ar(~trackbus.index,source);
+
+Out.ar(0,(vol*source)+Pan2.ar((beepvol*beep),0.0));
+
+SendTrig.kr(trackb,100,tempo);  //sends with ID of 100 matching what clock expects
+
+}).play(trackgroup);
+
+//creates at tail of trackgroup
+~database.analyse(~trackbus.index, 101, trackgroup, 0.34, ~clock); //trigID 101 is default
+
+});
+
+)
+
+
+
+
+~tracksynth.set(\vol,0.0);
+
+~tracksynth.set(\beepvol,1.0);
+
+~database.threshold_(0.1); //make it more event trigger happy
+
+
+a=BBCut2(CutGroup(CutStream3(~database, 4, 0.0, 0.0,false,false, 1.0),numChannels:2), SQPusher1.new).play(~clock);
+
+b=BBCut2(CutGroup(CutStream3(~database, 4, 0.0, 1.0,false,false),numChannels:2), WarpCutProc1.new).play(~clock);
+
+c=BBCut2(CutGroup([CutBRF1.new,CutRev1.new,CutStream3(~database, 4, 0.0, 0.0,false,false)],numChannels:2), ChooseCutProc(0.5,4)).play(~clock);
+
+d=BBCut2(CutGroup(CutStream1(~trackbus.index),numChannels:2), ChooseBlockProc(1,8)).play(~clock);
+
+e=BBCut2(CutGroup(CutStream1(~trackbus.index, nil),numChannels:2), BBCutProc11.new).play(~clock);
+
+f=BBCut2(CutGroup(CutStream1(~trackbus.index, nil),numChannels:2), SQPusher1.new).play(~clock);
+
+
+
+~database.threshold_(0.01); //make it extremely event trigger happy
+
+a.end;
+b.end;
+c.end;
+d.end;
+e.end;
+f.end;
+
+~clock.stop;
+~database.stop;
+
+
+
+//Limiter 
+//SynthDef(\limiter,{
+//var input;
+//
+//input=In.ar(0,2);
+//
+//ReplaceOut.ar(0,Limiter.ar(input,0.99));
+//}).play(Group.tail(Node.basicNew(s,1)));
+::
+
+section:: fredrik olofsson examples
+
+code::
+//bbcut2 examples by Fredrik Olofsson
+
+//jazzwaltz example (changes after a number of bars...)
+s.boot;
+s.latency= 0.05;
+
+(
+var sf;
+
+Routine.run({
+            
+sf= BBCutBuffer("sounds/break", 8);
+
+s.sync; //this forces a wait for the Buffer to load
+
+BBCut2(CutBuf2(sf, 0), ChooseBlockProc(16, {[8, 12, 16, 32].wchoose([0.3, 0.1, 0.3, 0.3])}), BBCutQuantise1(0.33)).play(1.6);
+});
+
+)
+
+
+//live coding style
+
+f= BBCutBuffer("sounds/break", 8);
+
+(   //init settings
+~plength= 1;
+~subfunc= {[8, 16].choose};
+~permfunc= {|i| i%7%3};
+~stutfunc= {|i| i%8};
+)
+
+a= BBCut2(CutBuf2(f), BBCPPermute(~plength, {~subfunc.value}, {|i, n| ~permfunc.value(i, n)}, {|i| ~stutfunc.value(i)})).play(2.3)
+
+(
+~cnt= 0;
+~subfunc= {~cnt= ~cnt+1; [4, 8][(~cnt%8).div(7)]};
+~permfunc= {|i| i%7%5};
+~stutfunc= {|i| i%5};
+)
+
+(
+~plength= 4;
+~subfunc= {1.rrand(8)};
+~permfunc= {|i, n| (8%n/(i+1)).asInteger};
+~stutfunc= {|i| i|4};
+)
+
+(
+~plength= 1;
+~subfunc= 20;
+~permfunc= {|i, n| [n-i, n][i.div(6)%2]};
+~stutfunc= {|i| [i, 0].wchoose([0.97, 0.03])};
+)
+
+(
+//wait for it to grow
+~cnt= 0;
+~plength= 8;
+~subfunc= 4;
+~permfunc= {|i, n| i};
+~stutfunc= {|i| ~cnt= ~cnt+1; ~cnt+i%(~cnt.div(64)+2)};
+)
+
+a.end
+
+
+
+
+f= BBCutBuffer("sounds/break", 8);
+
+(   //init settings
+~blockfunc= 1;
+~cutfunc= 24;
+~bpsd= {|i| i%8/4};
+)
+
+a= BBCut2(CutBuf2(f), ChooseBlockProc({|left, len| ~blockfunc.value(left, len)}, {|len| ~cutfunc.value(len)}, {|i| ~bpsd.value(i)})).play(2.4);
+
+(
+~blockfunc= 4;
+)
+
+(
+~cutfunc= {2.rrand(12)};
+~bpsd= {|i| i%4/4};
+)
+
+(
+~blockfunc= {[2, 3].wchoose([0.9, 0.1])};
+~cutfunc= {|len| 1+len};
+~bpsd= {|i| [3, 1, 3, 1, 3, 1, 4].wrapAt(i)};
+)
+
+(   //practice the drums
+~cnt= 1;
+~blockfunc= 1;
+~cutfunc= {~cnt};
+~bpsd= {|i| ~cnt= i%8+1; ~cnt.div(2)+1}
+)
+
+(
+~blockfunc= {[2, 4, 8][~cnt%3]};
+~bpsd= {|i| ~cnt= ~cnt+i%8+1; 4.div(~cnt)+1}
+)
+
+a.end
+
+::
+
+section:: cut attack
+
+code::
+(
+var sf, clock, cutsynth, cutproc;
+
+clock= ExternalClock(TempoClock(2.7725));           
+clock.play;     
+        
+Routine.run({
+            
+sf= BBCutBuffer("sounds/break2",4);
+
+s.sync; //this forces a wait for the Buffer to load
+
+cutsynth= CutBuf2(sf, dutycycle: CutPBS1({rrand(0.8,1.0)}, 0));
+cutproc=BBCutProc11(phrasebars:2, stutterchance:0.8, stutterspeed:{[2,8].wchoose([0.7,0.3])});
+
+BBCut2(cutsynth,cutproc).play(clock);
+});
+
+)
+
+
+
+//example streaming source sound
+{Out.ar(1,Resonz.ar(Saw.ar(LFNoise0.ar(2.7725*0.25,20,60).round(3.7),4),1000,SinOsc.kr(2.7725*0.25,0,0.3,0.4)))}.play;
+
+
+
+(   //cut attack on stream
+var cutsynth, cutproc;
+
+{Out.ar(16,Resonz.ar(Saw.ar(LFNoise0.ar(2.7725*0.25,20,60).round(3.7),4),1000,SinOsc.kr(2.7725*0.25,0,0.3,0.4)))}.play;
+
+cutsynth= CutStream1(16, dutycycle:{rrand(0.8,1.0)});
+cutproc=BBCutProc11(phrasebars:2, stutterchance:0.8, stutterspeed:{[2,8].wchoose([0.7,0.3])});
+
+BBCut2(cutsynth,cutproc).play(2.7725);
+)
+
+(   //all at once
+var sf,cutsynth1, cutsynth2, cutsynth3, cutproc;
+
+{Out.ar(16,Resonz.ar(Saw.ar(LFNoise0.ar(2.7725*0.25,20,60).round(3.7),4),1000,SinOsc.kr(2.7725*0.25,0,0.3,0.4)))}.play(Group.head(RootNode.new));
+
+{Out.ar(17,Resonz.ar(Mix.ar(LFTri.ar(Array.fill(3,{arg i; LFNoise0.ar(2.7725*0.25,200,600).round(3.7)}),1)),1000,SinOsc.kr(2.7725*0.125,0,0.3,0.4)))}.play(Group.head(RootNode.new));
+
+Routine.run({
+    
+sf=BBCutBuffer("sounds/break2",4);
+
+s.sync;
+
+cutsynth1= [CutBuf2(sf, dutycycle: CutPBS1({rrand(0.8,1.0)}, 0))];
+cutsynth2= [CutStream1(16, dutycycle: {rrand(0.3,1.0)})];
+cutsynth3= [CutStream2(17, dutycycle: CutPBS1({rrand(0.8,1.0)}, 0)),CutMixer(0,1,1,panfunc:{0.5.rand2})];
+cutproc=BBCutProc11.new(phrasebars:2, stutterchance:0.8, stutterspeed:{[2,8].wchoose([0.7,0.3])});
+
+BBCut2([cutsynth1,cutsynth2,cutsynth3],cutproc).play(2.7725);
+
+});
+
+)
+
+
+a={ReplaceOut.ar(0,Resonz.ar(CombN.ar(In.ar(0,2),0.05,0.05,3.60685),MouseY.kr(200,10000),MouseX.kr(0.1,1.0)))}.play(addAction:\addToTail)
+a.free
+::
+
+section:: fills and cutproc swapping
+
+Note that due to scheduling limitations (the anticipatory nature required by latency, PAT and expressive timing corrections and a beat induction clock) swapping procs at tempoclock beat boundaries may miss the first cuts of a beat (because they should have been prescheduled).
+
+Or see the MultiProc help file for fill pattern examples.
+
+code::
+(
+var sf, clock, cutsynth, cutproc;
+
+clock= ExternalClock(TempoClock(2.7725));           
+clock.play;     
+        
+Routine.run({
+            
+sf= BBCutBuffer("sounds/break2",4);
+
+s.sync; //this forces a wait for the Buffer to load
+
+cutsynth= CutBuf2(sf, dutycycle: CutPBS1({rrand(0.8,1.0)}, 0));
+cutproc=BBCutProc11(phrasebars:2, stutterchance:0.8, stutterspeed:{[2,8].wchoose([0.7,0.3])});
+
+g=BBCut2(cutsynth,cutproc).play(clock);
+});
+
+)
+
+//the swaps occurs from the next beat; there may be overlaps, missing initial events (usually fine for small cuts)
+
+//change cutproc
+g.proc_(WarpCutProc1.new);
+
+g.proc_(BBCPPermute(4.0,8,{|i,n| (i**5)%n},{[1,2].choose}));
+::
+
+section:: over the top
+
+code::
+( //test- block speed choice of procedure
+var sf, clock, cutsynth, cutproc;
+
+clock= ExternalClock(TempoClock(2.7725));           
+clock.play;     
+        
+Routine.run({
+            
+sf= BBCutBuffer.array(["sounds/a11wlk01-44_1.aiff","sounds/break","sounds/break2"],[4,8,4]);
+
+s.sync; //this forces a wait for the Buffer to load
+
+cutsynth= CutBuf2(BufSelector(sf,{|block,lastindex|  if(block.cuts.size<3,{0},{rrand(1,2)})}),0.2);
+cutproc=MultiProc.new([
+CageCut({[2.0,4.0,16.0].wchoose([0.6,0.3,0.1])},[4,3,2,5,2,1,7],{arg array; if(0.2.coin,{array.scramble;},{array.permute(10.rand)}); }),
+TimelineCut(4.0,{Array.series(rrand(3,19),1,rrand(1,3)).reverse},
+{arg dur; var num= (rrand(1,7)*rrand(1,7)).div(7).max(1); Array.fill(num,dur/num)},{0.75.coin})],nil,{2.rand});
+
+g=BBCut2([cutsynth,CutBRF1(3000,0.2,1.5),CutBPF1.new, CutMixer(0,5)],cutproc).play(clock);
+});
+
+)
+::

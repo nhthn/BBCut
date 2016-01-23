@@ -4,6 +4,88 @@ categories:: Libraries>BBCut2
 
 BBCut2 is a collection of SuperCollider UGens, classes and patches for automated event analysis, beat induction and algorithmic audio splicing. It is released as public open source under the GNU General Public License. It was developed by Nick M. Collins.
 
+You are reading a fork of BBCut2 which uses the new help system.
+
+warning:: Set code::s.latency = 0.05;:: when using BBCut2. The default of 0.2 seconds is dangerous and may interact adversely with scheduling especially for faster tempi and beat tracking. Only tempi in a standard range of around 1-4bps are supported. ::
+
+section:: Info
+
+sc3-plugins is required.
+
+Tutorials
+
+list::
+## link::Tutorials/BBCut2Examples::
+::
+
+Machine Listening (can also be used independently of the cutters...)
+
+list::
+## link::Classes/Segmentation:: - GUI for segmentation, preparing soundfiles for use with CutBuf3 in particular, RT and NRT modes
+## link::Classes/AutoTrack:: - beat tracking UGen
+## link::Classes/AnalyseEvents2:: - on-the-fly event analysis UGen
+## link::Classes/AnalyseEventsDatabase:: - form a database of events on-the-fly
+## DrumTrack is not yet supported in this fork of BBCut2.
+::
+
+Cut Procedures (CutProcs)
+
+list::
+## link::Classes/BBCPPermute:: - generalised permutation cut function
+## link::Classes/BBCutProc11:: - abstraction of early d+b/jungle based on 3+3+2 like figures
+## link::Classes/CageCut:: - John Cage's 'square root' form influences a recursive cutter
+## link::Classes/CampCutProc:: - campanology = change ringing = bell ringing permutation patterns
+## link::Classes/ChooseBlockProc:: - select a block at a time by size, also determining the subdivisions
+## link::Classes/ChooseCutProc:: - select a cut at a time, with number of repeats, also a chance of rolls
+## link::Classes/MotifCutProc:: - intermediate level of hierarchy between phrase and block manipulated
+## link::Classes/MultiProc:: - a procedure that selects between other cut procedures algorithmically
+## link::Classes/OffsetCP1:: - choose next block and associated offset
+## link::Classes/RecCutProc:: - first version of a recursive cut procedure
+## link::Classes/RecursiveCutProc1:: - explicit recursive cut procedure plus demo of implicit using CutStream1 
+## link::Classes/SQPusher1:: - simulation of Squarepusher drum programming via cut decisions
+## link::Classes/SQPusher2:: - simulation of Squarepusher drum programming auto-transcribed from Come On My Selector
+## link::Classes/TimelineCut:: - inspired by choosing a fundamental timeline as block stricture on cuts
+## link::Classes/ThrashCutProc1:: - algorithmic abstraction of thrash drumming
+## link::Classes/WarpCutProc1:: - Warp Records cutting simulation, fast pitched rolls up into audio rate
+## link::Classes/BBCutProc:: - backwards compatability means I keep this older base class from BBCut1
+::
+
+Cut Synthesisers (CutSynths)
+
+list::
+## link::Classes/CutGroup:: - showing how to set Group and Bus of a cutter, and how to swap cutsynths on-the-fly
+## link::Classes/CutMixer:: - control final rendering bus, master volume, and ampfunc and panfunc parameters of cuts
+## link::Classes/CutTrig1:: - trigger samples from cuts (which may come from a set of buffers)
+## link::Classes/CutStream1:: - cut up a stream, via an intermediary buffer that holds the most recent cut for repeating
+## link::Classes/CutStream2:: - cut up a stream, via an intermediary buffer that allows offsetting from the most recent clock beat
+## link::Classes/CutStream3:: - cut up a stream, using on-the fly event analysis and relative to the clock's beat positions 
+## link::Classes/CutBuf1:: - cheap CPU buffer playback head jumping cutsynth, but no enveloping 
+## link::Classes/CutBuf2:: - spawns an enveloped grain Synth for each cut 
+## link::Classes/CutBuf3:: - uses knowledge of the analysed position of events in a buffer when rendering splices
+## link::Classes/CutFunc:: - call arbitrary functions at a new phrase, block or for individual cuts.  
+## link::Classes/CutTrace:: - (experimental) posts status, may be overridden later for OSC messaging of state to other apps
+::
+
+There are a number of other FX units of various kinds which you'll see turning up in examples, but which don't have their own help files. 
+
+Scheduling
+
+list::
+## link::Classes/ExternalClock:: - using bbcut2 and EventStreams with an external clock
+## link::Classes/ServerClock:: - running the controlling clock on the Server; shows beat tracking
+## link::Classes/EventStreamPlayer2:: - support for using Streams with an ExternalClock
+## link::Classes/CutProcStream:: - Use a cut procedure as a stream, and within Patterns library 
+::
+
+Core/Misc
+
+list::
+## link::Classes/BBCutBuffer:: - represents a Buffer with some BBCut specific refinements (derived from Buffer)
+## link::Classes/BBCutBlock:: - Data for the current block is held in a BBCutBlock object
+## link::Classes/BBCutQuantise1:: - (experimental) imposition of a metric template onto the cut procedure output
+## link::Classes/BufSelector:: - swaps between an array of BBCutBuffers at phrase or block boundaries
+::
+
 section:: History
 
 list::
