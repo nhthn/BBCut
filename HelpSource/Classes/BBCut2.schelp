@@ -1,0 +1,310 @@
+class:: BBCut2
+summary:: Algorithmic audio splicing
+categories:: Libraries>BBCut2
+
+description::
+
+BBCut2 is experimental but backwards compatible with BBCut. 
+
+BBCut2 provides the central scheduling mechanisms for algorithmic audio cutting running on an external clock. 
+ 
+BBCut2 is passed a cut renderer, an algorithmic cutting routine, and an optional quantisation routine. The clock is then passed in via play. 
+
+BBCut2 sends OSC messages ahead of rendering time to the Server so as to maintain perfect time lock without the jitter caused by variable network latency. This is superior to BBCut's 'send message at moment of decision' paradigm. The price is that the events during the next beat are determined a beat in advance and thus interaction with the cutting routines may show a beat or more's delay in response. 
+
+classmethods::
+
+method:: new
+
+argument:: cutgroups
+an Array of CutGroups, though this argument can also cope with being passed a CutSynth directly, a single CutGroup, an Array of CutSynths and an Array of Arrays of CutSynths. Now, a proc can have multiple renderers. The CutGroup is a necessary abstraction to select the execution graph and bus requirements of SC3, and you can think of BBCut2 making Group Nodes on the Server for each distinct CutGroup (=cut synthesiser chain).
+    
+argument:: proc
+an instance of a class derived from BBCutProc. This is the algorithmic composition routine that will generate cuts. 
+
+argument:: quantiser
+An optional quantisation class which imposes a template on the output of the algorithmic cutter. Leave this nil for default behaviour. 
+
+instancemethods::
+
+method:: free
+Frees any group and bus resources. If you passed in explicit Group and Bus objects they will not be deleted and are your own responsibility (see CutGroup).
+
+method:: pause
+Pause the bbcut2- it will not send further messages to the Server (but may have scheduled some already which can't be taken back).
+
+method:: resume
+Restart after a pause.
+
+method:: stop
+Stop playing, removing the cutter from the current clock. 
+
+method:: end
+Stop and free.
+
+method:: play
+Start playing on a given clock.
+
+argument:: clk
+A clock class derived from ExternalClock for the event scheduling. ExternalClock is a base class which wraps a TempoClock in SCLang. ServerClock is used for beat induction control from Server side UGens. If a TempoClock is passed in, it gets wrapped in an ExternalClock. If a bps is passed in (eg .play(2)) then a TempoClock is created at that bps and wrapped in an ExternalClock. 
+
+examples::
+
+code::
+
+s=Server.default;
+
+//shortest possible example, defaults to BBCutProc11 cut procedure, generates a default clock for you at 2 bps
+//will cut up the first audio input stream on your system (use with headphones to avoid feedback)
+b=BBCut2(CutStream1.new).play
+
+b.pause; //silent mode
+
+b.resume; //hear again
+
+b.stop; //finish on clock
+
+c=ExternalClock(TempoClock(2.7)).play;
+
+b.play(c); //start on a new running clock
+
+b.stop;
+
+b.free; //free any resources left
+
+
+//better use, explicit passing of clock, buffer
+(
+var clock= ExternalClock(TempoClock(2));
+var buffer= Buffer.alloc(s,44100,1);    
+
+clock.play;
+    
+//runs on first available input channel 
+BBCut2(CutStream1(s.options.numOutputBusChannels,buffer),BBCutProc11.new).play(clock);
+)
+
+
+(   //the same for a soundfile: you must allow time for the soundfile to load
+var sf;
+        
+Routine.run({
+            
+sf= BBCutBuffer("sounds/break",8);
+
+s.sync; //this forces a wait for the Buffer to load
+
+BBCut2(CutBuf1(sf)).play; //will use TempoClock.default so depends what tempo that is at
+});
+
+)
+
+TempoClock.default.tempo_(2.3)
+
+
+//you would usually load soundfiles separately (perhaps before performing) before running cutters
+
+
+//better practise, more explicit
+(
+var sf, clock;
+
+clock= ExternalClock(TempoClock(2.5));  
+        
+clock.play;     
+        
+Routine.run({
+            
+sf= BBCutBuffer("sounds/break",8);
+
+s.sync; //this forces a wait for the Buffer to load
+
+BBCut2(CutBuf1(sf), BBCutProc11.new).play(clock);
+});
+
+)
+
+//sharing clocks, and demonstrating what happens with tempo changes
+
+(
+var sf, tempoclock, bbcutclock;
+
+SynthDef(\beep,{Out.ar(0,SinOsc.ar(440,0,0.1)*Line.kr(1,0,0.1,doneAction:2))}).load(s);
+
+tempoclock= TempoClock(2.3);
+
+bbcutclock= ExternalClock(tempoclock);  
+        
+Routine.run({
+                
+    sf= BBCutBuffer("sounds/break",8);
+    
+    s.sync; //this forces a wait for the Buffer to load
+    
+    BBCut2([CutBuf1(sf),CutMixer(0,1.0,1.0,1.0)], BBCutProc11.new).play(bbcutclock);
+});
+        
+bbcutclock.play;        
+
+Task({  
+    
+    inf.do({
+    
+    Synth(\beep);
+    
+    if(0.1.coin,{tempoclock.tempo_(rrand(1.7,2.7))});
+    
+    1.0.wait;
+    });
+    
+}).play(tempoclock);
+
+)
+
+
+
+
+
+//creating CutGroup to choose rendering bus and Group, renders on bus 16 but output on bus 0 due to a hidden CutMixer
+(
+var clock= ExternalClock(TempoClock(2));
+var buffer= Buffer.alloc(s,44100,1);    
+var group= Group.head(Node.basicNew(s,1));
+var bus= Bus.audio(s,1); //mono rendering bus
+
+clock.play;
+    
+//runs on first available input channel 
+BBCut2(CutGroup(CutStream1(nil,buffer),group,bus),BBCutProc11.new).play(clock);
+)
+
+
+//also specifying a CutMixer to choose volume and outbus, but CutGroup will allocate a rendering Bus for you 
+(
+var clock= ExternalClock(TempoClock(2));
+var buffer= Buffer.alloc(s,44100,1);    
+var group= Group.head(Node.basicNew(s,1));
+
+clock.play;
+    
+BBCut2(CutGroup([CutStream1(nil,buffer),CutMixer(0,0.5,1.0,{1.0.rand2})],group),BBCutProc11.new).play(clock);
+)
+
+
+
+
+
+
+//showing off the five input possibilities for the cutgroup array argument
+//five options for shortcuts- all work because of code in BBCut2-initBBCut2
+
+
+
+//run this first to load the samples:
+(
+var filenames, bpsound;
+
+//Put in the locations of your samples
+filenames= ["sounds/break","sounds/break2"];
+//how many beats in your samples?
+bpsound= [8,4];
+
+f= BBCutBuffer.array(filenames,bpsound);
+)
+
+//test soundfile parameters
+f.do({arg val; Post <<[val.path, val.numChannels, val.numFrames, val.sampleRate, val.bufnum]<<nl;});
+
+//start a BBCut scheduling clock
+c= ExternalClock(TempoClock(2)).play;
+
+//run one line at a time, each BBCut instance
+a=BBCut2(CutFunc.new(blockfunc:{Synth(\beep)}),BBCutProc11.new).play(c);
+
+a.end; //end stops and frees the cutter
+
+//makes one running BBCutGroup containing two renderers
+a= BBCut2([CutBuf1(f[0]),CutBuf1(f[1])],BBCutProc11.new).play(c);
+
+a.end;
+
+//makes two running groups, first with default cut synth, second with sample based renderers
+a= BBCut2([[CutFunc.new(blockfunc:{Synth(\beep)})], [CutBuf1(f[0]),CutBuf1(f[1])]],BBCutProc11.new).play(c);
+
+a.end;
+
+//create explicitly a single BBCutGroup (BBCG is a shortcut name for one)
+a= BBCut2(CutGroup(CutBuf1(f[0])),BBCutProc11.new).play(c);
+
+a.end;
+
+//explicitly create an array of BBCutGroups, like the 'makes two running groups' option above but here more explicitly done
+a= BBCut2([CutGroup(CutFunc.new(blockfunc:{Synth(\beep)})), CutGroup([CutBuf1(f[0]),CutMixer(0,0.7,1.0,{1.0.rand2})]),CutGroup(CutBuf1(f[1]))],BBCutProc11.new).play(c);
+
+c.tempoclock.tempo_(2.3);
+
+a.end;
+
+
+
+//tempo ratio of 20 to 27
+(
+var sf, clock1, clock2;
+
+clock1= ExternalClock(TempoClock(2));   
+clock2= ExternalClock(TempoClock(2.7)); 
+    
+Routine.run({
+            
+sf=BBCutBuffer.array(["sounds/break","sounds/break2"],[8,4]);
+
+s.sync; //this forces a wait for the Buffer to load
+
+BBCut2([CutBuf1(sf[0]),CutMixer(0,0.5,1.0,-1.0)], ChooseCutProc(0.25,{[4,2].choose})).play(clock1);
+BBCut2([CutBuf1(sf[1]),CutMixer(0,0.5,1.0,1.0)], ChooseCutProc(0.25,{[4,2].choose})).play(clock2);
+});
+
+clock1.play;    
+clock2.play;
+)
+
+
+
+
+//adding/removing cutsynths
+
+//better practise, more explicit
+(
+var sf, clock;
+
+clock= ExternalClock(TempoClock(2.5));  
+        
+clock.play;     
+        
+Routine.run({
+            
+sf= BBCutBuffer("sounds/break",8);
+
+s.sync; //this forces a wait for the Buffer to load
+
+g=CutGroup(CutBuf1(sf));
+
+a=BBCut2(g, BBCutProc11.new).play(clock);
+});
+
+)
+
+//run these one at a time
+g.cutsynths.postln; //default CutMixer was added
+
+g.add(CutComb1({arg i; (i.clip2(10)*0.005)+0.01},0.5));
+
+g.cutsynths.postln;
+
+g.removeAt(2);  //remove comb
+
+g.cutsynths.postln;
+
+a.end
+
+::

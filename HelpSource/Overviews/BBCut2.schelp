@@ -1,0 +1,29 @@
+title:: BBCut2
+summary:: Algorithmic audio splicing
+categories:: Libraries>BBCut2
+
+BBCut2 is a collection of SuperCollider UGens, classes and patches for automated event analysis, beat induction and algorithmic audio splicing. It is released as public open source under the GNU General Public License. It was developed by Nick M. Collins.
+
+section:: History
+
+list::
+## 1.0 released 3/12/01, developed with the help of Fabrice Mogini, Fredrik Olofsson and Thor Magnusson.
+## 1.1 released 7/11/02
+## 1.2 for SC3 released 3/9/03
+## 1.2.1 released 10/10/03
+## 1.2.2 released 18/10/03
+## 1.3 released 20/02/04 
+## 2.0 released 15/8/05, testers/advisors Fredrik Olofsson and Julian Rohrhuber.
+## 2.0.1 31/8/05
+## 2.1 with full source 12/06/06
+::
+
+Please contact nc272@cam.ac.uk with comments or bug reports (or bring them up on the sc-users list).
+
+section:: Acknowledgements
+
+Version 2: Thanks to the many academic researchers whose work has been an inspiration, and to my PhD supervisors Ian Cross and Alan Blackwell for giving me the time to work on this project. Funding from AHRC. 
+
+Version 1: Thanks to Charles Ames, MDX Sonic Arts, the SuperCollider List and James McCartney.
+
+Academic papers about bbcut are available from www.cus.cam.ac.uk/~nc272
