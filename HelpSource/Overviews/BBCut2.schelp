@@ -12,6 +12,13 @@ Set code::s.latency = 0.05;:: when using BBCut2. The default of 0.2 seconds is d
 
 Copy break.aiff and break2.aiff from the BBCut source into code::Platform.userExtensionDir +/+ "sounds/"::. This is an optional step, but you will need this to run the examples.
 
+The ugens AutoTrack and AnalyseEvents2 are now in sc3-plugins, so they are no longer in this repository. The remaining ugen, link::Classes/DrumTrack::, is now cross-platform, and you can compile it like so:
+
+    cmake -DSC_PATH=/path/to/supercollider .
+    make
+
+This step is also optional. No other parts of BBCut2 depend on this ugen.
+
 section:: Contents
 
 sc3-plugins is required.
@@ -29,7 +36,7 @@ list::
 ## link::Classes/AutoTrack:: (from sc3-plugins) - beat tracking UGen
 ## link::Classes/AnalyseEvents2:: (from sc3-plugins) - on-the-fly event analysis UGen
 ## link::Classes/AnalyseEventsDatabase:: - form a database of events on-the-fly
-## link::Classes/DrumTrack:: (not supported) - experimental beat tracking UGen, tries to spot typical 4/4 drum patterns
+## link::Classes/DrumTrack:: - experimental beat tracking UGen, tries to spot typical 4/4 drum patterns
 ::
 
 Cut Procedures (CutProcs)

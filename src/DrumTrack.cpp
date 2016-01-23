@@ -23,10 +23,7 @@
 //last revisions pre release 1.0 Nick Collins 15 June 2004
 
 #include "SC_PlugIn.h"
-#include <vecLib/vecLib.h>
-#include <string.h>
-#include <math.h>
-#include <stdlib.h>
+#include "SC_fftlib.h"
 #include <stdio.h>
 
 //helpful constants
@@ -139,11 +136,11 @@ struct DrumTrack : Unit {
 	int m_bufWritePos;
 	float * m_prepareFFTBuf;
 	float * m_FFTBuf;
+
+	scfft *m_scfft;
 	
 	//vDSP
 	unsigned long m_vlog2n;
-	COMPLEX_SPLIT m_vA;
-	FFTSetup m_vsetup;
 	
 	//time positions
 	long m_frame;
@@ -312,13 +309,11 @@ void DrumTrack_Ctor(DrumTrack* unit) {
 	unit->m_prepareFFTBuf = (float*)RTAlloc(unit->mWorld, N * sizeof(float));
 	unit->m_FFTBuf = (float*)RTAlloc(unit->mWorld, N * sizeof(float));
 	unit->m_bufWritePos = 0;	
-	
-	////////vDSP///////////////
-	
-	unit->m_vA.realp = (float*)RTAlloc(unit->mWorld, NOVER2 * sizeof(float)); 
-	unit->m_vA.imagp = (float*)RTAlloc(unit->mWorld, NOVER2 * sizeof(float));
-	unit->m_vlog2n = 10; //N is hard coded as 1024, so 10^2=1024 //log2max(N);
-	unit->m_vsetup = create_fftsetup(unit->m_vlog2n, 0);
+
+	//N=1024
+	SCWorld_Allocator alloc(ft, unit->mWorld);
+	//no overlap
+	unit->m_scfft = scfft_create(N, N, kHannWindow, unit->m_FFTBuf, unit->m_FFTBuf, kForward, alloc);
 	
 	////////time positions//////////
 	unit->m_frame=0;
@@ -445,15 +440,14 @@ void DrumTrack_Dtor(DrumTrack *unit)
 	RTFree(unit->mWorld, unit->m_prepareFFTBuf);
 	RTFree(unit->mWorld, unit->m_FFTBuf);
 	//RTFree(unit->mWorld, unit->m_fftstore);
-	
-	if (unit->m_vA.realp) RTFree(unit->mWorld, unit->m_vA.realp);
-	if (unit->m_vA.imagp) RTFree(unit->mWorld, unit->m_vA.imagp);
-	if (unit->m_vsetup) destroy_fftsetup(unit->m_vsetup);
-	
+		
 	for (int i=0;i<3;++i)
 		RTFree(unit->mWorld, unit->m_powerbuf[i]); 
 	
-	
+	if(unit->m_scfft) {
+		SCWorld_Allocator alloc(ft, unit->mWorld);
+		scfft_destroy(unit->m_scfft, alloc);
+	}
 }
 
 
@@ -661,23 +655,17 @@ void dofft(DrumTrack *unit) {
 	
 	for (i=0; i<N; ++i)
 		fftbuf[i] *= hanning[i];
-				
-    // Look at the real signal as an interleaved complex vector by casting it.
-    // Then call the transformation function ctoz to get a split complex vector,
-    // which for a real signal, divides into an even-odd configuration.
-    ctoz ((COMPLEX *) fftbuf, 2, &unit->m_vA, 1, NOVER2);
+
+	scfft_dofft(unit->m_scfft);
 	
-    // Carry out a Forward FFT transform
-    fft_zrip(unit->m_vsetup, &unit->m_vA, 1, unit->m_vlog2n, FFT_FORWARD);
-	
-    // The output signal is now in a split real form.  Use the function
-    // ztoc to get a split real vector.
-    ztoc ( &unit->m_vA, 1, (COMPLEX *) fftbuf, 2, NOVER2);
-	
+	float val1, val2;
 	// Squared Absolute so get power
-	for (i=0; i<N; i+=2)
-		//i>>1 is i/2 
-		fftbuf[i>>1] = (fftbuf[i] * fftbuf[i]) + (fftbuf[i+1] * fftbuf[i+1]);
+	for (i=2; i<N; i+=2) {
+		val1 = fftbuf[i];
+		val2 = fftbuf[i+1];
+		//i>>1 is i/2
+		fftbuf[i>>1] = (val1*val1)+(val2*val2);
+	}
 	
 	//calculate loudness first, increments loudnesscounter needed in checkforonsets
 	calculateloudness(unit);
@@ -1572,7 +1560,7 @@ void snaredetection(DrumTrack *unit){
 		if(unit->m_lastsnaredetect<(unit->m_frame-6)) {
 			
 			if(unit->m_debugmode==2)
-			printf("snare found! %d %d \n", unit->m_lastsnaredetect, unit->m_frame);
+			printf("snare found! %ld %ld \n", unit->m_lastsnaredetect, unit->m_frame);
 			
 			//occured one frame ago, but do -2 to avoid kick overwrite on next cycle!
 			int onsetframe= (unit->m_loudnesscounter+LOUDNESSFRAMESSTORED-2)%LOUDNESSFRAMESSTORED;
@@ -1642,7 +1630,7 @@ void kickdetection(DrumTrack *unit){
 		if(unit->m_lastkickdetect<(unit->m_frame-6)) {
 			
 			if(unit->m_debugmode==2)
-			printf("kick found! %d %d \n", unit->m_lastkickdetect, unit->m_frame);
+			printf("kick found! %ld %ld \n", unit->m_lastkickdetect, unit->m_frame);
 			
 			
 			//occured one frame ago, but do -2 to avoid kick overwrite on next cycle!
@@ -1968,8 +1956,7 @@ void prepareHanningWindow(){
 }
 
 
-void load(InterfaceTable *inTable)
-{
+PluginLoad(BBCut2MoreUGens) {
 	
 	ft= inTable;
 	
