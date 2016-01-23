@@ -1,0 +1,68 @@
+class:: BufSelector
+summary:: Proxy for switching between BBCutBuffers
+categories:: Libraries>BBCut2
+related:: Overviews/BBCut2
+
+description::
+
+Fake interface to a BBCutBuffer object so that you can swap Buffers with each block/each phrase (depending on how you setup your index function).
+
+This class only works with CutBuf2 and 3, but not with CutBuf1, which is too efficient to allow for adaptable buffers. 
+
+classmethods::
+
+method:: new
+
+argument:: array
+Array of BBCutBuffer objects
+
+argument:: indexfunc
+Function of the form {arg block, lastindex;  } which returns an index into the array 
+
+examples::
+
+code::
+
+//swap each phrase
+(
+var sf, clock, synth;
+
+s=Server.default;
+
+clock= ExternalClock(TempoClock(2.1)).play; 
+        
+Routine.run({
+
+sf= BBCutBuffer.array(["sounds/break","sounds/break2"],[8,4]);
+
+s.sync;
+
+BBCut2(CutBuf2(BufSelector(sf,{|block,lastindex|  if(block.blocknum==1,{1-lastindex},{lastindex})}),0.2), WarpCutProc1.new).play(clock);
+
+});
+
+)
+
+
+
+//testing with CutBuf3 and three soundfiles
+(
+var sf, clock, synth;
+
+s=Server.default;
+
+clock= ExternalClock(TempoClock(2.1)).play; 
+        
+Routine.run({
+
+sf= BBCutBuffer.array(["sounds/a11wlk01-44_1.aiff","sounds/break","sounds/break2"],[4,8,4]);
+
+s.sync;
+
+BBCut2(CutBuf3(BufSelector(sf,{|block,lastindex|  if(block.cuts.size<3,{0},{rrand(1,2)})}),0.2), WarpCutProc1.new).play(clock);
+
+});
+
+)
+
+::

@@ -1,0 +1,41 @@
+class:: CutMixer
+summary:: BBCut2 volume and panning control
+categories:: Libraries>BBCut2
+related:: Overviews/BBCut2
+
+description::
+
+The CutMixer organises the final output from a given rendering CutGroup. It defaults to outputting a stereo centred signal at full volume on busses 0 and 1. Whilst the main rendering in bbcut2 is mono, the final output is thus rendered to stereo. A stereo buffer cutup would use a simpler CutMixer where no panning occurs. 
+
+classmethods::
+
+method:: new
+
+argument:: outbus
+Bus number for final output. The stereo output will be placed on this bus plus the one above. The default is thus 0 and 1.
+  
+argument:: volume
+output volume multiplier. Defaults to 1.0.
+
+argument:: ampfunc
+Anything responding to .value which is called each repeat to determine a cut's amplitude
+
+argument:: panfunc
+Anything responding to .value which is called each repeat to determine a cut's pan position.
+
+examples::
+
+code::
+
+TempoClock.default.tempo_(2);
+
+(   
+BBCut2(CutGroup([CutStream1.new,CutMixer(0,1.0,{1.0.rand},{1.0.rand2})]), ChooseCutProc(0.25,4)).play
+)
+
+
+(   
+BBCut2(CutGroup([CutStream1.new,CutMixer(0,1.0,RollAmplitude.new,CutPan1.new)]), WarpCutProc1(0.25,4)).play;
+)
+
+::

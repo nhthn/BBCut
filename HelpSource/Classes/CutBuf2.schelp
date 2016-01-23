@@ -1,0 +1,112 @@
+class:: CutBuf2
+summary:: BBCut2 buffer playback with modulatable grain parameters
+categories:: Libraries>BBCut2
+related:: Overviews/BBCut2
+
+description::
+
+Playback for a buffer, with individual grains spawned for each cut. Each grain may have associated parameters for playback speed, enveloping and dutycycle (ratio of duration to inter-onset-interval).  
+
+classmethods::
+
+method:: new
+
+All of the arguments apart from bbcutbuf can have more complex objects than SimpleNumbers passed in. You can pass in anything which responds to value (like a Function) or even objects which respond to the updateblock method such as CutPBS1 (see examples below).
+
+argument:: bbcutbuf
+An instance of BBCutBuffer representing the buffer to be cut-up.
+    
+argument:: offset
+A parameter to be passed to any cut playback position determining routine. The default chooseoffset method is in BBCutBuffer and the parameter is a single number from 0.0 to 1.0 giving the chance of a jump to a random event in the source.
+
+argument:: pbsfunc
+Playback speed (rate) control for grains. 
+
+argument:: dutycycle
+Ratio of duration to inter-onset-interval (IOI). 0.5 would mean that the duration of grains is only half the length between cut start times. 
+
+argument:: atkprop
+Enveloping parameter for attack speed. Rated as a proportion of the overall envelope (0.0 to 1.0) 
+
+argument:: relprop
+Enveloping parameter for release speed. Rated as a proportion of the overall envelope (0.0 to 1.0) 
+
+argument:: curve
+Envelope curve
+
+examples::
+
+code::
+
+(
+var sf, clock;
+
+s=Server.default;
+
+clock= ExternalClock(TempoClock(2.1)).play; 
+        
+Routine.run({
+            
+sf= BBCutBuffer("sounds/break",8);
+
+s.sync; //this forces a wait for the Buffer to load
+
+BBCut2(CutBuf2(sf,0.3), BBCutProc11.new).play(clock);
+});
+
+)
+
+
+//dutycycle and envelope manipulations, CutPBS1 instance used to control repitching of rolls
+(
+var sf, clock;
+
+clock= ExternalClock(TempoClock(2.1)).play; 
+        
+Routine.run({
+            
+sf= BBCutBuffer("sounds/break",8);
+
+s.sync; //this forces a wait for the Buffer to load
+
+BBCut2(CutBuf2(sf,0.3, CutPBS1(0.97,{1.rand2}), 0.5, 0.001, 0.5, -4), WarpCutProc1.new).play(clock);
+});
+
+)
+
+
+//showing passing of functions, the block argument passed to the dutycycle function is a BBCutBlock object
+(
+var sf, clock;
+
+clock=ExternalClock(TempoClock(3.3)).play;  
+        
+Routine.run({
+            
+sf= BBCutBuffer("sounds/break2",4);
+
+s.sync; //this forces a wait for the Buffer to load
+
+BBCut2(CutBuf2(sf,0.3, {rrand(0.9,1.1)}, {arg i, block; var ioi; ioi= block.iois[i]; ioi.min(0.75)/ioi},{exprand(0.001,0.5)}), ChooseCutProc({[0.5,1.0,1.25].choose},{rrand(1,4)})).play(clock);
+});
+
+)
+
+
+(
+var sf, clock;
+
+clock=ExternalClock(TempoClock(3.3)).play;  
+        
+Routine.run({
+            
+sf= BBCutBuffer("sounds/break2",4);
+
+s.sync; //this forces a wait for the Buffer to load
+
+BBCut2(CutBuf2(sf, relprop:0.8, curve:{rrand(-16,-1)}), ChooseCutProc({[0.5,1.0,0.25].choose},{rrand(1,4)})).play(clock);
+});
+
+)
+
+::

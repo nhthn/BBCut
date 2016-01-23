@@ -1,0 +1,180 @@
+class:: CutBuf3
+summary:: BBCut2 buffer playback with modulatable grain parameters
+categories:: Libraries>BBCut2
+related:: Overviews/BBCut2
+
+description::
+
+Playback for a segmented buffer, with individual grains spawned for each event. Cuts play back any events within their scope. The scheduling system for bbcut2 takes account of groove based time deviations from quantised template positions for the events, and perceptual attack times. Note that FX units may switch exactly on the cuts, which may or may not match up with the event playback. There are options to constrain the amount of groove deviation. 
+
+Because CutBuf3 works by scheduling individual events in a soundfile, there is no repitch for different tempi. So you may get different plkayback speeds from a CutBuf2 or 1- ie, with CutBuf3 you should hear the sample's original pitch at whatever tempo you explore.   
+
+classmethods::
+
+method:: new
+
+argument:: bbcutbuf
+An instance of BBCutBuffer representing the buffer to be cut-up.
+    
+argument:: offset
+A parameter to be passed to any cut playback position determining routine. The default chooseoffset method is in BBCutBuffer and the parameter is a single number from 0.0 to 1.0 giving the chance of a jump to a random event in the source. You can pass an Array in that has two parameters, being [randomoffsetchance, quantise grid of offsetcutting in beats]. Ie, [0.3, 0.5] would have a 30% chance of jumping to a random eighth note position. 
+
+argument:: deviationmult
+Multiplies the groove based time deviations of events. Set to 0.0 for rigid quantise based playback, 1.0 for full original timing properties. 
+
+argument:: pretrim
+If playing back a cut, play any events within the cut even if there tming deviation puts them ahead of the cut start. Ie, play anticipatory events. 
+
+argument:: posttrim
+The same for events whose deviation puts them after the end of the cut, but whose quantised position is within the cut. 
+
+argument:: pbsfunc
+Playback speed (rate) control for grains. 
+
+argument:: dutycycle
+Ratio of duration to inter-onset-interval (IOI). 0.5 would mean that the duration of grains is only half the length between cut start times. 
+
+argument:: atk
+Enveloping parameter for attack speed of an event grain, in seconds. You may set to zero to play back source events exactly as in the original, assuming the source is proprely segmented and there are no clicks. 
+
+argument:: rel
+Enveloping parameter for release speed in seconds.
+
+argument:: curve
+Envelope curve parameter. 
+
+The cut synthesis arguments apart from bbcutbuf can have more complex objects than SimpleNumbers passed in. You can pass in anything which responds to value (like a Function) or even objects which respond to the updateblock method such as CutPBS1 (see examples below). 
+
+examples::
+
+code::
+
+s=Server.default;
+
+
+//default segmentation into eighth note events applied to the buffer 
+
+(
+var sf, clock;
+
+clock= ExternalClock(TempoClock(2.1));  
+        
+clock.play;     
+        
+Routine.run({
+            
+sf= BBCutBuffer("sounds/break",8);
+
+s.sync; //this forces a wait for the Buffer to load
+
+BBCut2(CutBuf3(sf,0.3), BBCutProc11.new).play(clock);
+});
+
+)
+
+
+//segment into even 16ths, apply swing on event playback, dutycycle manipulation, no enveloping
+(
+var sf, clock;
+
+clock= ExternalClock(TempoClock(1.8));  
+        
+clock.play;     
+        
+Routine.run({
+            
+sf= BBCutBuffer("sounds/break",8, 0.25); //segment into 16ths so 16th swing works
+
+s.sync; //this forces a wait for the Buffer to load
+
+sf.setgroove; //defaults to UK garage swing
+
+BBCut2(CutBuf3(sf,0.3,0.0,true,true,1.0,1.0,0.0,0.0,0), BBCutProc11.new).play(clock);
+});
+
+)
+
+
+
+//passing in event positions, event lengths will be taken as distance between event onsets
+//demonstrating repitch, keeping all anticipations and postevents with original groove deviation   
+(
+var sf, clock;
+
+clock= ExternalClock(TempoClock(3.1));  
+        
+clock.play;     
+        
+Routine.run({
+            
+sf= BBCutBuffer("sounds/break2",4, [ 0, 16789, 28721, 37166, 41389, 49042, 56783 ]);
+
+s.sync; //this forces a wait for the Buffer to load
+
+BBCut2(CutBuf3(sf,0.3,1.0, false, false), BBCutProc11.new).play(clock);
+});
+
+)
+
+
+
+//preserving time deviations but events realigned to a UK garage swing grid
+//also shows interaction with FX unit
+(
+var sf, clock;
+
+clock= ExternalClock(TempoClock(2.8));  
+        
+clock.play;     
+        
+Routine.run({
+            
+sf= BBCutBuffer("sounds/break2",4, [ 0, 16789, 28721, 37166, 41389, 49042, 56783 ]); //segment into 16ths so 16th swing works
+
+s.sync; //this forces a wait for the Buffer to load
+
+sf.setgroove; //defaults to UK garage swing
+
+BBCut2([CutBuf3(sf,0.3,1.0,false,false,1.0,1.0,0.0,0.0,0),CutComb1.new], ChooseCutProc(1.0,2)).play(clock);
+});
+
+)
+
+
+//use the GUI to find onsets for a loaded sample- use post to output the data array  
+Segmentation.new //also see the help file for this GUI
+
+
+//you could substitute your data here, remember to change the sound filename too
+(
+~data=[ [ 380, 0.21049886621315, 0.005 ], [ 9663, 0.16013605442177, 0.005 ], [ 16725, 0.28975056689342, 0.005 ], [ 29503, 0.085555555555556, 0.005 ], [ 33276, 0.067482993197279, 0.005 ], [ 41243, 0.18616780045351, 0.005 ], [ 49453, 0.29065759637188, 0.005 ], [ 62271, 0.085532879818594, 0.005 ], [ 66043, 0.081360544217687, 0.005 ], [ 74014, 0.18480725623583, 0.005 ], [ 82164, 0.28897959183673, 0.005 ], [ 94908, 0.08421768707483, 0.005 ], [ 98622, 0.096734693877551, 0.005 ], [ 106492, 0.2931746031746, 0.005 ], [ 119421, 0.08562358276644, 0.005 ], [ 123197, 0.0740589569161, 0.005 ] ];
+)
+
+//passing in event data in general form  
+(
+var sf, clock;
+
+clock= ExternalClock(TempoClock(2.1));  
+        
+clock.play;     
+        
+Routine.run({
+            
+sf= BBCutBuffer("sounds/break",8, ~data);
+
+s.sync; //this forces a wait for the Buffer to load
+
+BBCut2(CutBuf3(sf,0.3,1.0, false, true), BBCutProc11.new).play(clock);
+});
+)
+
+
+/////////////////////////////////////////////////////////////////////
+//test code for finding events for wraparound cuts 
+//default segmentation into eighth note events applied to the buffer 
+f= BBCutBuffer("sounds/break",8);
+a=f.findevents(7,8.4).postln;
+b=f.trimevents(7,8.4,a,true, true,2);
+//////////////////////////////////////////////////////////////////////
+
+::

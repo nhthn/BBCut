@@ -1,0 +1,175 @@
+class:: CutStream3
+summary:: BBCut2 with live input
+categories:: Libraries>BBCut2
+related:: Overviews/BBCut2
+
+description::
+
+Playback for a stream of audio which can be cut-up, with offsetting relative to the last beat marked by the clock. The stream can be any bus on the Server, so might be a file streamed off disk, a current audio input or some synthesised data. 
+
+Each grain may have associated parameters for playback speed, enveloping and dutycycle (ratio of duration to inter-onset-interval).  
+
+Note that CutStream3 uses In.ar rather than InFeedback.ar, for reaction speed, so execution order is important. you cannot cut-up a stream created later in the execution order. Change the SynthDefs in the class file to InFeedback if you want no execution order worries, at the expense of an audio block's delay (usually 64 samples). 
+
+classmethods::
+
+method:: new
+
+argument:: aed
+a running AnalyseEventsDatabase object, using the same ExternalClock as the cutter.
+    
+argument:: offset
+value to offset from the last recorded beat of the clock. 0 keeps this reference point, 2 would be a reference start time of three beats ago (last recorded, then back another 2). The default is 1. However, the meaning of this parameter changes when setoffset is applied by certain cut procedures; here it determines the region of offsetting in beats. 
+
+argument:: swing
+Number of beats of delay to apply for offbeat semiquavers, ie 0.0 is no swing, 0.08 is UK garage swing. For strict quantisation on-the-fly deviationmult must also be 0.0.  
+
+argument:: deviationmult
+Multiplies the groove based time deviations of events. Set to 0.0 for rigid quantise based playback, 1.0 for full original timing properties. 
+
+argument:: pretrim
+If playing back a cut, play any events within the cut even if there tming deviation puts them ahead of the cut start. Ie, play anticipatory events. 
+
+argument:: posttrim
+The same for events whose deviation puts them after the end of the cut, but whose quantised position is within the cut. 
+
+argument:: pbsfunc
+Manipulate playback speed, would usually be 1.0. 
+
+argument:: dutycycle
+Ratio of duration to inter-onset-interval (IOI). 0.5 would mean that the duration of grains is only half the length between cut start times. 
+
+argument:: atk
+Enveloping parameter for attack speed. Rated as a proportion of the overall envelope (0.0 to 1.0) 
+
+argument:: rel
+Enveloping parameter for release speed. Rated as a proportion of the overall envelope (0.0 to 1.0) 
+
+argument:: curve
+Envelope curve
+
+examples::
+
+code::
+
+s=Server.default;
+
+c=ExternalClock(2.3).play;
+
+e=AnalyseEventsDatabase.new;
+
+e.analyse(clock:c);
+
+//must be same clock    
+a=BBCut2(CutStream3(e,1,0.0), ChooseCutProc(0.5,2)).play(c);
+
+a.end;
+
+e.stop;
+
+c.stop;
+
+
+//sing along to the beat and have the events found in the audio stream in time, auto quantised
+(
+var b,buf,e, clock;
+
+clock= ExternalClock(TempoClock(2.1));  
+        
+clock.play;     
+        
+e=AnalyseEventsDatabase.new;
+
+e.analyse(clock:clock);
+                
+Routine.run({
+    
+b=BBCutBuffer("sounds/break",8);    
+
+s.sync; //this forces a wait for the Buffer to be allocated
+
+//3 beats into the past
+BBCut2(CutStream3(e,3,0.0,0.0, false, false), ChooseCutProc({[1.5,1.0].choose},2)).play(clock);
+
+BBCut2(CutBuf1(b), BBCutProc11.new).play(clock);
+});
+
+)
+
+
+
+//beat induction and event capture on an existing track
+(
+var trackbus, trackgroup;
+
+s.latency=0.05;
+
+//clear any existing OSCresponder
+OSCresponder.all.do({arg val; if(val.cmdName=='/tr',{OSCresponder.remove(val)}); });
+
+//run a line at a time
+~clock= ServerClock.new;    
+    
+~clock.play(100,s); //will wait on trigID 100
+    
+~database=AnalyseEventsDatabase.new;    
+    
+Routine.run({
+
+//choose some file you want to track off your hard drive
+~source=Buffer.read(s,"/Volumes/data/stevebeattrack/samples/100.wav");
+ 
+s.sync;
+ 
+~trackbus=Bus.audio(s,1);
+
+trackgroup= Group.before(Node.basicNew(s,1));
+
+//run a beat tracker on the Server which sends the appropriate OSC message
+~tracksynth= SynthDef(\help_cutstream3,{arg vol=1.0, beepvol=0.0, lock=0;
+var trackb,trackh,trackq,tempo;
+var source, beep;
+
+source= PlayBuf.ar(1,~source.bufnum,1.0,1,0,1);
+
+//see AutoTrack help file
+#trackb,trackh,trackq,tempo=AutoTrack.kr(source, lock);
+
+beep= SinOsc.ar(1000,0.0,Decay.kr(trackb,0.1));
+
+Out.ar(~trackbus.index,source);
+
+Out.ar(0,Pan2.ar((vol*source)+(beepvol*beep),0.0));
+
+SendTrig.kr(trackb,100,tempo);  //sends with ID of 100 matching what clock expects
+
+}).play(trackgroup);
+
+//creates at tail of trackgroup
+~database.analyse(~trackbus.index, 101, trackgroup, 0.34, ~clock); //trigID 101 is default
+
+});
+
+)
+
+//default is add to head of group at Node 1 CutGroup
+a=BBCut2(CutStream3(~database, 4, 0.0, 0.0,false,false), ChooseCutProc(1,2)).play(~clock);
+
+b=BBCut2(CutStream3(~database, 4, 0.0, 0.0,false,false), BBCutProc11.new).play(~clock);
+
+c=BBCut2([CutMod1.new,CutRev1.new,CutStream3(~database, 4, 0.0, 0.0,false,false)], ChooseCutProc(0.5,4)).play(~clock);
+
+~tracksynth.set(\vol,0.0);
+
+~tracksynth.set(\beepvol,1.0);
+
+~database.threshold_(0.1); //make it more event trigger happy
+
+a.end;
+b.end;
+c.end;
+
+~clock.stop;
+~database.stop;
+
+::

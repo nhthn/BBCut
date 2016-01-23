@@ -1,0 +1,167 @@
+class:: CutTrig1
+summary:: Playing samples in BBCut2
+categories:: Libraries>BBCut2
+related:: Overviews/BBCut2
+
+description::
+
+This cut synth will trigger a particular sample at each block. There is a user defined probability of whether to play the sample on every cut as a roll, or just once at the beginning of the block. The complete sample is played back, though tempered by the dutycycle parameter and repitched by the pbsfunc. 
+
+All the samples must be either mono, or all must be stereo. For stereo you must explicitly set the CutGroup to have 2 channels. 
+
+classmethods::
+
+method:: new
+
+argument:: bufarray
+Array of BBCutBuffer instances. 
+    
+argument:: buffunc
+Something responding to .value (usually a Function) which determines which buffer in the array above is selected. 
+
+argument:: rollprob
+Probability of playing every cut compared to playing just the first of a block. You can pass in a float, in which case the probability is the same for every sample in the bufarray, else pass in an array of the same size as the bufarray. 
+
+argument:: pbsfunc
+Playback speed (rate) control for triggered samples. 
+
+argument:: dutycycle
+Ratio of duration to inter-onset-interval (IOI). 0.5 would mean that the duration of grains is only half the length between cut start times. 
+
+examples::
+
+code::
+
+//you need three samples, labelled kick.wav, snare.wav and hat.wav to try these examples
+
+s=Server.default;
+
+(
+var bufs, clock;
+
+clock= ExternalClock(TempoClock(2.1));  
+        
+clock.play;     
+        
+Routine.run({
+            
+bufs=BBCutBuffer.array(["sounds/kick.wav","sounds/snare.wav","sounds/hat.wav"]);
+
+s.sync; 
+
+BBCut2(CutTrig1(bufs, {3.rand},[0.0,0.2,1.0],1.0,1.0), WarpCutProc1.new).play(clock);
+});
+
+)
+
+
+
+(
+var bufs, clock;
+
+clock= ExternalClock(TempoClock(2.1));  
+        
+clock.play;     
+        
+Routine.run({
+            
+bufs=BBCutBuffer.array(["sounds/kick.wav","sounds/snare.wav","sounds/hat.wav"]);
+
+s.sync; 
+
+BBCut2(CutTrig1(
+bufs,                                    //source buffer array
+{arg block; [0,1,2].wrapAt(block.blocknum)},    //buffer selection
+[0.5,0.7,0.2],                          //roll probs
+{[1.0,0.5,2].wchoose([0.8,0.1,0.1])},       //pbsfunc
+{[1.0,0.5,0.25].wchoose([0.9,0.07,0.03])}       //dutycycle
+), ChooseCutProc({[0.25,0.125].wchoose([0.8,0.2])},4)).play(clock);
+});
+
+)
+
+
+
+//faster algorithmic 4/4 beat
+(
+var bufs, clock;
+
+clock= ExternalClock(TempoClock(3.4));  
+        
+clock.play;     
+        
+Routine.run({
+            
+bufs=BBCutBuffer.array(["sounds/kick.wav","sounds/snare.wav","sounds/hat.wav"]);
+
+s.sync; 
+
+BBCut2(CutTrig1(
+bufs,                                    //source buffer array
+{arg block; [0,2,1,2].wrapAt(block.blocknum)},  //buffer selection
+[0.3,0.7,0.5],                          //roll probs
+{[1.0,0.96,1.02].wchoose([0.8,0.1,0.1]);},      //pbsfunc
+{[1.0,0.5,0.25].wchoose([0.6,0.3,0.1]);}        //dutycycle
+), ChooseCutProc(0.25,4)).play(clock);
+});
+
+)
+
+
+
+
+//timing test
+(
+var bufs, clock;
+
+clock= ExternalClock(TempoClock(1.4));  
+        
+clock.play;     
+        
+Routine.run({
+            
+bufs=BBCutBuffer.array(["sounds/kick.wav","sounds/snare.wav","sounds/hat.wav"]);
+
+s.sync; 
+
+BBCut2(CutTrig1(
+bufs,                                    //source buffer array
+{arg block; [0,2].wrapAt(block.blocknum)},  //buffer selection
+[1.0,1.0,1.0],                          //roll probs
+1.0,        //pbsfunc
+1.0     //dutycycle
+), ChooseCutProc(0.25,4)).play(clock);
+});
+
+)
+
+
+
+//stereo sample test (you need to supply stereo samples here to try this)
+(
+var bufs, clock;
+
+clock= ExternalClock(TempoClock(2.4));  
+        
+clock.play;     
+        
+Routine.run({
+            
+bufs=BBCutBuffer.array(["sounds/stereokick.wav","sounds/stereosnare.wav"]);
+
+s.sync; 
+
+BBCut2(CutGroup(CutTrig1(
+bufs,                                    //source buffer array
+{arg block; [0,1].wrapAt(block.blocknum)},  //buffer selection
+[1.0,1.0],                          //roll probs
+1.0,        //pbsfunc
+1.0     //dutycycle
+),
+numChannels:2)
+, ChooseCutProc({[0.5,0.25].choose},2)).play(clock);
+});
+
+)
+
+::
