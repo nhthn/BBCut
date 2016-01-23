@@ -1,0 +1,36 @@
+class:: EventStreamPlayer2
+summary:: Stream player on an ExternalClock
+categories:: Libraries>BBCut2
+related:: Overviews/BBCut2
+
+description::
+
+An EventStreamPlayer2 is used by Event based Patterns for scheduling on an ExternalClock.  
+You do not explictly create an EventStreamPlayer2s, they are created for you when you call Pattern-playExt.
+
+The EventStreamPlayer2 holds a stream which returns a series of Events, and a protoEvent. At each call to next, it copies the protoEvent, passes that to the stream, and stores the Event returned into a scheduling queue driven by the external clock.
+
+examples::
+
+code::
+
+s=Server.default;
+
+s.latency=0.05;
+
+c=ExternalClock(TempoClock(2.1)).play;
+
+//playExt= play on External Clock
+p=Pbind.new.playExt(c); 
+
+q= Pbind(\dur,Pseq([0.25,0.25,0.5],inf),\freq,Pseq([330,330,550],inf),\sustain, 0.1).playExt(c);
+
+q.mute;
+q.unmute;
+
+p.stop;
+q.stop;
+
+c.stop;
+
+::

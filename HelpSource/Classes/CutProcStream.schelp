@@ -1,0 +1,42 @@
+class:: CutProcStream
+summary:: Stream wrapper for a cut procedure
+categories:: Libraries>BBCut2
+related:: Overviews/BBCut2
+
+description::
+
+Stream wrapper for a cut procedure, for use with Patterns or in your own custom code. 
+
+classmethods::
+
+method:: new
+
+argument:: proc
+A cut procedure derived from BBCutProc
+
+examples::
+
+code::
+
+s=Server.default;
+
+a= CutProcStream(BBCutProc11.new);
+
+//no offsets set (usually this would be decided by cut synthesisers
+10.do {a.next(Event.default).postln};
+
+a= CutProcStream(RecursiveCutProc1.new);
+
+//offsets set
+10.do {a.next(Event.default).postln };
+
+//use with Patterns- not good for live interaction and beat induction in this case, but fine for rendering at server latency arms length.
+
+t=TempoClock(2.4);
+
+Pbindf(CutProcStream(WarpCutProc1.new),\sustain,0.01,\freq,Pfunc({arg event; (event[\cutnum]*50) + 200})).play(t);
+
+
+Pbindf(CutProcStream(SQPusher1.new),\sustain,0.01,\freq,Pfunc({arg event; (event[\cutnum]*260) + 170}), \amp, 0.2).play(t);
+
+::

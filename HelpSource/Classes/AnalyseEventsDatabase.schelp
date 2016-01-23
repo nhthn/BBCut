@@ -1,0 +1,333 @@
+class:: AnalyseEventsDatabase
+summary:: Records events found by the AnalyseEvents2 UGen
+categories:: Libraries>BBCut2
+related:: Overviews/BBCut2
+
+description::
+
+Database that will store any events discovered in an audio signal using the AnalyseEvents UGen. This works on-the-fly, and you can switch the target input bus. 
+
+Discovered events are recorded in the database as an array of information of the form: 
+
+[timecollected, startPos (buffer sample position), length (in seconds), ... (features of event)]
+
+Note that the event analyser works at a delay of at least the length of each event it discovers. The database is thus often around half a second lagging behind the musical state of play. This is a fundamental limitation- you as a human also post analyse, it's just that predictive processes (like beat tracking, stylistic expectancies) give you the illusion of knowing in advance what things may occur. 
+
+Applications: use the collection times to extract rhythms, combine with known beat (perhaps from beat tracking- see AutoTrack) to quantise inputs, assess expressive timing, have a memory fading histogram of event locations, schedule any events in any way that plays with time etc...  
+
+classmethods::
+
+method:: new
+
+argument:: length
+Length in seconds of circular buffer for storing the audio stream.
+
+argument:: numChan
+The stream can have 1 to 2 channels, not modulatable after creation.
+
+argument:: server
+Which to run on.
+
+instancemethods::
+
+method:: analyse
+
+argument:: inbus
+Bus number for input
+
+argument:: trigID
+Trigger ID number used for passing data between the UGen analyser and the database
+
+argument:: group
+Group to run the analysis synth within
+
+argument:: threshold
+Parameter for the analyser, see AnalyseEvents help file. 
+
+argument:: clock
+An ExternalClock. This clock will be used to determine the beat time of any received events, with associated quantisation properties as set for this class. 
+
+examples::
+
+code::
+
+s=Server.default;
+
+a=AnalyseEventsDatabase(10, 1, s);
+
+//on my system bus 8 is the first audio in
+a.analyse(8, 77); 
+
+Post << a.list << nl; 
+
+a.pause;
+a.resume;
+
+a.list.first
+
+
+(
+var data;
+
+data= a.list.first;
+Synth(\AEPlayBuf++(a.numChannels),[\outbus,0, \bufnum, a.soundbuf.bufnum, \startPos, data[1], \length, data[2]]);
+)
+
+//using the List in a Task
+(
+t=Task({    
+    var data;
+    
+    inf.do({    
+        
+        data= a.list.choose; //use most recently collected
+        
+        4.do {if(data.notNil,{Synth(\AEPlayBuf++(a.numChannels),[\bufnum, a.soundbuf.bufnum, \startPos, data[1], \length, data[2]]);}); 0.125.wait;};
+        
+    }); 
+});
+)
+
+t.start;
+t.stop;
+
+
+a.stop;
+
+
+
+
+//rhythm transcription, must pass in a clock
+s=Server.default;
+
+c=ExternalClock(2.3).play;
+
+a=AnalyseEventsDatabase(10,1,s);
+
+//makes a Group for me
+a.analyse(8,77,nil,0.34,c);
+
+a.findevents(c.lastBeat-4,c.lastBeat-1).postln;
+
+a.pause;
+a.resume;
+
+//look for events in range, convert them to an ioi rhythm in seconds
+//could ask for events that just happened (Main.elapsedTime) but won't be any, since there is a delay of the length of an event
+//for the UGen to tell the database to update 
+//note that the start time is further in the past, the endtime is more recent. Events are stored in the database by the absolute time of their discovery (onset time)
+//the functions return data as [offset,[list of iois terminated by nil, empty if none in range]]
+Post << a.getAbsoluteRhythm(Main.elapsedTime-3.0, Main.elapsedTime-1.0) << nl;
+
+//find rhythm for four beats before the most recent
+//The first element in the IOI array will be the beat difference between the startbeat and the first event in the region, except where zero
+Post << a.getRhythm(c.lastBeat-5,c.lastBeat-1) << nl;
+
+//find rhythm with respect to an arbitrary (phase, period).
+//The first element in the IOI array will be the beat difference between the starttime and the first event in the region, except where zero
+Post << a.reconsiderRhythm(Main.elapsedTime-3.0, Main.elapsedTime-1.0, 0.25, 2, 0.25) << nl;
+
+
+a.stop;
+
+
+
+
+
+//example sing along to a 4 to the floor with your rhythm during some previous time becoming the next synth line
+
+(
+SynthDef(\kicksynth,{
+Out.ar(0,SinOsc.ar(100,pi*0.5,0.5).clip2(0.2)*2*Line.kr(1,0,0.01,doneAction:2));
+}).store;
+
+SynthDef(\leadsynth,{
+Out.ar(0,Resonz.ar(Saw.ar(400,0.5).clip2(0.1)*4*Line.kr(1,0,0.1,doneAction:2),Line.kr(2000,400,0.1),0.2));
+}).load(s);
+
+)
+
+//test Synths
+Synth(\kicksynth);
+Synth(\leadsynth);
+
+//setup 
+(
+s=Server.default;
+
+t=TempoClock(2);
+
+c=ExternalClock(t).play(quant:1.0);
+
+a=AnalyseEventsDatabase(10,1,s);
+
+//makes a Group for me
+a.analyse(8,77,nil,0.34,c);
+)
+
+//run click track so you know what the timing is
+(
+t.schedAbs(t.beats.ceil+(1.0-(s.latency*t.tempo)), {
+    
+        //args.postln;
+        s.sendBundle(s.latency,["/s_new",\kicksynth, s.nextNodeID, 1, 1]);
+        
+        1.0;
+});
+)
+
+//this also works
+//Pbind(\dur, 1.0, \instrument, \kicksynth).playExt(c);
+
+
+//rhythmic imitation canon at 4 beats- need to compensate for s.latency in scheduling so scheduled in time to the beat
+(
+t.schedAbs(t.beats.ceil+(1.0-(s.latency*t.tempo)), {
+    var nextrhythm, seq;
+    
+    //get nextrhythm from audio in analysis, this works out to 4 to 2 beats ago
+    nextrhythm= a.getRhythm(c.lastBeat-3,c.lastBeat-1, false); //no quantisation
+    
+    nextrhythm.postln;
+    
+    if(nextrhythm[1].notEmpty,{
+        
+        seq=Pseq(nextrhythm[1],1).asStream;
+        
+        t.sched(nextrhythm[0],{
+            
+            s.sendBundle(s.latency,["/s_new",\leadsynth, s.nextNodeID, 1, 1]);
+            
+            seq.next;
+        });
+        
+    });
+    
+    2.0
+});
+)
+
+a.threshold_(0.5);
+
+
+a.stop;
+c.stop;
+
+
+
+//with GUI display of histogram
+//running histogram of events each bar used to make a probabilistic rhythm machine
+
+//setup 
+(
+s=Server.default;
+
+t=TempoClock(2);
+
+c=ExternalClock(t).play(quant:1.0);
+
+a=AnalyseEventsDatabase(10,1,s);
+
+//makes a Group for me
+a.analyse(8,77,nil,0.34,c);
+)
+
+//run click track so you know what the timing is
+(
+t.schedAbs(t.beats.ceil+(1.0-(s.latency*t.tempo)), {
+    
+        s.sendBundle(s.latency,["/s_new",\kicksynth, s.nextNodeID, 1, 1]);
+        
+        1.0;
+});
+)
+
+//update decaying histogram each 4 beats to form an idea of when to strike
+(
+var grid, decayfactor, count;
+var w, msview;
+grid=Array.fill(16, {0.0});
+
+count=0;
+
+decayfactor=0.5;
+
+w=SCWindow("rhythm histogram",Rect(100,500,170,160));
+
+msview=SCMultiSliderView(w,Rect(5,5,160,150));
+
+msview.value_(grid);
+msview.thumbSize_(10.0);
+msview.strokeColor_(Color.blue);
+msview.fillColor_(Color.blue);
+msview.drawLines(false);
+msview.gap_(0);
+
+w.front;
+
+//-0.1 so always updates ahead of next scheduler, but not so much as to impinge on last semiquaver of previous cycle
+t.schedAbs(t.beats.ceil+(1.0-(s.latency*t.tempo)-0.1), {
+    var nextrhythm, newgrid, cumul, iois, index;
+    
+    //get nextrhythm from audio in analysis, this works out to 6 to 2 beats ago
+    nextrhythm= a.getRhythm(c.lastBeat-5,c.lastBeat-1, true); //with quantisation
+    
+    newgrid=Array.fill(16, {0.0});
+
+    iois= nextrhythm[1];
+    
+    //get event locations in a grid of 16
+    if(iois.notEmpty,{
+        
+        cumul=nextrhythm[0];
+        
+        //[cumul,iois].postln;
+        
+        iois.do({arg val;
+        
+        //quantise is every 0.25 by default
+        index= min((cumul*4).round(1.0).asInteger,15);
+        
+        //[cumul,index].postln;
+        
+        newgrid[index]=1.0;
+        
+        if(val.notNil,{cumul=cumul+val;});
+        
+        });
+                
+    });
+    
+    grid=(0.5*newgrid)+(decayfactor*grid);
+    
+    {msview.value_(grid);}.defer;
+    
+    4.0
+});
+
+
+//another process to spawn events from the current grid, delayed by a bar to sync up correctly 
+t.schedAbs(t.beats.ceil+(3.0-(s.latency*t.tempo)), {
+
+//[\grid,grid[count], count].postln;
+
+if(grid[count].coin,{
+
+    s.sendBundle(s.latency,["/s_new",\leadsynth, s.nextNodeID, 1, 1]);
+            
+});
+
+count=(count+1)%16;
+
+0.25
+});
+
+)
+
+
+a.threshold_(0.5);
+
+a.stop;
+c.stop;
+
+::

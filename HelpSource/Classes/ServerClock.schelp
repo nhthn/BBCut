@@ -1,0 +1,161 @@
+class:: ServerClock
+summary:: A server-controlled clock
+categories:: Libraries>BBCut2
+related:: Overviews/BBCut2
+
+description::
+
+A scheduling clock driven from OSC Triggers from the Server. Allows the use of a UGen as a beat tracker controlling scheduling. This class assumes a UGen running on the Server, sending OSC trig messages at each beat. 
+
+instancemethods::
+
+method:: play
+
+argument:: trigID
+Trigger OSC message ID number. 
+argument:: s
+Server. 
+
+method:: stop
+A ServerClock must be stopped to remove the OSC responder that reacts to triggers sent from the Server. 
+
+examples::
+
+code::
+
+s=Server.default;
+s.latency=0.05; //must be small compared to half beat size in tempo
+
+(
+//react to an Impulse driven clock on the Server, SendTrig with ID of 100
+SynthDef(\help_ServerClock,{arg tempo=2.3, beepvol=0.0, trigID=100;
+    var clocktick, beep;
+    
+    clocktick=Impulse.ar(tempo);
+    
+    beep= SinOsc.ar(440,0,0.1)*Decay.ar(clocktick,0.1);
+    
+    Out.ar(0,Pan2.ar(beepvol*beep,0.0));
+    
+    //trig from clock, trigID 100, always pass current tempo as parameter 
+    SendTrig.ar(clocktick,trigID,tempo);    //sends with ID of 100 matching what clock expects
+}).send(s);
+)
+
+a=Synth(\help_ServerClock);
+
+//set up a ServerClock running off of these triggers
+c=ServerClock.new.play(100,s);
+
+//run a bbcut from it
+b=BBCutBuffer("sounds/break",8);
+
+d=BBCut2(CutBuf2(b)).play(c);
+
+a.set(\tempo,2.5);
+a.set(\tempo,1.7);
+
+//triggers stop
+a.free;
+
+//continue triggers
+a=Synth(\help_ServerClock)
+
+c.stop; //stop and free OSC responder.
+
+d.free; //free resources
+
+//frees clock
+a.free;
+
+
+
+
+
+//now a beat tracking example
+//change the ~source line with a path to some song file you want to track to load from your hard drive
+
+(
+var trackbus, trackgroup;
+
+s.latency=0.05;
+
+//clear any existing OSCresponder
+OSCresponder.all.do({arg val; if(val.cmdName=='/tr',{OSCresponder.remove(val)}); });
+
+//run a line at a time
+~clock= ServerClock.new;    
+    
+~clock.play(100,s); //will wait on trigID 100
+
+Routine.run({
+            
+~buffers= BBCutBuffer.array(["sounds/break","sounds/break2"],[8,4]);
+
+//choose some file you want to track off your hard drive
+~source=Buffer.read(s,"/Volumes/data/stevebeattrack/samples/100.wav");
+ 
+~trackbus=Bus.audio(s,1);
+
+trackgroup= Group.before(Node.basicNew(s,1));
+
+//run a beat tracker on the Server which sends the appropriate OSC message
+~tracksynth= SynthDef(\help_bbinduct,{arg vol=1.0, beepvol=0.0, lock=0;
+var trackb,trackh,trackq,tempo;
+var source, beep;
+
+source= PlayBuf.ar(1,~source.bufnum,1.0,1,0,1);
+
+//see AutoTrack help file
+#trackb,trackh,trackq,tempo=AutoTrack.kr(source, lock);
+
+beep= SinOsc.ar(1000,0.0,Decay.kr(trackb,0.1));
+
+Out.ar(~trackbus.index,source);
+
+Out.ar(0,Pan2.ar((vol*source)+(beepvol*beep),0.0));
+
+SendTrig.kr(trackb,100,tempo);  //sends with ID of 100 matching what clock expects
+
+}).play(trackgroup);
+
+});
+
+)
+
+//cutters will run by default in Node.basicNew(s,1), so rendering order safe
+
+//will be added to run on this clock as soon as made, you'll hear from the next beat
+a=BBCut2(CutBuf2(~buffers[0],0.3), ChooseCutProc(1,2)).play(~clock);
+
+b=BBCut2(CutBuf2(~buffers[1],0.5, dutycycle:0.3), BBCutProc11.new).play(~clock);
+
+~tracksynth.set(\vol,0.1);
+
+~tracksynth.set(\beepvol,0.0);
+
+~store=Buffer.alloc(Server.default,44100,1);
+
+//stream cut the source with respect to the inferred beat
+c=BBCut2(CutStream1(~trackbus.index,~store), ChooseCutProc(0.25,4)).play(~clock);
+
+//lock in to a state that is working
+~tracksynth.set(\lock,1.0);
+
+//remove lock (ie track again)
+~tracksynth.set(\lock,0.0);
+
+
+
+a.end;
+b.end;
+c.stop;
+
+~store.free;
+
+//remove everything and terminate clock
+~clock.stop;
+
+~tracksynth.free;
+
+::
