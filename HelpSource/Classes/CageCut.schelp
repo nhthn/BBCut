@@ -1,0 +1,58 @@
+class:: CageCut
+summary:: Automatic breakbeat cutting algorithm inspired by John Cage
+categories:: Libraries>BBCut2
+related:: Overviews/BBCut2
+
+description::
+
+A cut procedure simulating John Cage's 'square root' form, or something akin to recursive subdivision. 
+
+classmethods::
+
+method:: new
+Create a CageCut object with the given parameters.
+
+argument:: phraselength
+Choose a new phraselength. You can pass a function, which will be called at 
+each new phrase. 
+argument:: subdivfunc
+Anything that returns an array of subdivisions when .value is called on it. (This array is normalizeSummed so it always adds up to 1.0). These subdivisions are applied once recursively, ie if subdivfunc was [0.5,0.25,0.25] the output blocks would be phraselength*[[0.25,0.125,0.125],[0.125,0.0625,0.0625],[0.125,0.0625,0.0625]].
+argument:: permutefunc
+A function which takes an array (being the cuts in a block) and returns some permutation of it. The default is just to return the input without any scrambling or other operations. 
+
+examples::
+
+code::
+
+//you must have run this line before any of the examples below
+f= BBCutBuffer("sounds/break",8); 
+
+TempoClock.default.tempo_(2.3);
+
+//default
+a=BBCut2(CutBuf1(f),CageCut.new).play;
+
+a.end;
+
+//weirder
+a=BBCut2(CutBuf1(f),CageCut(8.0,[0.2,0.3,0.4,0.1])).play;
+
+a.end;
+
+//using your own permutation function
+a=BBCut2(CutBuf1(f),CageCut(16.0,[1,3,3,1,1,2,2,1],{arg array; array.scramble; })).play;
+
+a.end;
+
+//lots of stuff happening
+a=BBCut2([CutBuf2(f, pbsfunc:CutPBS2.new),CutMod1(1.0,100,1.3,1.3)],CageCut({[16.0,8.0,4.0].wchoose([0.6,0.3,0.1])},[4,1,2,1,4,2,2],{arg array; if(0.2.coin,{array.reverse;},{array}); })).play;
+
+a.end;
+
+
+//old jazzy backdrop
+a=BBCut2([CutBuf2(f, 0.3),CutBPF1.new],CageCut({[16.0,8.0,4.0].wchoose([0.6,0.3,0.1])},[4,3,2,5,2,1,7],{arg array; if(0.2.coin,{array.scramble;},{array.permute(10.rand)}); })).play;
+
+a.end;
+
+::
