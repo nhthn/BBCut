@@ -21,6 +21,9 @@ Number of beats in the soundfile, also used to estimate the source tempo in beat
 argument:: eventlist
 Array giving a segmentation of the sound file measured in sample frames. The class can construct one for you if you pass in a granularity, ie 0.5 for eighth note cuts imposed throughout the soundfile length- see below. If left nil the default is an even segmentation in eighth notes. 
 
+argument:: action
+A function to be evaluated when the buffer is done loading. This instance of BBCutBuffer is passed as an argument.
+
 method:: array
 
 argument:: filenames
