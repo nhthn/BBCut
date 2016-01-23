@@ -328,7 +328,7 @@ Segmentation {
 		//"sounds/SCsamp/breaks/drumtimemono.wav"
 	
 		//"NRTanalysis.wav"
-		Score.recordNRT(x, "NRTanalysis", nil, nil,44100, "WAV", "int16", o); // synthesize
+		Score.recordNRT(x, "NRTanalysis", PathName.tmp +/+ "NRTAnalysis.wav", nil, 44100, "WAV", "int16", o); // synthesize
 				
 		//"afterwards?".postln 
 		//may need fine tuning how long is waited, works on my machine
