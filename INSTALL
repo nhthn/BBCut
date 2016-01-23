@@ -1,4 +1,4 @@
-To install, copy this directory into Platform.userExtensionDir.
+To install, copy this directory into Platform.userExtensionDir. sc3-plugins is required for the ugens `AutoTrack` and `AnalyseEvents2`.
 
 The main help page is the file BBCut2Wiki.help.rtf. Explore the help files by clicking and trying examples.
 
