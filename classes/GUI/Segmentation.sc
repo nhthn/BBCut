@@ -125,7 +125,7 @@ Segmentation {
 			});
 		
 			if((key<123) && (key>96),{
-			if(((buffer.notNil) && (onsets.notNil)) ,{
+			if(((buffer.notNil) && (onsets.notNil) and: { onsets.size != 0 }) ,{
 				key=key-97;
 				last=(key+keyoffset)%(onsets.size);
 				
