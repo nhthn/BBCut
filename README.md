@@ -14,10 +14,3 @@ The ugens AutoTrack and AnalyseEvents2 are now in sc3-plugins, so they are no lo
     make
 
 This step is also optional. No other parts of BBCut2 depend on this ugen.
-
-## Using both bbcut1 and 2 ##
-
-If you already have bbcut1, you can use both bbcut and bbcut2 on one machine, but must avoid a few class duplications:
-
-- remove the bbcutprocs folder from the bbcut1 classes folder. 
-- remove the DDSlider.sc file from the UI subfolder of part of the bbcut1 classes folder.
