@@ -102,10 +102,12 @@ section:: Changelog
 Here are the differences between this fork and the most recent "official" release:
 
 list::
-## Documentation has been moved to the new help system.
-## The ugens AnalyseEvents2 and AutoTrack have been removed since they are now in sc3-plugins.
-## DrumTrack is now cross-platform.
-## code::action:: argument added to link::Classes/BBCutBuffer::.
+## Moved documentation to the new help system.
+## Removed AnalyseEvents2 and AutoTrack since they are now in sc3-plugins.
+## Made DrumTrack cross-platform.
+## Added code::action:: argument to link::Classes/BBCutBuffer::.
+## Renamed example sounds with .aiff extensions.
+## Fixed link::Classes/Segmentation:: bitrot.
 ::
 
 section:: History
