@@ -5,101 +5,101 @@
 //just a simple solution for now, would ultimately replace the cut composers with Event, Pbind style system
 
 CutProcStream : Stream {
-	var <>proc;
-	var phraseprop, offset, isroll; //backwards compatability
- 	var cache; 
- 	var blocklength, blocknum,phrasepos, cutnum; //block data 
- 	
-	*new { arg proc;
-		^super.new.proc_(proc).init;
-	}
-	
-	init {
-		cache=LinkedList.new;  
-		
-		//done for backwards compatability purposes
-		proc.attachsynth(this);
-	}
+    var <>proc;
+    var phraseprop, offset, isroll; //backwards compatability
+    var cache;
+    var blocklength, blocknum,phrasepos, cutnum; //block data
+
+    *new { arg proc;
+        ^super.new.proc_(proc).init;
+    }
+
+    init {
+        cache=LinkedList.new;
+
+        //done for backwards compatability purposes
+        proc.attachsynth(this);
+    }
 
 
-//Pbind Pattern
+    //Pbind Pattern
 
-	next {arg inval;
-		var nextcut;
-		
-		if(cache.isEmpty, {
-		this.refillcache; 
-		}); 
-		
-		nextcut=cache.popFirst;
-		
-		inval.use({
-		
-		~dur= nextcut[0]; //ioi
-		~sustain= nextcut[1]/nextcut[0];
-		~offset= (nextcut[2]) ? offset; //usually nil because offsets determined by cut synthesiser 
-		~amp= nextcut[3]*0.1; //Julian R's comment: default to 0.1 as max volume
-		~blocklength= blocklength;
-		~blocknum= blocknum;
-		~cutnum=cutnum;
-		~phrasepos= phrasepos;
-		~phraseprop= phraseprop;
-		~isroll= isroll;
-		});
-		
-		cutnum=cutnum+1;
-			
-		^inval;
-	}
-	
-		//if cache empty
-	refillcache {
-		var cuts;
-		
-		//reset offset to receive another
-		if(offset.notNil,{offset=nil;});
+    next {arg inval;
+        var nextcut;
 
-		proc.chooseblock;
-		
-		cuts= proc.cuts;
-		
-		//backwards compatability
-		if(not(cuts[0].isKindOf(Array)),{
-		
-		cuts= Array.fill(cuts.size,{arg i; [cuts[i],cuts[i], nil,1.0]}); 
-		});
-		
-		cache= cache++cuts; 
-		
-		blocklength=proc.blocklength; //in beats
-		blocknum=proc.block;
-		phrasepos=proc.phrasepos-blocklength; //this is phrasepos at start of block, for offset calc
-		
-		cutnum=0;
-	}
-	
-		//backwards compatability, not passed on to cutgroups, cutsynths, may remove- requires BBCutProc revision though
-	// doesn't make sense now since choosing block is 
-	//independent of rendering time
-	updatephrase { arg phrase, currphraselength;
-	}
-	
-	chooseoffset{ arg phrasepos,beatspersubdiv,currphraselength;
-	}
+        if(cache.isEmpty, {
+            this.refillcache;
+        });
 
-	updateblock { arg block,pp,cuts,ir;
-	
-	phraseprop= pp;
-	isroll=ir;
-	
-	}
-	
-	//setoffset backwards compat for older cut procs
-	setoffset {
-	arg prop,phraselength;
-		
-		offset=prop;
-	}
+        nextcut=cache.popFirst;
+
+        inval.use({
+
+            ~dur= nextcut[0]; //ioi
+            ~sustain= nextcut[1]/nextcut[0];
+            ~offset= (nextcut[2]) ? offset; //usually nil because offsets determined by cut synthesiser
+            ~amp= nextcut[3]*0.1; //Julian R's comment: default to 0.1 as max volume
+            ~blocklength= blocklength;
+            ~blocknum= blocknum;
+            ~cutnum=cutnum;
+            ~phrasepos= phrasepos;
+            ~phraseprop= phraseprop;
+            ~isroll= isroll;
+        });
+
+        cutnum=cutnum+1;
+
+        ^inval;
+    }
+
+    //if cache empty
+    refillcache {
+        var cuts;
+
+        //reset offset to receive another
+        if(offset.notNil,{offset=nil;});
+
+        proc.chooseblock;
+
+        cuts= proc.cuts;
+
+        //backwards compatability
+        if(not(cuts[0].isKindOf(Array)),{
+
+            cuts= Array.fill(cuts.size,{arg i; [cuts[i],cuts[i], nil,1.0]});
+        });
+
+        cache= cache++cuts;
+
+        blocklength=proc.blocklength; //in beats
+        blocknum=proc.block;
+        phrasepos=proc.phrasepos-blocklength; //this is phrasepos at start of block, for offset calc
+
+        cutnum=0;
+    }
+
+    //backwards compatability, not passed on to cutgroups, cutsynths, may remove- requires BBCutProc revision though
+    // doesn't make sense now since choosing block is
+    //independent of rendering time
+    updatephrase { arg phrase, currphraselength;
+    }
+
+    chooseoffset{ arg phrasepos,beatspersubdiv,currphraselength;
+    }
+
+    updateblock { arg block,pp,cuts,ir;
+
+        phraseprop= pp;
+        isroll=ir;
+
+    }
+
+    //setoffset backwards compat for older cut procs
+    setoffset {
+        arg prop,phraselength;
+
+        offset=prop;
+    }
 
 
 }

@@ -2,17 +2,17 @@
 
 //Extensions to support playing on an ExternalClock
 
- + Pattern {
- 
- 	//quant will be ignored
-	playExt { arg clock, protoEvent, quant=1.0;
-	
-	//"not here".postln;
-		^this.asEventStreamPlayer2(protoEvent).play(clock, false, quant)
-	}
++ Pattern {
 
-	asEventStreamPlayer2 { arg protoEvent;
-		^EventStreamPlayer2(this.asStream, protoEvent);
-	}
- 
- }
+    //quant will be ignored
+    playExt { arg clock, protoEvent, quant=1.0;
+
+        //"not here".postln;
+        ^this.asEventStreamPlayer2(protoEvent).play(clock, false, quant)
+    }
+
+    asEventStreamPlayer2 { arg protoEvent;
+        ^EventStreamPlayer2(this.asStream, protoEvent);
+    }
+
+}

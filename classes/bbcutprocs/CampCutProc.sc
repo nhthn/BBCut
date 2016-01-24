@@ -4,71 +4,71 @@
 
 //only really makes sense for BBCutSynth which responds to setoffset
 
-CampCutProc : BBCutProc 
+CampCutProc : BBCutProc
 {
-var offsetlist,bells;
-var campstream;
-var bellbeat;
+    var offsetlist,bells;
+    var campstream;
+    var bellbeat;
 
-*new
-{
-arg campstream,phraselength=4.0;
+    *new
+    {
+        arg campstream,phraselength=4.0;
 
-^super.new(0.5,phraselength).initCampCutProc(campstream);
-}
+        ^super.new(0.5,phraselength).initCampCutProc(campstream);
+    }
 
-initCampCutProc
-{
-arg cs,pf=4.0;
+    initCampCutProc
+    {
+        arg cs,pf=4.0;
 
-campstream=cs;
+        campstream=cs;
 
-bells= campstream.bells;
-offsetlist= List.series(bells,0,1);
-block=bells;
-}
+        bells= campstream.bells;
+        offsetlist= List.series(bells,0,1);
+        block=bells;
+    }
 
-chooseblock
-{
-var temp,perm;
+    chooseblock
+    {
+        var temp,perm;
 
-if(bells==block,
-{	//new phrase
-this.newPhraseAccounting;
+        if(bells==block,
+            {	//new phrase
+                this.newPhraseAccounting;
 
-//bellbeat=currphraselength/bells;
-//fixed block length, bells blocks per phrase
-blocklength=currphraselength/bells;
+                //bellbeat=currphraselength/bells;
+                //fixed block length, bells blocks per phrase
+                blocklength=currphraselength/bells;
 
-//find next offsetlist
-//calculate offset sequence
-perm= campstream.next; //permdata.at(method.next);
+                //find next offsetlist
+                //calculate offset sequence
+                perm= campstream.next; //permdata.at(method.next);
 
-//calls to swap, permute
-perm.do(
-{
-arg val,i;
-//involutions always swap val and one above val
-offsetlist.swap(val,val+1);
-});
+                //calls to swap, permute
+                perm.do(
+                    {
+                        arg val,i;
+                        //involutions always swap val and one above val
+                        offsetlist.swap(val,val+1);
+                });
 
-});
+        });
 
-//render block
-		
-//always new slice/roll to calculate
-cuts=[blocklength];
+        //render block
 
-this.updateblock; 
+        //always new slice/roll to calculate
+        cuts=[blocklength];
 
-//to minimise floating point errors?
-//if(block==(bells-1),{blocklength=currphraselength- phrasepos;});
+        this.updateblock;
 
-//proportionate- will be taken as percentage through sample
-bbcutsynth.setoffset((offsetlist.at(block))/bells); 
+        //to minimise floating point errors?
+        //if(block==(bells-1),{blocklength=currphraselength- phrasepos;});
 
-this.endBlockAccounting;
-}
+        //proportionate- will be taken as percentage through sample
+        bbcutsynth.setoffset((offsetlist.at(block))/bells);
+
+        this.endBlockAccounting;
+    }
 
 
 }
