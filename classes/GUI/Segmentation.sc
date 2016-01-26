@@ -32,20 +32,28 @@ Segmentation {
     }
 
     initSegmentation {|server|
-        var tmp;
+        var margin = 10;
+        var viewwidth = 800;
+        var viewheight = 90;
+        var evheight = 30;
+        var controlsheight = 30;
+        var sliderwidth = 300;
+        var buttonwidth = 70;
+        var windowwidth = margin * 2 + viewwidth;
+        var windowheight = margin * 2 + viewheight + evheight + controlsheight;
 
-        s= server ?? {Server.default};
+        s = server ?? {Server.default};
 
-        loadflag=false;
+        loadflag = false;
 
         //allow for up to 30 seconds at 15 events/sec 15*10*30+2
-        analysisbuffer= Buffer.alloc(s,4502,1); //can't have more thean 255 events, expand later
+        analysisbuffer = Buffer.alloc(s,4502,1); //can't have more thean 255 events, expand later
 
-        viewsize=800;
+        viewsize = 800;
 
-        w=  Window("onset detection GUI", Rect(50,500,viewsize+50,200));
+        w = Window("onset detection GUI", Rect(50, 500, windowwidth, windowheight));
 
-        overview=  SoundFileView.new(w, Rect(5,5, viewsize, 90));
+        overview = SoundFileView.new(w, Rect(margin, margin, viewwidth, viewheight));
 
         f = SoundFile.new;
 
@@ -58,7 +66,7 @@ Segmentation {
 
         overview.drawsWaveForm_(true);
 
-        eventview = EnvelopeView(w, Rect(5, 105, viewsize, 30));
+        eventview = EnvelopeView(w, Rect(margin, margin + viewheight, viewwidth, evheight));
 
         eventview.thumbWidth_(3.0); //setProperty(\thumbWidth, 3.0);
         eventview.thumbHeight_(30.0); //setProperty(\thumbHeight, 30.0);
@@ -67,34 +75,53 @@ Segmentation {
         eventview.strokeColor_(Color.red);
         eventview.selectionColor_(Color.blue);
 
-        nametext= StaticText(w, Rect(5, 155, 400,30)).font_(Font(\HelveticaNeue, 12)).string_(" ");
+        nametext = StaticText(
+            w,
+            Rect(
+                margin, margin + viewheight + evheight,
+                viewwidth - sliderwidth - (buttonwidth * 3), controlsheight
+            )
+        ).font_(Font(\HelveticaNeue, 12)).string_(" ");
 
-        loadb= Button(w, Rect(405, 155, 70,30));
-        loadb.states= [["load",Color.blue]];
+        loadb = Button(w,
+            Rect(
+                margin + viewwidth - sliderwidth - (buttonwidth * 3), margin + viewheight + evheight,
+                buttonwidth, controlsheight
+            )
+        );
+        loadb.states = [["Load"]];
 
         loadb.action_({
-
-            Dialog.openPanel({arg path;
-
+            Dialog.openPanel({ arg path;
                 //no checking safety, just tries to load as best it can
                 this.load(path);
-
             });
-
         });
 
-        analysisb= Button(w, Rect(475, 155, 70,30));
-        analysisb.states= [["analyse",Color.blue]];
+        analysisb = Button(
+            w,
+            Rect(
+                margin + viewwidth - sliderwidth - (buttonwidth * 2), margin + viewheight + evheight,
+                buttonwidth, controlsheight
+            )
+        );
+        analysisb.states = [["Analyse"]];
 
-        analysisb.action_({ if(loadflag,{this.analyse;}); });
+        analysisb.action_({ if(loadflag, { this.analyse; }); });
         //
         //		analysisNRTb= SCButton(w, Rect(555, 155, 70,30));
         //		analysisNRTb.states= [["NRT",Color.blue]];
         //
         //		analysisNRTb.action_({if(loadflag,{this.analyseNRT;});});
         //
-        postb= Button(w, Rect(625, 155, 70,30));
-        postb.states= [["post",Color.blue]];
+        postb = Button(
+            w,
+            Rect(
+                margin + viewwidth - sliderwidth - buttonwidth, margin + viewheight + evheight,
+                buttonwidth, controlsheight
+            )
+        );
+        postb.states = [["Post"]];
 
         //output in format required by bbcut2 for CutBuf3
         postb.action_({
@@ -105,7 +132,17 @@ Segmentation {
             Post << outputarray <<nl;  //? 1.0
         });
 
-        threshslid= DDSlider(w, Rect(700, 155, 100,50),"threshold",0.0,1.0,\lin,0.01,0.34);
+        threshslid = EZSlider(
+            w,
+            Rect(
+                margin + viewwidth - sliderwidth, margin + viewheight + evheight,
+                sliderwidth, controlsheight
+            ),
+            "Threshold",
+            \unipolar,
+            initVal: 0.14,
+            labelWidth: 80
+        );
 
         keyoffset=0;
 
