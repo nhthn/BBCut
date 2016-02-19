@@ -1,13 +1,13 @@
-class:: CutPBS1
+class:: SQPushFXPitch2
 summary:: CutBuf playback rate algorithm
 categories:: Libraries>BBCut2
 related:: Overviews/BBCut2
 
 description::
 
-CutPBS1 is intended to be used in the pbsfunc (playback speed func) parameter of link::Classes/CutBuf2:: and link::Classes/CutBuf3::. The first repeat of each block has rate 1, and the following repeats follow a geometric sequence.
+SQPushFXPitch2 is intended to be used in the pbsfunc (playback speed func) parameter of link::Classes/CutBuf2:: and link::Classes/CutBuf3::. It is exactly the same as link::Classes/CutPBS1::, but only changes the rate sometimes, controlled by a probability argument.
 
-All arguments can be constant values, but they can also be anything that responds to .value. In the latter case, .value is called every blockt.
+All arguments can be constant values, but they can also be anything that responds to .value. In the latter case, .value is called every block.
 
 classmethods::
 
@@ -18,6 +18,9 @@ The common ratio of the geometric sequence. This should be between 0 and 1.
 
 argument:: directfunc
 If this is nonpositive, the pitch will go down. If positive, the pitch will go up. If nil, this defaults to a function that decides between -1 and 1.
+
+argument:: pbchance
+The probability that the pitch will be shifted at all.
 
 examples::
 
