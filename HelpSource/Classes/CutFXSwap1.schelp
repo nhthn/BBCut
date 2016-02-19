@@ -1,0 +1,31 @@
+class:: CutFXSwap1
+summary:: adds and removes random effects in a BBCut2
+categories:: Libraries>BBCut2
+related:: Overviews/BBCut2
+
+description::
+
+CutFXSwap1 randomly adds and removes instances of CutBRF1, CutBPF1, CutMod1, CutBit1, CutComb1, CutRev1 to the CutGroup it is in. Every second block in each phrase, CutFXSwap1 may remove and may add one of these.
+
+warning:: Don't put more than one CutFXSwap1 in a single CutGroup. ::
+
+classmethods::
+
+method:: new
+
+argument:: maxnumfx
+Controls the maximum number of effects.
+
+argument:: addchance
+Controls the probability that a new effect will be added.
+
+argument:: removechance
+Controls the probability that an effect will be deleted.
+
+examples::
+
+code::
+~buf = BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff", 8);
+
+BBCut2(CutGroup([CutBuf3(~buf, 0.3), CutFXSwap1(3, 0.5, 0.5)]), BBCutProc11()).play(2.5);
+::
