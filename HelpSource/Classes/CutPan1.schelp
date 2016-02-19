@@ -1,0 +1,24 @@
+class:: CutPan1
+summary:: CutMixer panning algorithm
+categories:: Libraries>BBCut2
+related:: Overviews/BBCut2
+
+description::
+
+CutPan1 is intended to be used in the panfunc parameter of link:: Classes/CutMixer ::. It pans each repeat in a way that wanders between the left and right channels. The formula is
+
+code::
+pan = previous_pan + (directfunc.value * outrate.value);
+::
+
+The pan is automatically clipped if it goes outside of the range [-1, 1].
+
+classmethods::
+
+method:: new
+
+argument:: directfunc
+A function, called every block, that determines the direction to change the pan. Defaults to a function that returns uniform random values between -1 and 1.
+
+argument:: outrate
+A float value that determines how quickly the pan should change. Defaults to 0.2. This can also be a function, in which case it is called every repeat.

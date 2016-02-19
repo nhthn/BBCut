@@ -1,0 +1,36 @@
+class:: RollAmplitude
+summary:: CutMixer amplitude algorithm
+categories:: Libraries>BBCut2
+related:: Overviews/BBCut2
+
+description::
+
+RollAmplitude is intended to be used in the ampfunc parameter of link:: Classes/CutMixer ::. It adds crescendos or diminuendos to rolls. The formula is
+
+code::
+amp[i] = (i / number_of_repeats) ** ampexp;
+::
+
+Non-rolls are unaffected.
+
+classmethods::
+
+method:: new
+
+argument:: ampdirect
+A function, called every block, that determines whether to crescendo or diminuendo. Crescendo if positive, dim if nonpositive.
+
+argument:: ampexp
+A float value that determines the exponent of the crescendo or diminuendo. 1 is linear, 2 is parabolic, 3 is cubic, etc. The default is 2. This can also be a function, in which case it is called every block.
+
+examples::
+
+code::
+~buf = BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff", 8);
+
+// cresc
+BBCut2(CutGroup([CutBuf3(~buf, 0.3), CutMixer(0, 1, RollAmplitude(1))]), WarpCutProc1()).play(2.5);
+
+// dim
+BBCut2(CutGroup([CutBuf3(~buf, 0.3), CutMixer(0, 1, RollAmplitude(-1))]), WarpCutProc1()).play(2.5);
+::
