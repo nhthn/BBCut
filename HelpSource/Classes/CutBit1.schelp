@@ -7,7 +7,7 @@ description::
 
 CutBit1 adds a bitcrusher and sample rate reducer effect to BBCut2. The number of bits is given by an arithmetic series for each block, and the sample rate is given by a geometric series for each block.
 
-All four arguments can be constant values, but they can also be anything that responds to .value. In the latter case, .value is called every block.
+All four arguments can be constant values, but they can also be anything that responds to .value. In the latter case, .value is called every block, with the block as an argument.
 
 classmethods::
 
