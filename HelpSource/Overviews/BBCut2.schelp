@@ -94,7 +94,10 @@ Cut Effects
 list::
 ## link::Classes/CutPan1:: - random walk panning
 ## link::Classes/RollAmplitude:: - make rolls fade in and out
-## link::Classes/CutBit1:: - bitcrusher effect
+## link::Classes/CutBit1:: - bitcrusher/decimator effect
+## link::Classes/CutComb1:: - comb filter effect
+## link::Classes/CutBPF1:: - bandpass filter effect
+## link::Classes/CutBRF1:: - band-reject filter effect
 ::
 
 Scheduling
