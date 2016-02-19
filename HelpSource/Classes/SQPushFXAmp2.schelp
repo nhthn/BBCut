@@ -1,0 +1,26 @@
+class:: SQPushFXAmp2
+summary:: CutMixer amplitude algorithm
+categories:: Libraries>BBCut2
+related:: Overviews/BBCut2
+
+description::
+
+SQPushFXAmp2 is intended to be used in the ampfunc parameter of link:: Classes/CutMixer ::. It randomly drops repeats according to a table of probabilities depending on the current position in the bar. It is apparently inspired by Squarepusher.
+
+classmethods::
+
+method:: new
+
+argument:: ampchance
+Controls the overall probability that a given repeat will be dropped.
+
+argument:: amptemplate
+An array of 16 float values from 0 to 1, each value corresponding to one sixteenth of the bar. The decision to drop a repeat is done by the following process: look up the current time in the table, multiply that probability by ampchance, and then drop the repeat with that probability.
+
+examples::
+
+code::
+~buf = BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff", 8);
+
+BBCut2(CutGroup([CutBuf3(~buf, 0.3), CutMixer(0, 1, SQPushFXAmp2(0.5))]), SQPusher1()).play(2.5);
+::
