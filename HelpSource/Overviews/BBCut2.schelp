@@ -89,7 +89,13 @@ list::
 ## link::Classes/CutTrace:: - (experimental) posts status, may be overridden later for OSC messaging of state to other apps
 ::
 
-There are a number of other FX units of various kinds which you'll see turning up in examples, but which don't have their own help files. 
+Cut Effects
+
+list::
+## link::Classes/CutPan1:: - random walk panning
+## link::Classes/RollAmplitude:: - make rolls fade in and out
+## link::Classes/CutBit1:: - bitcrusher effect
+::
 
 Scheduling
 
@@ -111,6 +117,7 @@ list::
 ## Added code::action:: argument to link::Classes/BBCutBuffer::.
 ## Renamed example sounds with .aiff extensions.
 ## Fixed link::Classes/Segmentation:: bitrot.
+## Documented some previously undocumented effects.
 ::
 
 section:: History
