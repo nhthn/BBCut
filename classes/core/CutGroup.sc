@@ -64,32 +64,23 @@ CutGroup {
 
         //always create an appropriate Mixer, stereo or mono?
 
-        //setup for cutsynths
-
-        //if no CutMixer make one so that defaults are heard on main out rather than in hidden bus
-        //but never do if was bus passed in
-        cutmixer=false; //if(b.notNil, true, false);
-
-        cutsynths.do({arg cutsynth;
-
-            if(cutsynth.isKindOf(CutMixer),{cutmixer=true;});
-
-            cutsynth.initCutSynth(this)});
-
-        //["true cutmixer?",cutmixer].postln;
-
-        if(not(cutmixer),{
-
-            cutmixer=CutMixer(0,1.0,1.0,0.0);
-            cutmixer.initCutSynth(this);
-
-            if(cutsynths.isKindOf(Array),{
-                cutsynths=cutsynths++[cutmixer];},{
-                cutsynths= [cutsynths,cutmixer]; //was a singular cutsynth derived object
-            });
-
+        // If cutsynths isn't an array, make it into a single-element array
+        if(cutsynths.isKindOf(Array).not, {
+            cutsynths = [cutsynths];
         });
 
+        //if there's no CutMixer, make one so that defaults are heard on main out rather than in hidden bus
+        if(cutsynths.any(_.isKindOf(CutMixer)).not, {
+            cutmixer = CutMixer(0, 1.0, 1.0, 0.0);
+            cutsynths = cutsynths.add(cutmixer);
+        });
+
+        //setup for cutsynths
+        // All cutsynths are initialized after adding the CutMixer.
+        // Some cutsynths such as CutFXSwap1 need to know the entire cutsynth list when they are initialized.
+        cutsynths.do({ |cutsynth|
+            cutsynth.initCutSynth(this);
+        });
 
     }
 
