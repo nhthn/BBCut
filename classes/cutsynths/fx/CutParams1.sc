@@ -74,7 +74,7 @@ CutPBS1 {
 		arg repeat,block;
 		
 		if(repeat>0, {
-			if(pbdirect<0, {	//reduce!
+			if(pbdirect<=0, {	//reduce!
 				currpbmult= currpbmult*pbmult;
 			},{
 				currpbmult= currpbmult*pbmultrecip
