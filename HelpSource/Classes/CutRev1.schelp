@@ -1,0 +1,30 @@
+class:: CutRev1
+summary:: BBCut2 reverb
+categories:: Libraries>BBCut2
+related:: Overviews/BBCut2
+
+description::
+
+CutRev1 adds a ring modulator effect to BBCut2
+
+All arguments can be constant values, but they can also be anything that responds to .value. In the latter case, .value is called every block, with the current block as an argument.
+
+classmethods::
+
+method:: new
+
+argument:: amount
+Reverb amplitude.
+
+argument:: send
+Reverb pre-gain.
+
+examples::
+
+code::
+~buf = BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff", 8);
+
+BBCut2(CutGroup([CutBuf3(~buf, 0.3), CutRev1(0.3, 0.3)]), BBCutProc11()).play(2.5);
+
+BBCut2(CutGroup([CutBuf3(~buf, 0.3), CutRev1({ 1.0.rand }, 0.3)]), BBCutProc11()).play(2.5);
+::
