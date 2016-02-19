@@ -94,10 +94,16 @@ Cut Effects
 list::
 ## link::Classes/CutPan1:: - random walk panning
 ## link::Classes/RollAmplitude:: - make rolls fade in and out
+## link::Classes/SQPushFXAmp2:: - randomly drop cuts, inspired by Squarepusher
+## link::Classes/CutPBS1:: - change the playback rate
+## link::Classes/SQPushFXPitch2:: - change the playback rate, inspired by Squarepusher
 ## link::Classes/CutBit1:: - bitcrusher/decimator effect
 ## link::Classes/CutComb1:: - comb filter effect
 ## link::Classes/CutBPF1:: - bandpass filter effect
 ## link::Classes/CutBRF1:: - band-reject filter effect
+## link::Classes/CutMod1:: - ring modulator effect
+## link::Classes/CutRev1:: - reverb effect
+## link::Classes/CutFXSwap1:: - add and remove random effects
 ::
 
 Scheduling
@@ -120,7 +126,8 @@ list::
 ## Added code::action:: argument to link::Classes/BBCutBuffer::.
 ## Renamed example sounds with .aiff extensions.
 ## Fixed link::Classes/Segmentation:: bitrot.
-## Documented some previously undocumented effects.
+## Documented all cut effects.
+## Fixed bug in CutFXSwap1 with automatically added CutMixer.
 ::
 
 section:: History

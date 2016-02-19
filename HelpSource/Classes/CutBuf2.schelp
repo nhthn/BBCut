@@ -20,7 +20,7 @@ argument:: offset
 A parameter to be passed to any cut playback position determining routine. The default chooseoffset method is in BBCutBuffer and the parameter is a single number from 0.0 to 1.0 giving the chance of a jump to a random event in the source.
 
 argument:: pbsfunc
-Playback speed (rate) control for grains. 
+Playback speed (rate) control for each cut. This can be a constant, or some other object that responds to .value, which is called for every repeat in a block. The first argument is the repeat number in the block, and the second argument is the block itself. If pbsfunc responds to .updateblock, that will also be called every block with the current block passed as an argument.
 
 argument:: dutycycle
 Ratio of duration to inter-onset-interval (IOI). 0.5 would mean that the duration of grains is only half the length between cut start times. 
