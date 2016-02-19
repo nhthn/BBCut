@@ -14,8 +14,10 @@ Copy break.aiff and break2.aiff from the BBCut source into code::Platform.userEx
 
 The ugens AutoTrack and AnalyseEvents2 are now in sc3-plugins, so they are no longer in this repository. The remaining ugen, link::Classes/DrumTrack::, is now cross-platform, and you can compile it like so:
 
-    cmake -DSC_PATH=/path/to/supercollider .
-    make
+code::
+cmake -DSC_PATH=/path/to/supercollider .
+make
+::
 
 This step is also optional. No other parts of BBCut2 depend on this ugen.
 
@@ -27,6 +29,16 @@ Tutorials
 
 list::
 ## link::Tutorials/BBCut2Examples::
+::
+
+Core/Misc
+
+list::
+## link::Classes/BBCut2:: - splices and reassembles audio
+## link::Classes/BBCutBuffer:: - represents a Buffer with some BBCut specific refinements (derived from Buffer)
+## link::Classes/BBCutBlock:: - Data for the current block is held in a BBCutBlock object
+## link::Classes/BBCutQuantise1:: - (experimental) imposition of a metric template onto the cut procedure output
+## link::Classes/BufSelector:: - swaps between an array of BBCutBuffers at phrase or block boundaries
 ::
 
 Machine Listening (can also be used independently of the cutters...)
@@ -86,15 +98,6 @@ list::
 ## link::Classes/ServerClock:: - running the controlling clock on the Server; shows beat tracking
 ## link::Classes/EventStreamPlayer2:: - support for using Streams with an ExternalClock
 ## link::Classes/CutProcStream:: - Use a cut procedure as a stream, and within Patterns library 
-::
-
-Core/Misc
-
-list::
-## link::Classes/BBCutBuffer:: - represents a Buffer with some BBCut specific refinements (derived from Buffer)
-## link::Classes/BBCutBlock:: - Data for the current block is held in a BBCutBlock object
-## link::Classes/BBCutQuantise1:: - (experimental) imposition of a metric template onto the cut procedure output
-## link::Classes/BufSelector:: - swaps between an array of BBCutBuffers at phrase or block boundaries
 ::
 
 section:: Changelog
