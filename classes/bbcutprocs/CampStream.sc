@@ -6,29 +6,29 @@
 //method is a stream itself
 CampStream : Stream
 {
-var <permdata,<method,<bells; 
-*new {arg permdata,method,bells;
+    var <permdata,<method,<bells;
+    *new {arg permdata,method,bells;
 
-^super.new.init(permdata,method,bells).reset;
-}
+        ^super.new.init(permdata,method,bells).reset;
+    }
 
-init
-{
-arg permd,meth,b;
+    init
+    {
+        arg permd,meth,b;
 
-permdata=permd;
-method=meth;
-bells=b;
-}
+        permdata=permd;
+        method=meth;
+        bells=b;
+    }
 
-next
-{
-^permdata.at(method.next)
-}
+    next
+    {
+        ^permdata.at(method.next)
+    }
 
-reset
-{
-method.reset;
-}
+    reset
+    {
+        method.reset;
+    }
 
 }
