@@ -53,14 +53,11 @@ BBCutProc
         this.endBlockAccounting;
     }
 
-    //don't call this.updateblock if infinite phrases
-    //just do call yourself as bbcutsynth.updateblock(block,0.0,cuts,0);
-    //since phrasepos/currphraselength is always zero for infinite phrases
+    // don't call this.updateblock if infinite phrases
+    // use phraseprop = 0 instead
+    // since phrasepos/currphraselength is always zero for infinite phrases
     updateblock
-    { |roll = nil|
-        roll.notNil.if {
-            "Outdated use of updateblock".throw;
-        };
+    {
         phraseprop = phrasepos / currphraselength;
     }
     
