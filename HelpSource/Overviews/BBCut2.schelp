@@ -2,9 +2,7 @@ title:: BBCut2
 summary:: Algorithmic audio splicing
 categories:: Libraries>BBCut2
 
-BBCut2 is a collection of SuperCollider UGens, classes and patches for automated event analysis, beat induction and algorithmic audio splicing. It is released as public open source under the GNU General Public License. It was developed by Nick M. Collins.
-
-This is not the original BBCut2, but a fork made by Nathan Ho. See below.
+BBCut2 is a collection of SuperCollider UGens, classes and patches for automated event analysis, beat induction and algorithmic audio splicing. It is released as public open source under the GNU General Public License. It was written by Nick M. Collins, and is maintained by Nathan Ho since 2016.
 
 section:: Setup
 
@@ -115,9 +113,7 @@ list::
 ## link::Classes/CutProcStream:: - Use a cut procedure as a stream, and within Patterns library 
 ::
 
-section:: Changelog
-
-Here are the differences between this fork and the most recent "official" release:
+section:: Changelog since 2.1
 
 list::
 ## Moved documentation to the new help system.
@@ -129,6 +125,7 @@ list::
 ## Documented all cut effects.
 ## Fixed bug in link::Classes/CutFXSwap1:: with automatically added link::Classes/CutMixer::.
 ## Removed duplicate classes CutAmp1 and CutPBS2 (use link::Classes/SQPushFXAmp2:: and link::Classes/SQPushFXPitch2::).
+## Imported missing class link::Classes/CampStream::.
 ::
 
 section:: History
@@ -145,7 +142,7 @@ list::
 ## 2.1 with full source 12/06/06
 ::
 
-Please contact nc272@cam.ac.uk with comments or bug reports (or bring them up on the sc-users list).
+Please ask questions or file bugs at https://github.com/snappizz/BBCut2/issues.
 
 section:: Acknowledgements
 
@@ -153,4 +150,4 @@ Version 2: Thanks to the many academic researchers whose work has been an inspir
 
 Version 1: Thanks to Charles Ames, MDX Sonic Arts, the SuperCollider List and James McCartney.
 
-Academic papers about bbcut are available from www.cus.cam.ac.uk/~nc272
+Academic papers about bbcut are available from http://composerprogrammer.com/research.html.
