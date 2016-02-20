@@ -19,7 +19,6 @@ BBCutProc
     var <cuts,<blocklength,<phrasepos,<beatspersubdiv;
     var <phraseprop, <offset, <roll;
     var <currphraselength,<phraselength;
-    var bbcutsynth;	//has to call updatephrase, updateblock from here
 
     *new
     {
@@ -64,16 +63,7 @@ BBCutProc
         };
         phraseprop = phrasepos / currphraselength;
     }
-
-    //will only attach relevant synth engine, in some special cases
-    //might need to attach a reference to a list- make a list class?
-    //done now via base
-    attachsynth
-    {
-        arg bbcs;
-        bbcutsynth=bbcs;
-    }
-
+    
     phraseover
     {
         ^if(((currphraselength-phrasepos)<0.00001),1,0)

@@ -67,12 +67,6 @@ MultiProc : BBCutProc
         this.endBlockAccounting;
     }
 
-    attachsynth
-    {
-        arg bbcs;
-        procs.do({arg val; val.attachsynth(bbcs)});
-    }
-
     phraseover
     {
         ^currproc.phraseover

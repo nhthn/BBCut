@@ -72,9 +72,6 @@ ChooseBlockProc : BBCutProc
         //correction for arithmetic errors
         cuts.put(repeats-1,temp+(blocklength-(temp*repeats)));
 
-        //offsets are now decided by cut renderer
-        bbcutsynth.chooseoffset(phrasepos,beatspersubdiv,currphraselength);
-
         this.updateblock;
 
         this.endBlockAccounting;

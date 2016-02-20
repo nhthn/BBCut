@@ -14,7 +14,7 @@ OffsetCP1 : BBCutProc
 {
     var dofunc, offsetscale, durationscale;
     //variables persisting between spawns
-    var beatsleft, nextblock, offset;
+    var beatsleft, nextblock;
 
     var temp,index;
 
@@ -93,9 +93,6 @@ OffsetCP1 : BBCutProc
 
 
         offset=(nextblock.at(1))*(offsetscale.value);
-
-        //offsets are now decided by cut renderer
-        bbcutsynth.setoffset(offset,currphraselength);
 
         this.updateblock;
 

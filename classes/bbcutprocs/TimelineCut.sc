@@ -83,12 +83,6 @@ TimelineCut : BBCutProc {
             blocklength= beatsleft;
         });
 
-        //if(offsetflag,{});
-        //bbcutsynth.setoffset(currform[block]);
-
-        //offsets are now decided by cut renderer
-        bbcutsynth.chooseoffset(phrasepos,beatspersubdiv,currphraselength);
-
         this.updateblock;
 
         this.endBlockAccounting;

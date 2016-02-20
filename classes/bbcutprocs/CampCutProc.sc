@@ -59,13 +59,13 @@ CampCutProc : BBCutProc
         //always new slice/roll to calculate
         cuts=[blocklength];
 
-        this.updateblock;
-
         //to minimise floating point errors?
         //if(block==(bells-1),{blocklength=currphraselength- phrasepos;});
 
         //proportionate- will be taken as percentage through sample
-        bbcutsynth.setoffset((offsetlist.at(block))/bells);
+        offset = (offsetlist.at(block))/bells;
+
+        this.updateblock;
 
         this.endBlockAccounting;
     }

@@ -109,11 +109,9 @@ ChooseCutProc : BBCutProc
             }
         );
 
+        roll = rollon;
 
-        //offsets are now decided by cut renderer
-        bbcutsynth.chooseoffset(phrasepos,beatspersubdiv,currphraselength);
-
-        this.updateblock(rollon);
+        this.updateblock;
 
         this.endBlockAccounting;
     }

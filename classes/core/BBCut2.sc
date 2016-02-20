@@ -54,9 +54,6 @@ BBCut2 {
 
         quantiser=q; //may be nil if no quantising to do
 
-        //done for backwards compatability purposes
-        proc.attachsynth(this);
-
         //scheduling queue preparation
         upto=0.0;
         cache=LinkedList.new;   //could use a PriorityQueue but cheaper to avoid any searches of position
@@ -155,10 +152,7 @@ BBCut2 {
 
         //other killed by garbage collector
         proc=p ?? {BBCutProc11.new};
-
-        //done for backwards compatability purposes
-        proc.attachsynth(this);
-
+        
         //will be initial lateness in first beat since should have scheduled at latency already
         upto=0.0;
         cache=LinkedList.new;

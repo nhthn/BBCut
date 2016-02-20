@@ -58,13 +58,13 @@ RecCutProc : BBCutProc
         blocklength=next.at(0)*primitive;
         cuts=[blocklength];
 
-        this.updateblock;
-
         //proportionate- will be taken as percentage through sample
-        bbcutsynth.setoffset((next.at(1).asFloat)/(rcd.subdiv));
+        offset = (next.at(1).asFloat)/(rcd.subdiv);
 
         //to minimise floating point errors?
         //if(block==(offsetlist.size-1),{blocklength=currphraselength- phrasepos;});
+
+        this.updateblock;
 
         this.endBlockAccounting;
     }

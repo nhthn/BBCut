@@ -149,10 +149,6 @@ SQPusher1 : BBCutProc
             blocklength= beatsleft;
         });
 
-
-        //offsets are now decided by cut renderer
-        bbcutsynth.chooseoffset(phrasepos,beatspersubdiv,currphraselength);
-
         this.updateblock;
 
         this.endBlockAccounting;
