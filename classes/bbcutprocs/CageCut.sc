@@ -90,10 +90,7 @@ CageCut : BBCutProc {
         });
 
         //if(offsetflag,{});
-        //bbcutsynth.setoffset(currform[block]);
-
-        //offsets are now decided by cut renderer
-        bbcutsynth.chooseoffset(phrasepos,beatspersubdiv,currphraselength);
+        //offset = currform[block];
 
         this.updateblock;
 

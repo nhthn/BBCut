@@ -17,6 +17,7 @@ BBCutProc
 {
     var <phrase,<block,<totalbeatsdone;
     var <cuts,<blocklength,<phrasepos,<beatspersubdiv;
+    var <phraseprop, <offset, <roll;
     var <currphraselength,<phraselength;
     var bbcutsynth;	//has to call updatephrase, updateblock from here
 
@@ -49,9 +50,6 @@ BBCutProc
         blocklength=currphraselength;
         cuts=[blocklength];
 
-        //offsets are now decided by cut renderer
-        bbcutsynth.chooseoffset(phrasepos,beatspersubdiv,currphraselength);
-
         this.updateblock;
         this.endBlockAccounting;
     }
@@ -60,10 +58,11 @@ BBCutProc
     //just do call yourself as bbcutsynth.updateblock(block,0.0,cuts,0);
     //since phrasepos/currphraselength is always zero for infinite phrases
     updateblock
-    {
-        arg isroll=0;
-
-        bbcutsynth.updateblock(block,phrasepos/currphraselength,cuts,isroll);
+    { |roll = nil|
+        roll.notNil.if {
+            "Outdated use of updateblock".throw;
+        };
+        phraseprop = phrasepos / currphraselength;
     }
 
     //will only attach relevant synth engine, in some special cases
@@ -91,7 +90,6 @@ BBCutProc
         //themselves can pass in chosen phraselength
 
         currphraselength=cpl ? (phraselength.value(phrase));
-        bbcutsynth.updatephrase(phrase, currphraselength);
 
         phrasepos=0.0;
         phrase=phrase+1;
