@@ -1,6 +1,6 @@
 # BBCut2 #
 
-BBCut2 is a SuperCollider package (both for client and server) by Nick Collins for automated event analysis, beat induction and algorithmic audio splicing. This repository forks BBCut 2.1 (the most recent version, released in 2006) and dusts it off with a new help system and several other bugfixes and enhancements.
+BBCut2 is a SuperCollider package (both for client and server) by Nick Collins for automated event analysis, beat induction and algorithmic audio splicing. Development ceased in 2006, and this repository is a revival maintained by Nathan Ho with documentation and bug fixes.
 
 ## Installation ##
 
