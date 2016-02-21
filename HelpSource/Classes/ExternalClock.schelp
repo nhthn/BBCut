@@ -1,7 +1,7 @@
 class:: ExternalClock
 summary:: Externally driven scheduling
-categories:: Libraries>BBCut2
-related:: Overviews/BBCut2
+categories:: Libraries>BBCut
+related:: Overviews/BBCut
 
 description::
 

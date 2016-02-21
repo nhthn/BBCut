@@ -1,7 +1,7 @@
 class:: CutBuf2
 summary:: BBCut2 buffer playback with modulatable grain parameters
-categories:: Libraries>BBCut2
-related:: Overviews/BBCut2
+categories:: Libraries>BBCut
+related:: Overviews/BBCut
 
 description::
 

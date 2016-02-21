@@ -1,7 +1,7 @@
 class:: ChooseBlockProc
 summary:: Automatic breakbeat cutting algorithm with a user-specified block size
-categories:: Libraries>BBCut2
-related:: Overviews/BBCut2
+categories:: Libraries>BBCut
+related:: Overviews/BBCut
 
 description::
 

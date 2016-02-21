@@ -1,7 +1,7 @@
 class:: SQPushFXPitch2
 summary:: CutBuf playback rate algorithm
-categories:: Libraries>BBCut2
-related:: Overviews/BBCut2
+categories:: Libraries>BBCut
+related:: Overviews/BBCut
 
 description::
 
