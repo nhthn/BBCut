@@ -10,11 +10,11 @@ Set code::s.latency = 0.05;:: when using BBCut. The default of 0.2 seconds is da
 
 Copy break.aiff and break2.aiff from the BBCut source into code::Platform.userExtensionDir +/+ "sounds/"::. This is an optional step, but you will need this to run the examples.
 
-BBCut used to come with three server plugins -- AnalyzeEvents2, AutoTrack, and DrumTrack. AutoTrack is now known as BeatTrack and made it to the core library, and the other two ugens are in sc3-plugins.
+BBCut used to come with three server plugins -- AnalyzeEvents2, AutoTrack, and DrumTrack. AutoTrack is now known as BeatTrack and made it to the core library, and the other two ugens are in sc3-plugins. As a result, sc3-plugins is required. (If you want to use DrumTrack, a fairly recent version is needed.)
 
 section:: Contents
 
-sc3-plugins is required.
+A quick note on naming: the second version of BBCut uses a weird naming scheme so that versions 1 and 2 can coexist without any conflicts. (For example, the main class is called BBCut2.) This is no longer needed because the modern quarks system can take care of multiple versions. The next major version of BBCut will fix the naming scheme.
 
 Tutorials
 
@@ -120,7 +120,7 @@ list::
 ## 2.1 with full source 2006-06-12
 ::
 
-Please ask questions or file bugs at https://github.com/snappizz/BBCut2/issues.
+Please ask questions or file bugs at https://github.com/snappizz/BBCut/issues.
 
 section:: Acknowledgements
 
