@@ -2,7 +2,7 @@ title:: BBCut
 summary:: Algorithmic audio splicing
 categories:: Libraries>BBCut
 
-BBCut is a collection of SuperCollider UGens, classes and patches for automated event analysis, beat induction and algorithmic audio splicing. It is released as public open source under the GNU General Public License. It was written by Nick M. Collins, and is maintained by Nathan Ho since 2016.
+BBCut is a collection of SuperCollider classes for automated event analysis, beat induction and algorithmic audio splicing. It is released as public open source under the GNU General Public License. It was written by Nick M. Collins, and is maintained by Nathan Ho since 2016.
 
 section:: Setup
 
@@ -10,7 +10,7 @@ Set code::s.latency = 0.05;:: when using BBCut. The default of 0.2 seconds is da
 
 Copy break.aiff and break2.aiff from the BBCut source into code::Platform.userExtensionDir +/+ "sounds/"::. This is an optional step, but you will need this to run the examples.
 
-The ugens AutoTrack and AnalyseEvents2 are now in sc3-plugins, so they are no longer in this repository. The remaining ugen, link::Classes/DrumTrack:: must be compiled with cmake. This step is also optional. No other parts of BBCut depend on this ugen.
+BBCut used to come with three server plugins -- AnalyzeEvents2, AutoTrack, and DrumTrack. AutoTrack is now known as BeatTrack and made it to the core library, and the other two ugens are in sc3-plugins.
 
 section:: Contents
 
@@ -36,10 +36,10 @@ Machine Listening (can also be used independently of the cutters...)
 
 list::
 ## link::Classes/Segmentation:: - GUI for segmentation, preparing soundfiles for use with CutBuf3 in particular, RT and NRT modes
-## link::Classes/AutoTrack:: (from sc3-plugins) - beat tracking UGen
+## link::Classes/BeatTrack:: (from core) - beat tracking UGen
 ## link::Classes/AnalyseEvents2:: (from sc3-plugins) - on-the-fly event analysis UGen
 ## link::Classes/AnalyseEventsDatabase:: - form a database of events on-the-fly
-## link::Classes/DrumTrack:: - experimental beat tracking UGen, tries to spot typical 4/4 drum patterns
+## link::Classes/DrumTrack:: (from sc3-plugins) - experimental beat tracking UGen, tries to spot typical 4/4 drum patterns
 ::
 
 Cut Procedures (CutProcs)

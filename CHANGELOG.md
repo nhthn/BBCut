@@ -8,10 +8,9 @@
 ### Changed
 - Moved documentation to the new help system.
 - Renamed example sounds with .aiff extensions.
-- Made DrumTrack cross-platform.
 
 ### Removed
-- Removed AnalyseEvents2 and AutoTrack since they are now in sc3-plugins.
+- Removed ugens, which have been moved to sc3-plugins.
 
 ## Fixed
 - Fixed Segmentation bitrot.
