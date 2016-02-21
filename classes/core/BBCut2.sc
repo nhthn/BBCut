@@ -18,12 +18,15 @@ BBCut2 {
 
     //should pass in tempoclock, server
     *new {arg cutgroups, proc, quantiser;
-
         ^super.new.initBBCut2(cutgroups, proc, quantiser);
     }
 
     initBBCut2 {arg cg, p, q;
         var clk;
+
+        Server.default.serverRunning.not.if {
+            Error("Server must be booted before creating BBCut2.").throw;
+        };
 
         cutgroups= if(cg.isKindOf(Array),{
 
