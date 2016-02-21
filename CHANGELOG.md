@@ -12,7 +12,7 @@
 ### Removed
 - Removed ugens, which have been moved to sc3-plugins.
 
-## Fixed
+### Fixed
 - Fixed Segmentation bitrot.
 - Imported missing class CampStream.
 - Fixed bug where CutFXSwap1 would sometimes remove a CutMixer.

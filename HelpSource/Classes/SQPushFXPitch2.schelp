@@ -9,6 +9,8 @@ SQPushFXPitch2 is intended to be used in the pbsfunc (playback speed func) param
 
 All arguments can be constant values, but they can also be anything that responds to .value. In the latter case, .value is called every block.
 
+The alias link::Classes/CutPBS2:: is available for backward compatibility.
+
 classmethods::
 
 method:: new
