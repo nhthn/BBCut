@@ -1,4 +1,4 @@
-## [Unreleased]
+## [2.2] - 2016-02-21
 
 ### Added
 - Documented all cut effects.
