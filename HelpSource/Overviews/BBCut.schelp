@@ -1,23 +1,16 @@
-title:: BBCut2
+title:: BBCut
 summary:: Algorithmic audio splicing
-categories:: Libraries>BBCut2
+categories:: Libraries>BBCut
 
-BBCut2 is a collection of SuperCollider UGens, classes and patches for automated event analysis, beat induction and algorithmic audio splicing. It is released as public open source under the GNU General Public License. It was written by Nick M. Collins, and is maintained by Nathan Ho since 2016.
+BBCut is a collection of SuperCollider UGens, classes and patches for automated event analysis, beat induction and algorithmic audio splicing. It is released as public open source under the GNU General Public License. It was written by Nick M. Collins, and is maintained by Nathan Ho since 2016.
 
 section:: Setup
 
-Set code::s.latency = 0.05;:: when using BBCut2. The default of 0.2 seconds is dangerous and may interact adversely with scheduling especially for faster tempi and beat tracking. Only tempi in a standard range of around 1-4bps are supported.
+Set code::s.latency = 0.05;:: when using BBCut. The default of 0.2 seconds is dangerous and may interact adversely with scheduling especially for faster tempi and beat tracking. Only tempi in a standard range of around 1-4bps are supported.
 
 Copy break.aiff and break2.aiff from the BBCut source into code::Platform.userExtensionDir +/+ "sounds/"::. This is an optional step, but you will need this to run the examples.
 
-The ugens AutoTrack and AnalyseEvents2 are now in sc3-plugins, so they are no longer in this repository. The remaining ugen, link::Classes/DrumTrack::, is now cross-platform, and you can compile it like so:
-
-code::
-cmake -DSC_PATH=/path/to/supercollider .
-make
-::
-
-This step is also optional. No other parts of BBCut2 depend on this ugen.
+The ugens AutoTrack and AnalyseEvents2 are now in sc3-plugins, so they are no longer in this repository. The remaining ugen, link::Classes/DrumTrack:: must be compiled with cmake. This step is also optional. No other parts of BBCut depend on this ugen.
 
 section:: Contents
 
@@ -113,32 +106,18 @@ list::
 ## link::Classes/CutProcStream:: - Use a cut procedure as a stream, and within Patterns library 
 ::
 
-section:: Changelog since 2.1
-
-list::
-## Moved documentation to the new help system.
-## Removed AnalyseEvents2 and AutoTrack since they are now in sc3-plugins.
-## Made DrumTrack cross-platform.
-## Added code::action:: argument to link::Classes/BBCutBuffer::.
-## Renamed example sounds with .aiff extensions.
-## Fixed link::Classes/Segmentation:: bitrot.
-## Documented all cut effects.
-## Fixed bug in link::Classes/CutFXSwap1:: with automatically added link::Classes/CutMixer::.
-## Imported missing class link::Classes/CampStream::.
-::
-
 section:: History
 
 list::
-## 1.0 released 3/12/01, developed with the help of Fabrice Mogini, Fredrik Olofsson and Thor Magnusson.
-## 1.1 released 7/11/02
-## 1.2 for SC3 released 3/9/03
-## 1.2.1 released 10/10/03
-## 1.2.2 released 18/10/03
-## 1.3 released 20/02/04 
-## 2.0 released 15/8/05, testers/advisors Fredrik Olofsson and Julian Rohrhuber.
-## 2.0.1 31/8/05
-## 2.1 with full source 12/06/06
+## 1.0 released 2001-12-03, developed with the help of Fabrice Mogini, Fredrik Olofsson and Thor Magnusson.
+## 1.1 released 2002-11-07
+## 1.2 for SC3 released 2002-03-09
+## 1.2.1 released 2003-10-10
+## 1.2.2 released 2003-10-18
+## 1.3 released 2004-02-20
+## 2.0 released 2005-08-15, testers/advisors Fredrik Olofsson and Julian Rohrhuber.
+## 2.0.1 2005-08-31
+## 2.1 with full source 2006-06-12
 ::
 
 Please ask questions or file bugs at https://github.com/snappizz/BBCut2/issues.
