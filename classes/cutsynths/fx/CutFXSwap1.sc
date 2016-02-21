@@ -37,14 +37,14 @@ CutFXSwap1 : CutSynth {
 		if(block.blocknum==1, {	
 			
 			//remove
-			if((removechance.coin) && (numfx>0),{
+			if((removechance.value.coin) && (numfx>0),{
 				cutgroup.removeAt(basenum+(numfx.rand));
 				numfx=numfx-1;
 			});
 			
 			
 			
-			if((addchance.coin) && (numfx<maxnumfx),{	
+			if((addchance.value.coin) && (numfx<maxnumfx),{	
 					
 				newfx = [
 					{var cfreq, rq,drq;
