@@ -124,7 +124,6 @@ list::
 ## Fixed link::Classes/Segmentation:: bitrot.
 ## Documented all cut effects.
 ## Fixed bug in link::Classes/CutFXSwap1:: with automatically added link::Classes/CutMixer::.
-## Removed duplicate classes CutAmp1 and CutPBS2 (use link::Classes/SQPushFXAmp2:: and link::Classes/SQPushFXPitch2::).
 ## Imported missing class link::Classes/CampStream::.
 ::
 

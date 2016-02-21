@@ -5,7 +5,6 @@
 //assumes 4 beat bar
 //ampzerochance at the moment, could be stresschance
 
-
 SQPushFXAmp2 {	
 	var ampchance, amptemplate;
 	var barpos; 
@@ -46,10 +45,6 @@ SQPushFXAmp2 {
 	
 }
 
-
-
-
-
 //assumes 4 beat bar
 //subtle change of CutPBS1
 SQPushFXPitch2 : CutPBS1 {	
@@ -80,6 +75,10 @@ SQPushFXPitch2 : CutPBS1 {
 	
 }
 
+// Aliases for backward compatibility
 
+CutAmp1 : SQPushFXAmp2 {
+}
 
-
+CutPBS2 : SQPushFXPitch2 {
+}
