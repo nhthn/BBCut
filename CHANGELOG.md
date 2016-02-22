@@ -3,7 +3,6 @@
 ### Added
 - Documented all cut effects.
 - Added action argument to BBCutBuffer.
-- Allowed arguments to CutFXSwap1 to be functions.
 - Added errors when trying to run BBCut while the server isn't running.
 
 ### Changed
