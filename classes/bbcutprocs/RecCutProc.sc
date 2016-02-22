@@ -64,7 +64,7 @@ RecCutProc : BBCutProc
         //to minimise floating point errors?
         //if(block==(offsetlist.size-1),{blocklength=currphraselength- phrasepos;});
 
-        this.updateblock;
+        
 
         this.endBlockAccounting;
     }

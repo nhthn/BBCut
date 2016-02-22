@@ -65,7 +65,7 @@ CampCutProc : BBCutProc
         //proportionate- will be taken as percentage through sample
         offset = (offsetlist.at(block))/bells;
 
-        this.updateblock;
+        
 
         this.endBlockAccounting;
     }

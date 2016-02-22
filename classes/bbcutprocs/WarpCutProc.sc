@@ -116,7 +116,7 @@ WarpCutProc1 : BBCutProc
 
         roll = rollon;
 
-        this.updateblock;
+        
         
         this.endBlockAccounting;
     }

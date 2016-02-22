@@ -82,7 +82,7 @@ BBCPPermute : BBCutProc
         //flags if a stutter is happening
         roll = if((repeats - 1) > 0, 1, 0);
         
-        this.updateblock;
+        
         this.endBlockAccounting;
     }
 

@@ -49,16 +49,8 @@ BBCutProc
         blocklength=currphraselength;
         cuts=[blocklength];
 
-        this.updateblock;
+        
         this.endBlockAccounting;
-    }
-
-    // don't call this.updateblock if infinite phrases
-    // use phraseprop = 0 instead
-    // since phrasepos/currphraselength is always zero for infinite phrases
-    updateblock
-    {
-        phraseprop = phrasepos / currphraselength;
     }
     
     phraseover
@@ -85,19 +77,10 @@ BBCutProc
 
     endBlockAccounting
     {
-        phrasepos=phrasepos+blocklength;
-        totalbeatsdone=totalbeatsdone+ blocklength;
-        block=block+1;
+        phraseprop = phrasepos / currphraselength;
+        phrasepos = phrasepos + blocklength;
+        totalbeatsdone = totalbeatsdone + blocklength;
+        block = block + 1;
     }
 
-
-
 }
-
-
-
-
-
-
-
-

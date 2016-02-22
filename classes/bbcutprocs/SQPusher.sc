@@ -149,7 +149,7 @@ SQPusher1 : BBCutProc
             blocklength= beatsleft;
         });
 
-        this.updateblock;
+        
 
         this.endBlockAccounting;
     }

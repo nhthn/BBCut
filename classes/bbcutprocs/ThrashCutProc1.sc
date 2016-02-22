@@ -203,7 +203,7 @@ ThrashCutProc1 : BBCutProc
         //is roll if block has more than 2 elemnts
         roll = if(cuts.size>1, 1, 0);
 
-        this.updateblock;
+        
         
         this.endBlockAccounting;
     }

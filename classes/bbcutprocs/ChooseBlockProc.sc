@@ -72,7 +72,7 @@ ChooseBlockProc : BBCutProc
         //correction for arithmetic errors
         cuts.put(repeats-1,temp+(blocklength-(temp*repeats)));
 
-        this.updateblock;
+        
 
         this.endBlockAccounting;
     }

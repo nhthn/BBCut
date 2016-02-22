@@ -94,7 +94,7 @@ OffsetCP1 : BBCutProc
 
         offset=(nextblock.at(1))*(offsetscale.value);
 
-        this.updateblock;
+        
 
         this.endBlockAccounting;
     }

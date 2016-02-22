@@ -92,7 +92,7 @@ CageCut : BBCutProc {
         //if(offsetflag,{});
         //offset = currform[block];
 
-        this.updateblock;
+        
 
         this.endBlockAccounting;
     }

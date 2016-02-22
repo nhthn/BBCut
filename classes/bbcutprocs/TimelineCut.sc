@@ -83,7 +83,7 @@ TimelineCut : BBCutProc {
             blocklength= beatsleft;
         });
 
-        this.updateblock;
+        
 
         this.endBlockAccounting;
     }

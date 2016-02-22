@@ -96,7 +96,7 @@ MotifCutProc : BBCutProc
 
         });
 
-        this.updateblock;
+        
 
         this.endBlockAccounting;
     }

@@ -151,7 +151,7 @@ BBCutProc11 : BBCutProc
 
         roll = stutteron;
 
-        this.updateblock;
+        
 
         this.endBlockAccounting;
     }

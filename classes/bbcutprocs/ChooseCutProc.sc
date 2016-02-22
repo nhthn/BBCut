@@ -111,7 +111,7 @@ ChooseCutProc : BBCutProc
 
         roll = rollon;
 
-        this.updateblock;
+        
 
         this.endBlockAccounting;
     }
