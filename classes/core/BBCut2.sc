@@ -338,7 +338,6 @@ BBCut2 {
     // TODO: have the cut procedures create and return the BBCutBlock object
     getBlock {
         var convert, b;
-        var tmp;
 
         // Tell the cut procedure to set properties
         proc.chooseblock;
@@ -352,31 +351,28 @@ BBCut2 {
         b.phraseprop = proc.phraseprop;
         b.isroll = proc.roll;
 
+        // Cuts take on the form [interval, duration, offsetparam, amplitude]
+        // A simple number becomes [x, x, nil, 1]
         b.cuts = proc.cuts.collect { |cut|
             cut.isKindOf(Number).if { [cut, cut, nil, 1] } { cut };
         };
 
-        //quantise must occur here, must adjust b.length too
+        // quantise must occur here, must adjust b.length too
         quantiser.notNil.if { quantiser.value(b, proc) };
 
         // used to be clock.tempoclock.tempo
         convert = clock.tempo.reciprocal;
 
-        //so ioi in beats but dur is in seconds, needed for rendering - is it?
+        // so ioi in beats but dur is in seconds, needed for rendering - is it?
         b.cuts.do { |cut|
             cut[1] = cut[1] * convert;
         };
 
+        // array of IOIs (inter-onset intervals)
         b.iois = b.cuts.collect(_[0]);
 
-        tmp = 0.0;
-        //cumulative start positions useful for timed msgs and scheduling code
-        b.cumul = Array.fill(b.cuts.size, { |i|
-            var prev;
-            prev = tmp;
-            tmp = tmp + b.cuts[i][0];
-            prev;
-        });
+        // cumulative start positions useful for timed msgs and scheduling code
+        b.cumul = b.iois.size.collect { |i| b.iois[0..i].sum };
 
         b.timedmsgs = List();
         b.functions = List();
