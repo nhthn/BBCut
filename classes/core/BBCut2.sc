@@ -335,56 +335,55 @@ BBCut2 {
 
 
 
-    //make BBCutBlock here for now, later cut procedures can just make them directly (add a test in this method)
-    //each block just has one offset, don't need [ioi, dur, offset, amp form]
+    // TODO: have the cut procedures create and return the BBCutBlock object
     getBlock {
-        var convert, b, cuts;
+        var convert, b;
         var tmp;
+
+        // Tell the cut procedure to set properties
         proc.chooseblock;
 
-        //Post << blocks << "  blocklength    " << nextBeat << nl <<"cuts   " <<bbcutproc.cuts<< nl;
-
-        cuts = proc.cuts;
-
-        //backwards compatability
-        if(not(cuts[0].isKindOf(Array)),{
-
-            cuts = Array.fill(cuts.size,{arg i; [cuts[i],cuts[i], nil,1.0]});
-        });
-
-        //put into a BBCutBlock for rendering purposes
-
-        b = BBCutBlock.new;
-        b.length = proc.blocklength; //in beats
+        // put into a BBCutBlock for rendering purposes
+        b = BBCutBlock();
+        b.length = proc.blocklength; // in beats
         b.blocknum = proc.block;
-        b.phrasepos = proc.phrasepos-b.length; //this is phrasepos at start of block, for offset calc
+        b.phrasepos = proc.phrasepos - b.length; // this is phrasepos at start of block, for offset calc
         b.offset = proc.offset;
         b.phraseprop = proc.phraseprop;
         b.isroll = proc.roll;
-        b.cuts = cuts;
+
+        b.cuts = proc.cuts.collect { |cut|
+            cut.isKindOf(Number).if { [cut, cut, nil, 1] } { cut };
+        };
 
         //quantise must occur here, must adjust b.length too
-        if(quantiser.notNil,{quantiser.value(b, proc)});
+        quantiser.notNil.if { quantiser.value(b, proc) };
 
-        //clock.tempoclock.tempo //used to be
-        convert= clock.tempo.reciprocal;
+        // used to be clock.tempoclock.tempo
+        convert = clock.tempo.reciprocal;
 
-        //so ioi in beats but dur is in seconds, needed for rendering- is it?
-        b.cuts.do({arg val,i; val[1]= convert*val[1]; b.cuts[i]= val; });
+        //so ioi in beats but dur is in seconds, needed for rendering - is it?
+        b.cuts.do { |cut|
+            cut[1] = cut[1] * convert;
+        };
 
-        //probably unnecessary
-        b.iois=Array.fill(b.cuts.size,{arg i; b.cuts[i][0]});
+        b.iois = b.cuts.collect(_[0]);
 
-        tmp=0.0;
+        tmp = 0.0;
         //cumulative start positions useful for timed msgs and scheduling code
-        b.cumul= Array.fill(b.cuts.size,{arg i; var prev; prev=tmp; tmp= tmp+(b.cuts[i][0]); prev;});
+        b.cumul = Array.fill(b.cuts.size, { |i|
+            var prev;
+            prev = tmp;
+            tmp = tmp + b.cuts[i][0];
+            prev;
+        });
 
-        b.timedmsgs=List.new;
-        b.functions=List.new;
+        b.timedmsgs = List();
+        b.functions = List();
 
         //empty Lists awaits msgs for each cut (could also allow mix of functions and messages)
         //LinkedList more efficient?
-        b.msgs=Array.fill(cuts.size,{List.new}); //used to make LinkedList.new
+        b.msgs = b.cuts.collect { List() }; //used to make LinkedList.new
 
         ^b
     }
