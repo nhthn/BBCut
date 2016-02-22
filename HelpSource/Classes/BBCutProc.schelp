@@ -36,7 +36,7 @@ method:: endBlockAccounting
 
 Method provided to help avoid repeated code for updating statistics of the base class.
 
-method:: startPhraseAccounting
+method:: newPhraseAccounting
 
 Method provided to help avoid repeated code for updating statistics of the base class.
 
