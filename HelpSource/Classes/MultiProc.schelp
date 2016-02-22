@@ -1,7 +1,7 @@
 class:: MultiProc
 summary:: Allows selection between multiple breakbeat cutting algorithms
-categories:: Libraries>BBCut2
-related:: Overviews/BBCut2
+categories:: Libraries>BBCut
+related:: Overviews/BBCut
 
 description::
 

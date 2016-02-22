@@ -1,7 +1,7 @@
 class:: CutBRF1
 summary:: BBCut2 band-reject filter
-categories:: Libraries>BBCut2
-related:: Overviews/BBCut2
+categories:: Libraries>BBCut
+related:: Overviews/BBCut
 
 description::
 

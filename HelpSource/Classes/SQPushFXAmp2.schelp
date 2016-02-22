@@ -1,11 +1,13 @@
 class:: SQPushFXAmp2
 summary:: CutMixer amplitude algorithm
-categories:: Libraries>BBCut2
-related:: Overviews/BBCut2
+categories:: Libraries>BBCut
+related:: Overviews/BBCut
 
 description::
 
 SQPushFXAmp2 is intended to be used in the ampfunc parameter of link:: Classes/CutMixer ::. It randomly drops repeats according to a table of probabilities depending on the current position in the bar. It is apparently inspired by Squarepusher.
+
+The alias link::Classes/CutAmp1:: is available for backward compatibility.
 
 classmethods::
 

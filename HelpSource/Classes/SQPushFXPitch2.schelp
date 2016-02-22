@@ -1,13 +1,15 @@
 class:: SQPushFXPitch2
 summary:: CutBuf playback rate algorithm
-categories:: Libraries>BBCut2
-related:: Overviews/BBCut2
+categories:: Libraries>BBCut
+related:: Overviews/BBCut
 
 description::
 
 SQPushFXPitch2 is intended to be used in the pbsfunc (playback speed func) parameter of link::Classes/CutBuf2:: and link::Classes/CutBuf3::. It is exactly the same as link::Classes/CutPBS1::, but only changes the rate sometimes, controlled by a probability argument.
 
 All arguments can be constant values, but they can also be anything that responds to .value. In the latter case, .value is called every block.
+
+The alias link::Classes/CutPBS2:: is available for backward compatibility.
 
 classmethods::
 

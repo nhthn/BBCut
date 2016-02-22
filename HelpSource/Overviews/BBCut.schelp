@@ -1,29 +1,20 @@
-title:: BBCut2
+title:: BBCut
 summary:: Algorithmic audio splicing
-categories:: Libraries>BBCut2
+categories:: Libraries>BBCut
 
-BBCut2 is a collection of SuperCollider UGens, classes and patches for automated event analysis, beat induction and algorithmic audio splicing. It is released as public open source under the GNU General Public License. It was developed by Nick M. Collins.
-
-This is not the original BBCut2, but a fork made by Nathan Ho. See below.
+BBCut is a collection of SuperCollider classes for automated event analysis, beat induction and algorithmic audio splicing. It is released as public open source under the GNU General Public License. It was written by Nick M. Collins, and is maintained by Nathan Ho since 2016.
 
 section:: Setup
 
-Set code::s.latency = 0.05;:: when using BBCut2. The default of 0.2 seconds is dangerous and may interact adversely with scheduling especially for faster tempi and beat tracking. Only tempi in a standard range of around 1-4bps are supported.
+Set code::s.latency = 0.05;:: when using BBCut. The default of 0.2 seconds is dangerous and may interact adversely with scheduling especially for faster tempi and beat tracking. Only tempi in a standard range of around 1-4bps are supported.
 
 Copy break.aiff and break2.aiff from the BBCut source into code::Platform.userExtensionDir +/+ "sounds/"::. This is an optional step, but you will need this to run the examples.
 
-The ugens AutoTrack and AnalyseEvents2 are now in sc3-plugins, so they are no longer in this repository. The remaining ugen, link::Classes/DrumTrack::, is now cross-platform, and you can compile it like so:
-
-code::
-cmake -DSC_PATH=/path/to/supercollider .
-make
-::
-
-This step is also optional. No other parts of BBCut2 depend on this ugen.
+BBCut used to come with three server plugins -- AnalyzeEvents2, AutoTrack, and DrumTrack. AutoTrack is now known as BeatTrack and made it to the core library, and the other two ugens are in sc3-plugins. As a result, sc3-plugins is required. (If you want to use DrumTrack, a fairly recent version is needed.)
 
 section:: Contents
 
-sc3-plugins is required.
+A quick note on naming: the second version of BBCut uses a weird naming scheme so that versions 1 and 2 can coexist without any conflicts. (For example, the main class is called BBCut2.) This is no longer needed because the modern quarks system can take care of multiple versions. The next major version of BBCut will fix the naming scheme.
 
 Tutorials
 
@@ -45,10 +36,10 @@ Machine Listening (can also be used independently of the cutters...)
 
 list::
 ## link::Classes/Segmentation:: - GUI for segmentation, preparing soundfiles for use with CutBuf3 in particular, RT and NRT modes
-## link::Classes/AutoTrack:: (from sc3-plugins) - beat tracking UGen
+## link::Classes/BeatTrack:: (from core) - beat tracking UGen
 ## link::Classes/AnalyseEvents2:: (from sc3-plugins) - on-the-fly event analysis UGen
 ## link::Classes/AnalyseEventsDatabase:: - form a database of events on-the-fly
-## link::Classes/DrumTrack:: - experimental beat tracking UGen, tries to spot typical 4/4 drum patterns
+## link::Classes/DrumTrack:: (from sc3-plugins) - experimental beat tracking UGen, tries to spot typical 4/4 drum patterns
 ::
 
 Cut Procedures (CutProcs)
@@ -115,37 +106,22 @@ list::
 ## link::Classes/CutProcStream:: - Use a cut procedure as a stream, and within Patterns library 
 ::
 
-section:: Changelog
-
-Here are the differences between this fork and the most recent "official" release:
-
-list::
-## Moved documentation to the new help system.
-## Removed AnalyseEvents2 and AutoTrack since they are now in sc3-plugins.
-## Made DrumTrack cross-platform.
-## Added code::action:: argument to link::Classes/BBCutBuffer::.
-## Renamed example sounds with .aiff extensions.
-## Fixed link::Classes/Segmentation:: bitrot.
-## Documented all cut effects.
-## Fixed bug in link::Classes/CutFXSwap1:: with automatically added link::Classes/CutMixer::.
-## Removed duplicate classes CutAmp1 and CutPBS2 (use link::Classes/SQPushFXAmp2:: and link::Classes/SQPushFXPitch2::).
-::
-
 section:: History
 
 list::
-## 1.0 released 3/12/01, developed with the help of Fabrice Mogini, Fredrik Olofsson and Thor Magnusson.
-## 1.1 released 7/11/02
-## 1.2 for SC3 released 3/9/03
-## 1.2.1 released 10/10/03
-## 1.2.2 released 18/10/03
-## 1.3 released 20/02/04 
-## 2.0 released 15/8/05, testers/advisors Fredrik Olofsson and Julian Rohrhuber.
-## 2.0.1 31/8/05
-## 2.1 with full source 12/06/06
+## 1.0 released 2001-12-03, developed with the help of Fabrice Mogini, Fredrik Olofsson and Thor Magnusson.
+## 1.1 released 2002-11-07
+## 1.2 for SC3 released 2002-03-09
+## 1.2.1 released 2003-10-10
+## 1.2.2 released 2003-10-18
+## 1.3 released 2004-02-20
+## 2.0 released 2005-08-15, testers/advisors Fredrik Olofsson and Julian Rohrhuber.
+## 2.0.1 2005-08-31
+## 2.1 with full source 2006-06-12
+## 2.2 released 2016-02-21 (adoption by Nathan Ho)
 ::
 
-Please contact nc272@cam.ac.uk with comments or bug reports (or bring them up on the sc-users list).
+Please ask questions or file bugs at https://github.com/snappizz/BBCut/issues.
 
 section:: Acknowledgements
 
@@ -153,4 +129,4 @@ Version 2: Thanks to the many academic researchers whose work has been an inspir
 
 Version 1: Thanks to Charles Ames, MDX Sonic Arts, the SuperCollider List and James McCartney.
 
-Academic papers about bbcut are available from www.cus.cam.ac.uk/~nc272
+Academic papers about bbcut are available from http://composerprogrammer.com/research.html.

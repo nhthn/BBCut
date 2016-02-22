@@ -1,7 +1,7 @@
 class:: CutBPF1
 summary:: BBCut2 bandpass filter
-categories:: Libraries>BBCut2
-related:: Overviews/BBCut2
+categories:: Libraries>BBCut
+related:: Overviews/BBCut
 
 description::
 

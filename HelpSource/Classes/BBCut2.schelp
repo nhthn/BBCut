@@ -1,11 +1,11 @@
 class:: BBCut2
 summary:: splices and reassembles audio
-categories:: Libraries>BBCut2
-related:: Overviews/BBCut2
+categories:: Libraries>BBCut
+related:: Overviews/BBCut
 
 description::
 
-This help file is for the BBCut2 class. For an overview of the BBCut2 library, see link:: Overviews/BBCut2 ::.
+This help file is for the BBCut2 class. For an overview of the BBCut2 library, see link:: Overviews/BBCut ::.
 
 BBCut2 provides the central scheduling mechanisms for algorithmic audio cutting running on an external clock. 
  

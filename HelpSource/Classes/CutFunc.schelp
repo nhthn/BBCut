@@ -1,7 +1,7 @@
 class:: CutFunc
 summary:: Breakbeat cut rendering with an arbitrary function
-categories:: Libraries>BBCut2
-related:: Overviews/BBCut2
+categories:: Libraries>BBCut
+related:: Overviews/BBCut
 
 description::
 

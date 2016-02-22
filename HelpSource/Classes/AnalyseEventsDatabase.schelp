@@ -1,7 +1,7 @@
 class:: AnalyseEventsDatabase
 summary:: Records events found by the AnalyseEvents2 UGen
-categories:: Libraries>BBCut2
-related:: Overviews/BBCut2
+categories:: Libraries>BBCut
+related:: Overviews/BBCut
 
 description::
 

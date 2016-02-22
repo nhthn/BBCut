@@ -1,7 +1,7 @@
 class:: CutBuf1
 summary:: BBCut2 buffer playback, efficient but inflexible
-categories:: Libraries>BBCut2
-related:: Overviews/BBCut2
+categories:: Libraries>BBCut
+related:: Overviews/BBCut
 
 description::
 

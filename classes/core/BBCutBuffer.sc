@@ -29,6 +29,10 @@ BBCutBuffer : Buffer {
     //shortcut function
     *new {arg filename, beatlength=8, eventlist, action;
 
+        Server.default.serverRunning.not.if {
+            Error("Server must be booted before creating BBCutBuffers.").throw;
+        };
+
         ^super.read(Server.default,filename, action: {
             arg buf;
             buf.beatlength_(beatlength);
