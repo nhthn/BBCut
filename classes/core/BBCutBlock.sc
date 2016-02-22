@@ -10,7 +10,7 @@ BBCutBlock {
     // Length of the block in clock time
     var <>length;
     // Array of cut data of the form [ioi, dur, offsetparam, amp]
-    var <cuts;
+    var <>cuts;
     // Buffer offset position
     // If nil, use the time since start of phrase modulo buffer size
     var <>offset;
@@ -45,12 +45,6 @@ BBCutBlock {
         functions = List();
     }
 
-    cuts_ { |argCuts|
-        cuts = argCuts.collect { |cut|
-            cut.isKindOf(Number).if { [cut, cut, nil, 1] } { cut };
-        };
-    }
-
     scaleDurations { |factor|
         cuts.do { |cut|
             cut[1] = cut[1] * factor;
@@ -58,9 +52,9 @@ BBCutBlock {
     }
 
     update {
-        msgs = cuts.collect { List() };
+        msgs = cuts.size.collect { List() };
         iois = cuts.collect(_[0]);
-        cumul = iois.size.collect { |i| iois[0..i].sum };
+        cumul = cuts.size.collect { |i| iois.copyRange(0, i - 1).sum };
     }
 
     //timedelay is groovedeviation- perceptual attack time

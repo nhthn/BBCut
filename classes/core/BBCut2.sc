@@ -352,7 +352,9 @@ BBCut2 {
         b.isroll = proc.roll;
         // Cuts take on the form [interval, duration, offsetparam, amplitude]
         // A simple number becomes [x, x, nil, 1]
-        b.cuts = proc.cuts;
+        b.cuts = proc.cuts.collect { |cut|
+            cut.isKindOf(Number).if { [cut, cut, nil, 1] } { cut };
+        };
 
         // quantise must occur here, must adjust b.length too
         quantiser.notNil.if { quantiser.value(b, proc) };
