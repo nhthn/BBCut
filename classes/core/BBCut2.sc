@@ -344,42 +344,24 @@ BBCut2 {
 
         // put into a BBCutBlock for rendering purposes
         b = BBCutBlock();
-        b.length = proc.blocklength; // in beats
         b.blocknum = proc.block;
-        b.phrasepos = proc.phrasepos - b.length; // this is phrasepos at start of block, for offset calc
+        b.length = proc.blocklength;
+        b.phrasepos = proc.phrasepos - proc.blocklength;
         b.offset = proc.offset;
         b.phraseprop = proc.phraseprop;
         b.isroll = proc.roll;
-
         // Cuts take on the form [interval, duration, offsetparam, amplitude]
         // A simple number becomes [x, x, nil, 1]
-        b.cuts = proc.cuts.collect { |cut|
-            cut.isKindOf(Number).if { [cut, cut, nil, 1] } { cut };
-        };
+        b.cuts = proc.cuts;
 
         // quantise must occur here, must adjust b.length too
         quantiser.notNil.if { quantiser.value(b, proc) };
 
         // used to be clock.tempoclock.tempo
-        convert = clock.tempo.reciprocal;
-
         // so ioi in beats but dur is in seconds, needed for rendering - is it?
-        b.cuts.do { |cut|
-            cut[1] = cut[1] * convert;
-        };
+        b.scaleDurations(clock.tempo.reciprocal);
 
-        // array of IOIs (inter-onset intervals)
-        b.iois = b.cuts.collect(_[0]);
-
-        // cumulative start positions useful for timed msgs and scheduling code
-        b.cumul = b.iois.size.collect { |i| b.iois[0..i].sum };
-
-        b.timedmsgs = List();
-        b.functions = List();
-
-        //empty Lists awaits msgs for each cut (could also allow mix of functions and messages)
-        //LinkedList more efficient?
-        b.msgs = b.cuts.collect { List() }; //used to make LinkedList.new
+        b.update;
 
         ^b
     }

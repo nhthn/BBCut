@@ -3,12 +3,14 @@
 //BBCutBlock 24/12/04  by N.M.Collins
 
 BBCutBlock {
+    // Maybe time to get rid of some of the setters.
+
     // Index of the block in phrase (0 is start of phrase, 1 is second block in phrase, etc.)
     var <>blocknum;
     // Length of the block in clock time
     var <>length;
     // Array of cut data of the form [ioi, dur, offsetparam, amp]
-    var <>cuts;
+    var <cuts;
     // Buffer offset position
     // If nil, use the time since start of phrase modulo buffer size
     var <>offset;
@@ -16,13 +18,14 @@ BBCutBlock {
     var <>phrasepos;
     // Flag to mark this block as a roll
     var <>isroll;
-    // Current fraction of phrase that has been covered, 0..1
-    var <>phraseprop;
 
     // Inter-onset intervals (derived from cuts)
     var <>iois;
     // Cumulative times (derived from iois)
     var <>cumul;
+    // Current fraction of phrase that has been covered, 0..1
+    var <>phraseprop;
+
     // OSC messages exactly on cuts
     var <>msgs;
     // Messages timed from start of block, may be within cuts
@@ -33,6 +36,32 @@ BBCutBlock {
     // Not 100% sure what this is, BBCut2 uses it to timestamp the block I think? -NH
     var <>startbeat;
 
+    *new {
+        ^super.new.initBBCutBlock;
+    }
+
+    initBBCutBlock {
+        timedmsgs = List();
+        functions = List();
+    }
+
+    cuts_ { |argCuts|
+        cuts = argCuts.collect { |cut|
+            cut.isKindOf(Number).if { [cut, cut, nil, 1] } { cut };
+        };
+    }
+
+    scaleDurations { |factor|
+        cuts.do { |cut|
+            cut[1] = cut[1] * factor;
+        };
+    }
+
+    update {
+        msgs = cuts.collect { List() };
+        iois = cuts.collect(_[0]);
+        cumul = iois.size.collect { |i| iois[0..i].sum };
+    }
 
     //timedelay is groovedeviation- perceptual attack time
     addtimedmsgtocut {arg whichcut,beatdelay, timedelay, msg;
