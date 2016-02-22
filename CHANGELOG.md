@@ -1,3 +1,11 @@
+## [Unreleased]
+
+### Added
+- Began work on internals documentation.
+
+### Changed
+- Refactored BBCutProc for a more consistent API.
+
 ## [2.2] - 2016-02-21
 
 ### Added
