@@ -1,0 +1,97 @@
+title:: BBCut Internals
+summary:: How BBCut works, and how to extend it
+categories:: Libraries>BBCut
+
+To extend BBCut with your own cut procedures and effects, it's important to get an understanding of how BBCut works.
+
+section:: Basics
+
+An instance of code::BBCut2:: is a player for algorithmically splicing audio. A BBCut player consists of strong::cut synthesizers:: and a strong::cut procedure::.
+
+A cut procedure acts as a sequencer, while the cut synthesizers deal with audio and effects.
+
+section:: Cuts, blocks, and phrases
+
+The atomic unit of music in BBCut is the strong::cut::. Cuts are events where a segment of a buffer is played.
+
+A strong::block:: is a stream of one or more cuts with a restriction: all cuts within the same block must start at the same playback position in the buffer. A block wih more than one cut is a sort of "stutter" effect.
+
+A strong::phrase:: is one or more blocks. Typically, a phrase lasts several bars of 4/4.
+
+section:: Buffers and timing
+
+A BBCutBuffer is an ordinary buffer with a number of roughly equally spaced marks. Each of these marks is a single beat.
+
+Beats are used to keep track of timing in BBCut, but the beats provided by ExternalClock are different from beats in the buffer. To avoid confusion, I will use the terms "clock time" and "buffer time."
+
+section:: Block properties
+
+Blocks are represented by code::BBCutBlock:: objects. Here are the properties of BBCutBlocks that you should know about.
+
+list::
+## code::offset:: is the playback starting position of all cuts in this block. This is measured in buffer beats.
+## code::cuts:: is an array that describes the cuts within the block. Each cut is represented by an array of the form code::[ioi, dur, offsetparam, amp]::, where
+    list::
+    ## code::ioi:: stands for "inter-onset interval," representing the time until the next cut measured in clock beats.
+    ## code::dur:: is the amount of time the cut spends playing, measured in buffer beats.
+    ## code::offsetparam:: is an argument that will be passed to a CutBuf* instance. We'll get to this one later. Most cut procedures set this to nil.
+    ## code::amp:: is the amplitude of the cut. Most cut procedures set this to 1.
+    ::
+## code::length:: is the temporal duration of this block, measured in clock beats.
+## code::blocknum:: is the position of this block in the phrase. A blocknum of 0 means the first block in the phrase, and so on.
+## code::phrasepos:: is the amount of time in clock beats since the start of the phrase. code::phraseprop:: is a number from 0 to 1 indicating how far we are in the phrase.
+## code::isroll:: is a flag that marks this block as a "roll." There are no technical differences between a roll and a non-roll, but some parts of BBCut give rolls special treatment.
+::
+
+There are no objects dedicated to phrases or cuts. Instead, properties of the block object keep track of them.
+
+section:: Playing blocks
+
+Often, the code::offset:: parameter of the BBCutBlock is set to nil. In this case, the offset is the amount of time in clock beats since the beginning of the phrase, modulo the length of the buffer in buffer beats.
+
+That last sentence is important. Make sure you understand it!
+
+Perhaps an example will help. Suppose you have a buffer divided into four beats, and a cut procedure produces a phrase comprised of five blocks with offsets set to nil, and the following cuts:
+
+code::
+[[1.0, 1.0, nil, 1]]
+[[0.5, 0.5, nil, 1], [0.5, 0.5, nil, 1]]
+[[1.0, 1.0, nil, 1]]
+[[0.333, 0.333, nil, 1], [0.333, 0.333, nil, 1], [0.334, 0.334, nil, 1]]
+[[0.5, 0.5, nil, 1], [0.25, 0.25, nil, 1], [0.25, 0.25, nil, 1]]
+::
+
+Then you will hear, in order:
+
+list::
+## The first beat in the buffer.
+## The first half of the second beat, played twice.
+## The third beat.
+## The first 1/3 of the fourth beat, played three times in a triplet rhythm.
+## The first beat in the buffer, stuttered to form a "♪♬" rhythm.
+::
+
+Here is a visualization, showing the color-coded buffer and the remixed version:
+
+image::cut-example.png::
+
+In this case, the clock tempo is slower than the buffer tempo. The clock tempo can also be faster than the buffer tempo, in which case the samples will overlap.
+
+section:: Cut procedures
+
+Cut procedures are block factories. They are subclasses of link::Classes/BBCutProc::.
+
+A cut procedure produces a block via the instance method code::chooseblock::. Due to some strange architectural decisions, code::chooseblock:: does not actually create and return a BBCutBlock object. Instead, the cut procedure must set some publicly readable instance variables. The code::getBlock:: instance method of link::Classes/BBCut2:: creates the BBCutBlock object and copies properties from the cut procedure to the block. See the following code, simplified from code::getBlock::
+
+code::
+b = BBCutBlock.new;
+b.length = proc.blocklength;
+b.blocknum = proc.block;
+b.phrasepos = proc.phrasepos - b.length;
+b.offset = proc.offset;
+b.phraseprop = proc.phraseprop;
+b.isroll = proc.roll;
+b.cuts = proc.cuts;
+::
+
+Even worse, some of the cut procedure properties are inconsistently named compared to the block properties. I will eventually fix these weird decisions.
