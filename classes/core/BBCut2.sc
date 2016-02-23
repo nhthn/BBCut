@@ -350,6 +350,7 @@ BBCut2 {
         b.offset = proc.offset;
         b.phraseprop = proc.phraseprop;
         b.isroll = proc.roll;
+        b.currphraselength = proc.currphraselength;
         // Cuts take on the form [interval, duration, offsetparam, amplitude]
         // A simple number becomes [x, x, nil, 1]
         b.cuts = proc.cuts.collect { |cut|
@@ -357,7 +358,7 @@ BBCut2 {
         };
 
         // quantise must occur here, must adjust b.length too
-        quantiser.notNil.if { quantiser.value(b, proc) };
+        quantiser.notNil.if { quantiser.value(b) };
 
         // used to be clock.tempoclock.tempo
         // so ioi in beats but dur is in seconds, needed for rendering - is it?

@@ -3,8 +3,6 @@
 //BBCutBlock 24/12/04  by N.M.Collins
 
 BBCutBlock {
-    // Maybe time to get rid of some of the setters.
-
     // Index of the block in phrase (0 is start of phrase, 1 is second block in phrase, etc.)
     var <>blocknum;
     // Length of the block in clock time
@@ -14,10 +12,12 @@ BBCutBlock {
     // Buffer offset position
     // If nil, use the time since start of phrase modulo buffer size
     var <>offset;
-    // Clock time since start of phrase
+    // Clock time at the beginning of the buffer since start of phrase
     var <>phrasepos;
     // Flag to mark this block as a roll
     var <>isroll;
+    // Length of current phrase in clock beats
+    var <>currphraselength;
 
     // Inter-onset intervals (derived from cuts)
     var <>iois;
