@@ -37,7 +37,7 @@ CutStream1 : CutSynth {
         recdef= \cs1recordbuf++(cutgroup.numChannels.asSymbol);
 
         //have to wait until cutgroup known and have numChannels to create a Buffer
-        bbcutbuf=bbcutbuf ?? {deallocate=true; BBCutBuffer.alloc(Server.default,44100,cutgroup.numChannels)};
+        bbcutbuf=bbcutbuf ?? {deallocate=true; BBCutBuffer.alloc(Server.default,Server.default.sampleRate,cutgroup.numChannels)};
 
         playdef.postln;
         recdef.postln;

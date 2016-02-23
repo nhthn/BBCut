@@ -36,7 +36,7 @@ CutStream2 : CutSynth {
         recdef= \cs2recordbuf++(cutgroup.numChannels.asSymbol);
 
         //have to wait until cutgroup known and have numChannels to create a Buffer
-        bbcutbuf=bbcutbuf ?? {deallocate=true; BBCutBuffer.alloc(Server.default,44100*4,cutgroup.numChannels)};
+        bbcutbuf=bbcutbuf ?? {deallocate=true; BBCutBuffer.alloc(Server.default,Server.default.sampleRate*4,cutgroup.numChannels)};
 
         length= (bbcutbuf.numFrames)/bbcutbuf.sampleRate;
 
@@ -100,7 +100,7 @@ CutStream2 : CutSynth {
         //if offsetpassed in, set it, within last 4 beats (need to hold stable o/w, will be some juddering with this setup)
         startbeat= beatstartpos-(if(block.offset.notNil,{(block.offset)*(offset.value(block))},{offset.value(block)})) ;
 
-        startpos=((recordheadpos+ (startbeat*(clock.lastTempo)))%(length))*44100;
+        startpos=((recordheadpos+ (startbeat*(clock.lastTempo)))%(length))*Server.default.sampleRate;
 
         //Post << [\lastclockbeat, clock.lastBeatTime, \recordheadpos, recordheadpos, \beatstartpos, beatstartpos, \startbeat, startbeat, \startpos, startpos] << nl;
 
