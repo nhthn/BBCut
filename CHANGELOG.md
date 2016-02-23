@@ -1,3 +1,8 @@
+## [Unreleased]
+
+### Added
+- An easier interface to CampCutStrem and CampStream, supporting place notation.
+
 ## [2.2] - 2016-02-21
 
 ### Added

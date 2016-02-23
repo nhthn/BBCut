@@ -19,9 +19,9 @@ CampCutProc : BBCutProc
 
     initCampCutProc
     {
-        arg cs,pf=4.0;
+        |argCampstream|
 
-        campstream = cs ?? {
+        campstream = argCampstream ?? {
             // Default: Gainsborough Little Bob Major
             CampStream.notation(8, "x.18.x.18.x.16.x.18.x.18.x.12")
         };
@@ -57,7 +57,6 @@ CampCutProc : BBCutProc
                         //involutions always swap val and one above val
                         offsetlist.swap(val,val+1);
                 });
-                offsetlist.postln;
 
         });
 
