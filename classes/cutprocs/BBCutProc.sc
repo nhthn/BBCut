@@ -13,71 +13,88 @@
 
 //base class is also the NoCutProc (or the OneCutProc= whole phrase)
 
-BBCutProc
-{
+BBCutProc {
     var <phrase,<block,<totalbeatsdone;
     var <cuts,<blocklength,<phrasepos,<beatspersubdiv;
     var <phraseprop, <offset, <roll;
     var <currphraselength,<phraselength;
 
-    *new
-    {
-        arg bpsd=0.5,phraselength=4.0;
-
-        ^super.new.initBBCutProc(bpsd,phraselength)
+    *new { |bpsd = 0.5, phraselength = 4.0|
+        ^super.new.initBBCutProc(bpsd, phraselength)
     }
 
-    initBBCutProc
-    {
-        arg bpsd=0.5,pl=4.0;	//default to quavers
+    initBBCutProc { |bpsd = 0.5, pl = 4.0| //default to quavers
 
-        phrase=0;
-        block=0;
-        beatspersubdiv=bpsd;
-        phraselength=pl;
-        phrasepos=0.0;
+        phrase = 0;
+        block = 0;
+        beatspersubdiv = bpsd;
+        phraselength = pl;
+        phrasepos = 0.0;
         //must start 0.0 so to trigger a new phrase immediately
-        currphraselength=0.0;
-        totalbeatsdone=0.0;
+        currphraselength = 0.0;
+        totalbeatsdone = 0.0;
     }
 
-    chooseblock
-    {
+    chooseblock {
         this.newPhraseAccounting;
 
         //each phrase has one block
-        blocklength=currphraselength;
-        cuts=[blocklength];
-
-        
+        blocklength = currphraselength;
+        cuts = [blocklength];
+   
         this.endBlockAccounting;
     }
+
+    getBlock {
+        var b;
+
+        // The current setup is to set properties of the CutProc and them copy them over to the block.
+        this.chooseblock;
+
+        // put into a BBCutBlock for rendering purposes
+        b = BBCutBlock();
+        b.blocknum = block;
+        b.length = blocklength;
+        // 'phrasepos' property of BBCutProc is position of the END of the block
+        // while 'phrasepos' property of BBCutBlock is position of the START of the block.
+        // Will rename eventually.
+        b.phrasepos = phrasepos - blocklength;
+        b.offset = offset;
+        b.isroll = roll;
+        b.currphraselength = currphraselength;
+        b.phraseprop = phrasepos / currphraselength;
+        // Cuts take on the form [interval, duration, offsetparam, amplitude]
+        // A simple number becomes [x, x, nil, 1]
+        b.cuts = cuts.collect { |cut|
+            cut.isKindOf(Number).if { [cut, cut, nil, 1] } { cut };
+        };
+
+        // Redundant for now, but might as well keep it
+        b.update;
+
+        ^b;
+    }
     
-    phraseover
-    {
-        ^if(((currphraselength-phrasepos)<0.00001),1,0)
+    phraseover {
+        ^if(((currphraselength - phrasepos) < 0.00001), 1, 0)
     }
 
     //avoids repeated common code
 
     //done manually in MultiProc to avoid updatephrase call
     //currphraselength recalculated in BBCutProc11 and may be for future procedures
-    newPhraseAccounting
-    {
-        arg cpl;
+    newPhraseAccounting { |argCurrentPhraseLength|
         //if nil nothing was passed in; o/w, for procedures that work out the new phrase length
         //themselves can pass in chosen phraselength
 
-        currphraselength=cpl ? (phraselength.value(phrase));
+        currphraselength = argCurrentPhraseLength ? phraselength.value(phrase);
 
-        phrasepos=0.0;
-        phrase=phrase+1;
-        block=0;
+        phrasepos = 0.0;
+        phrase = phrase + 1;
+        block = 0;
     }
 
-    endBlockAccounting
-    {
-        phraseprop = phrasepos / currphraselength;
+    endBlockAccounting {
         phrasepos = phrasepos + blocklength;
         totalbeatsdone = totalbeatsdone + blocklength;
         block = block + 1;

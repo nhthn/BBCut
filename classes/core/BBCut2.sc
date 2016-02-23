@@ -333,40 +333,21 @@ BBCut2 {
     }
 
 
-
-
-    // TODO: have the cut procedures create and return the BBCutBlock object
     getBlock {
-        var convert, b;
-
-        // Tell the cut procedure to set properties
-        proc.chooseblock;
-
-        // put into a BBCutBlock for rendering purposes
-        b = BBCutBlock();
-        b.blocknum = proc.block;
-        b.length = proc.blocklength;
-        b.phrasepos = proc.phrasepos - proc.blocklength;
-        b.offset = proc.offset;
-        b.phraseprop = proc.phraseprop;
-        b.isroll = proc.roll;
-        b.currphraselength = proc.currphraselength;
-        // Cuts take on the form [interval, duration, offsetparam, amplitude]
-        // A simple number becomes [x, x, nil, 1]
-        b.cuts = proc.cuts.collect { |cut|
-            cut.isKindOf(Number).if { [cut, cut, nil, 1] } { cut };
-        };
+        // Retrieve block from cut procedure
+        var block = proc.getBlock;
 
         // quantise must occur here, must adjust b.length too
-        quantiser.notNil.if { quantiser.value(b) };
+        quantiser.notNil.if { quantiser.value(block) };
 
         // used to be clock.tempoclock.tempo
         // so ioi in beats but dur is in seconds, needed for rendering - is it?
-        b.scaleDurations(clock.tempo.reciprocal);
+        block.scaleDurations(clock.tempo.reciprocal);
 
-        b.update;
+        // Set properties: msgs, iois, cumul
+        block.update;
 
-        ^b
+        ^block;
     }
 
 }
