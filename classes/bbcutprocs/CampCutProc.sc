@@ -21,7 +21,13 @@ CampCutProc : BBCutProc
     {
         arg cs,pf=4.0;
 
-        campstream=cs;
+        campstream = cs ?? {
+            // Default: Gainsborough Little Bob Major
+            CampStream.notation(8, "x.18.x.18.x.16.x.18.x.18.x.12")
+        };
+        campstream.isKindOf(CampStream).not.if {
+            campstream = CampStream.notation(campstream[0], campstream[1]);
+        };
 
         bells= campstream.bells;
         offsetlist= List.series(bells,0,1);
@@ -51,6 +57,7 @@ CampCutProc : BBCutProc
                         //involutions always swap val and one above val
                         offsetlist.swap(val,val+1);
                 });
+                offsetlist.postln;
 
         });
 
