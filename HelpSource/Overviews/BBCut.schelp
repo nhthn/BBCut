@@ -35,16 +35,17 @@ list::
 Machine Listening (can also be used independently of the cutters...)
 
 list::
-## link::Classes/Segmentation:: - GUI for segmentation, preparing soundfiles for use with CutBuf3 in particular, RT and NRT modes
 ## link::Classes/BeatTrack:: (from core) - beat tracking UGen
 ## link::Classes/AnalyseEvents2:: (from sc3-plugins) - on-the-fly event analysis UGen
-## link::Classes/AnalyseEventsDatabase:: - form a database of events on-the-fly
 ## link::Classes/DrumTrack:: (from sc3-plugins) - experimental beat tracking UGen, tries to spot typical 4/4 drum patterns
+## link::Classes/AnalyseEventsDatabase:: - form a database of events on-the-fly
+## link::Classes/Segmentation:: - GUI for segmentation, preparing soundfiles for use with CutBuf3 in particular, RT and NRT modes
 ::
 
 Cut Procedures (CutProcs)
 
 list::
+## link::Classes/BBCutProc:: - base class for cut procedures
 ## link::Classes/BBCPPermute:: - generalised permutation cut function
 ## link::Classes/BBCutProc11:: - abstraction of early d+b/jungle based on 3+3+2 like figures
 ## link::Classes/CageCut:: - John Cage's 'square root' form influences a recursive cutter
@@ -61,7 +62,8 @@ list::
 ## link::Classes/TimelineCut:: - inspired by choosing a fundamental timeline as block stricture on cuts
 ## link::Classes/ThrashCutProc1:: - algorithmic abstraction of thrash drumming
 ## link::Classes/WarpCutProc1:: - Warp Records cutting simulation, fast pitched rolls up into audio rate
-## link::Classes/BBCutProc:: - backwards compatability means I keep this older base class from BBCut1
+## link::Classes/StatBalProc:: - statistical feedback simulation
+## link::Classes/StatBalProc2:: - statistical feedback simulation with normalization
 ::
 
 Cut Synthesisers (CutSynths)
@@ -104,6 +106,16 @@ list::
 ## link::Classes/ServerClock:: - running the controlling clock on the Server; shows beat tracking
 ## link::Classes/EventStreamPlayer2:: - support for using Streams with an ExternalClock
 ## link::Classes/CutProcStream:: - Use a cut procedure as a stream, and within Patterns library 
+::
+
+Auxiliary classes
+
+list::
+## link::Classes/CampStream:: - used in CampCutProc
+## link::Classes/StatBalStream:: - used in StatBalProc
+## link::Classes/StatBalNormStream:: - used in StatBalProc2
+## link::Classes/Pstatbal:: - Pattern wrapper for StatBalStream
+## link::Classes/Pstatbalnorm:: - Pattern wrapper for StatBalNormStream
 ::
 
 section:: History

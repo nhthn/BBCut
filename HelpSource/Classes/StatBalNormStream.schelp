@@ -1,5 +1,5 @@
 class:: StatBalNormStream
-summary:: 
+summary:: Stream class implementing Charles Ames' method of statistical feedback
 categories:: Libraries>BBCut
 related:: Overviews/BBCut, Classes/StatBalProc, Classes/StatBalProc2
 
