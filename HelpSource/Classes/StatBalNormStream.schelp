@@ -1,0 +1,82 @@
+class:: StatBalNormStream
+summary:: 
+categories:: Libraries>BBCut
+related:: Overviews/BBCut, Classes/StatBalProc, Classes/StatBalProc2
+
+Stream class implementing Charles Ames' method of statistical feedback.
+This class implements all the full possibilities of the method as presented in "Statistics and Compositional Balance" by Charles Ames. This includes
+a normalisation step. Charles Ame's original seems incorrect, so I've added my own
+normalisation that maintains the sum of statistics as precisely zero. There is a touch of
+controversy here; Charles has communicated to me personally that he doesn't consider
+computer music his field any more, so his comments on my correction are unavailable. At
+some point a deeper mathematical analysis should help to resolve this.
+
+Some normalisation step is necessary for situations where a weight may be zero for some
+time. Otherwise, the statistics will force unrealistic catchup when that weight becomes non zero again.
+Note that the set of weights, heterogeneity and accenture of a given test can be updated at any point.
+You could even change the set of states as long as the number of them remained the same.
+See StatBalStream for the simplified version without any controversial normalisation.
+The Pstatbalnorm class is also provided for use with Patterns classes.
+
+References (all Ames, Charles):
+
+list::
+## "Statistics and Compositional Balance" Perspectives of New Music 1989
+## "A Catalogue of Sequence Generators" Leonardo Music Journal 1992
+## "Quantifying Musical Merit" Interface: Journal of New Music Research 1992
+::
+
+classmethods::
+
+method:: new
+
+argument:: states
+An array of the states to return
+argument:: weights
+An array of weightings, one for each state. Weights may be zero.
+argument:: heterogeneity
+any positive float. Whilst weightings will be approached in the long term, how quickly 
+this occurs relative to serialism and the tolerance within which a running histogram of results fluctuates 
+depends on the ratio of heterogeneity to accent (by default 1).
+
+Heterogeneity 0.0 gives fully deterministic results, like serialism. Increasing heterogeneity increases the
+shuffling of order of appearance of states, that is, less predictability in the short term. 
+
+If heterogenity is really large then floating point problems will eventually occur. 
+argument:: length
+Number of calls to next before returning nil for sequence end. Default is inf for forever.
+
+instancemethods::
+
+method:: next
+Get the next state.
+
+method:: reset
+Restart the stream.
+
+examples::
+
+code::
+(   //compare to weighted randomness, with heterogeneity 1.0, and change of weights halfway
+var sbns;
+var weights;
+
+weights= [0.6,0.3,0.1,0.0];
+
+sbns= StatBalNormStream.new([0,1,2,3],weights,1.0);
+
+20.do({arg i; 
+"wchoose ".post;[0,1,2,3].wchoose(weights).post; "  statbal ".post;sbns.next.postln; 
+});
+
+weights=[0.6,0.0,0.1,0.3];
+
+"HALFWAY".postln;
+
+sbns.weights_(weights);
+
+20.do({arg i; 
+"wchoose ".post;[0,1,2,3].wchoose(weights).post; "  statbal ".post;sbns.next.postln; 
+});
+)
+::
