@@ -35,6 +35,10 @@ BBCutBlock {
 
     }
 
+    addtimedfunctiontocut { |whichcut, beatdelay, timedelay, func|
+        functions.add([cumul[whichcut] + beatdelay, timedelay, func]);
+    }
+
 
     //create [delta, bundle] list, will be sorted already
     cacheMsgs {arg cache, server;

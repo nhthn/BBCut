@@ -8,6 +8,7 @@
 
 CutBuf3 : CutSynth {
     var <>bbcutbuf, <>offset, <>pbsfunc, <>dutycycle, <>atk, <>rel, <>curve;
+    var <>grainfunc;
     var whichsynthdef;
     var <>deviationmult,<>pretrim,<>posttrim;
 
@@ -37,7 +38,8 @@ CutBuf3 : CutSynth {
         ^super.new.initCutBuf2(bbcutbuf, offset, deviationmult, pretrim, posttrim, pbsfunc, dutycycle, atk, rel, curve);
     }
 
-    initCutBuf2 {arg bcb, off, dm,pt,pstt, pf, dc,ap,rp,c;
+    initCutBuf2 {
+        |bcb, off, dm, pt, pstt, pf, dc, ap, rp, c|
 
         bbcutbuf=bcb;
         offset= off ? 0.0;
@@ -51,8 +53,6 @@ CutBuf3 : CutSynth {
         atk= ap ? 0.0;	//any enveloping may change the PAT
         rel= rp ? 0.0;
         curve= c ? 0;
-
-
     }
 
 
@@ -159,16 +159,44 @@ CutBuf3 : CutSynth {
 
                         eventdur= (bbcutbuf.eventlengths[index])*dc;
 
-                        block.addtimedmsgtocut(i,
+                        block.addtimedmsgtocut(
+                            i,
                             delay,
                             timedelay,
-                            [\s_new,whichsynthdef, -1, 0,cutgroup.synthgroup.nodeID,\outbus,cutgroup.index,\bufnum,bbcutbuf.bufnum,\startPos, bbcutbuf.eventstarts[index], \rate,pbs,\dur, eventdur,\atkprop,atkval,\relprop, relval, \curve, crv]);
+                            [
+                                \s_new, whichsynthdef, -1, 0, cutgroup.synthgroup.nodeID,
+                                \outbus, cutgroup.index,
+                                \bufnum, bbcutbuf.bufnum,
+                                \startPos, bbcutbuf.eventstarts[index],
+                                \rate, pbs,
+                                \dur, eventdur,
+                                \atkprop, atkval,
+                                \relprop, relval,
+                                \curve, crv
+                            ]
+                        );
+
+                        grainfunc.notNil.if {
+                            block.addtimedfunctiontocut(
+                                i,
+                                delay,
+                                timedelay,
+                                (
+                                    block: block,
+                                    clock: clock,
+                                    whichcut: i,
+                                    startPos: bbcutbuf.eventstarts[index],
+                                    dur: eventdur,
+                                    func: grainfunc,
+                                    play: { ~func.value(~whichcut, ~block, ~clock, ~startPos, ~dur) }
+                                )
+                            );
+                        };
 
                         //could pass pat, but assume 20mS multimodal integration herein
-                        if(trace.notNil,{trace.msg(block, i, delay, timedelay, \offset,(bbcutbuf.eventstarts[index])/(bbcutbuf.numFrames),\repeatlength,dur,\subevent,j)});
-
-
-                        //Post << [\dur, (bbcutbuf.eventlengths[index])] << nl;
+                        if(trace.notNil, {
+                            trace.msg(block, i, delay, timedelay, \offset, (bbcutbuf.eventstarts[index])/(bbcutbuf.numFrames), \repeatlength, dur, \subevent, j)
+                        });
 
                     });
 
@@ -180,6 +208,4 @@ CutBuf3 : CutSynth {
 
         //don't need to return block, updated by reference
     }
-
-
 }
