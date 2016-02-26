@@ -10,8 +10,40 @@ CutLab {
     // Index of cut procedures
     classvar <>cutprocs;
 
+    /*
+
+    +---------------------------+
+    |                           |
+    |     logo, soundfile       |
+    |                           |
+    +---------+-----------------+
+    |         |                 |
+    |         |                 |
+    |  BBCut  |    procedure-   |
+    | globals |     specific    |
+    |         |     settings    |
+    |         |                 |
+    |         |                 |
+    +---------+-----------------+
+
+    */
+
+    var margin = 10;
+    var globalPanelWidth = 200;
+    var procPanelWidth = 400;
+    var bottomPanelHeight = 500;
+    var logoHeight = 30;
+    var sfviewHeight = 30;
+    var playButtonHeight = 30;
+
+    var knobWidth = 50;
+    var knobHeight = 100;
+
     // GUI elements
     var window;
+    var topPanel;
+    var globalPanel;
+    var procPanel;
     var logoText;
     var playButton;
     var procMenu;
@@ -44,6 +76,12 @@ CutLab {
     }
 
     initCutLab { |argBuf|
+        var topPanelWidth;
+        var bottomPanelY;
+        var windowHeight;
+
+        // Synth initialization
+
         buf = argBuf;
 
         cutsynth = CutBuf3(buf, 0.3);
@@ -56,19 +94,29 @@ CutLab {
         clock = ExternalClock(TempoClock(2.4)).play;
         bbcut = BBCut2(CutGroup(cutsynth, numChannels: buf.numChannels), BBCutProc11());
 
-        cursorPos = 0.0;
-        grainStartPos = 0.0;
-        grainDur = 0.0;
+        // Messy dimension computations
+        // Can't use Layout, it's Qt only and doesn't work with EZGui
+        topPanelWidth = globalPanelWidth + margin + procPanelWidth;
+        bottomPanelY = margin + logoHeight + margin + sfviewHeight + margin;
+        windowHeight = bottomPanelY + playButtonHeight + margin + knobHeight + margin;
 
-        window = Window("CutLab", Rect(100, 100, 600, 300));
-        logoText = StaticText(window, Rect(10, 10, 580, 30))
+        // Creating the GUI elements
+
+        window = Window("CutLab", Rect(0, 0, margin + topPanelWidth + margin, windowHeight));
+
+        logoText = StaticText(window, Rect(margin, margin, topPanelWidth, logoHeight))
             .string_("✂ CutLab ✂")
             .align_(\center)
             .font_(Font(nil, 30));
 
+        // sound file view variables
+        cursorPos = 0.0;
+        grainStartPos = 0.0;
+        grainDur = 0.0;
+
         sf = SoundFile();
         sf.openRead(~buf.path);
-        sfview = SoundFileView(window, Rect(10, 50, 580, 40))
+        sfview = SoundFileView(window, Rect(margin, margin + logoHeight + margin, topPanelWidth, sfviewHeight))
             .gridOn_(false)
             .setSelectionColor(0, Color.gray(0.2))
             .timeCursorColor_(Color.white)
@@ -89,7 +137,7 @@ CutLab {
             }
         });
 
-        playButton = Button(window, Rect(10, 100, 100, 30))
+        playButton = Button(window, Rect(margin, bottomPanelY, globalPanelWidth, playButtonHeight))
             .states_([
                 ["▶ Play", nil, Color.green],
                 ["■ Stop", Color.white, Color.red]
@@ -103,22 +151,10 @@ CutLab {
                 };
             });
 
-        procMenu = EZPopUpMenu(
-            window, Rect(120, 100, 300, 30),
-            items: cutprocs.collect(_.key),
-            initVal: 0,
-            initAction: true,
-            globalAction: { |menu|
-                bbcut.proc = cutprocs[menu.value].value.interpret;
-                this.updateCode;
-            }
-        );
-
         tempoKnob = EZKnob(
-            window, Rect(10, 140, 50, 100),
+            window, Rect(margin, bottomPanelY + playButtonHeight + margin, knobWidth, knobHeight),
             label: "Tempo",
             controlSpec: ControlSpec(40, 200, \lin, 2, default: 144),
-            initAction: true,
             action: { |knob|
                 clock.tempo_(knob.value / 60);
                 this.updateCode;
@@ -127,17 +163,30 @@ CutLab {
         tempoKnob.labelView.align_(\center);
 
         jumpKnob = EZKnob(
-            window, Rect(70, 140, 50, 100),
+            window, Rect(margin + knobWidth + margin, bottomPanelY + playButtonHeight + margin, knobWidth, knobHeight),
             label: "Jump",
             controlSpec: \unipolar,
             initVal: 0.5,
-            initAction: true,
             action: { |knob|
                 cutsynth.offset = knob.value;
                 this.updateCode;
             }
         );
         jumpKnob.labelView.align_(\center);
+
+        procMenu = EZPopUpMenu(
+            window, Rect(margin + globalPanelWidth + margin, bottomPanelY, procPanelWidth, playButtonHeight),
+            items: cutprocs.collect(_.key),
+            initVal: 0,
+            globalAction: { |menu|
+                bbcut.proc = cutprocs[menu.value].value.interpret;
+                this.updateCode;
+            }
+        );
+
+        procMenu.doAction;
+        tempoKnob.doAction;
+        jumpKnob.doAction;
 
         sfviewRout.play;
 
@@ -152,12 +201,11 @@ CutLab {
     }
 
     updateCode {
-        /*
         "BBCut2(CutBuf3(~buf, %), %).play(%)".format(
             jumpKnob.value.asStringPrec(3),
             cutprocs[procMenu.value].value,
             (tempoKnob.value / 60).asStringPrec(3);
-        ).postln;*/
+        ).postln;
     }
 
 }
