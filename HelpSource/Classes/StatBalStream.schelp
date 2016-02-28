@@ -1,0 +1,80 @@
+class:: StatBalStream
+summary:: Stream class implementing Charles Ames' method of statistical feedback
+categories:: Libraries>BBCut
+related:: Overviews/BBCut, Classes/StatBalProc, Classes/StatBalProc2, Classes/StatBalNormStream
+
+Charles Ames' statistical feedback is a type of weighted random number generator that is useful
+for generating streams of random numbers that sound more "natural" and "balanced." Statistical balance
+keeps track of the distributions of its own output and compensates for short-term lack of diversity.
+A "heterogeneity" parameter allows you to control how strong this compensation is -- low heterogeneity
+approaches deterministic behavior (like serialism) and high heterogeneity behaves more randomly.
+
+The pseudocode is as follows:
+
+list::
+## Let W be a list of n nonzero weights.
+## Let h be a nonnegative heterogeneity scalar parameter.
+## Let a be an accent scalar parameter (scalar).
+## Set S to an array of n zeros.
+## To generate a new output of the stream:
+    list::
+    ## Find the weight k so that S[i] + (a + h * rand()) / W[i] is minimized, where rand() generates a random number from 0 to 1 for each index. 
+    ## Add a / W[k] to S[k].
+    ## Return k.
+    ::
+::
+
+W, h, and a can all be changed during the generator's evolution.
+
+References (all Ames, Charles):
+
+list::
+## "Statistics and Compositional Balance" Perspectives of New Music 1989
+## "A Catalogue of Sequence Generators" Leonardo Music Journal 1992
+## "Quantifying Musical Merit" Interface: Journal of New Music Research 1992
+::
+
+classmethods::
+
+method:: new
+
+argument:: states
+An array of the states to return
+argument:: weights
+An array of weightings, one for each state. Weights may be zero.
+argument:: heterogeneity
+any positive float. Whilst weightings will be approached in the long term, how quickly 
+this occurs relative to serialism and the tolerance within which a running histogram of results fluctuates 
+depends on the ratio of heterogeneity to accent (by default 1).
+
+Heterogeneity 0.0 gives fully deterministic results, like serialism. Increasing heterogeneity increases the
+shuffling of order of appearance of states, that is, less predictability in the short term. 
+
+If heterogenity is really large then floating point problems will eventually occur. 
+argument:: length
+Number of calls to next before returning nil for sequence end. Default is inf for forever.
+
+instancemethods::
+
+method:: next
+Get the next state.
+
+method:: reset
+Restart the stream.
+
+method:: accent
+Sets the accent parameter as described in the above pseudocode. The default is 1.
+
+method:: stats
+The internal statistics vector (S in the above pseudocode).
+
+
+examples::
+
+code::
+(
+g = StatBalStream((0..3), 1!4, 0.1);
+1000.collect({ g.next }).plot;
+1000.collect({ (0..3).choose }).plot;
+)
+::

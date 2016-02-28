@@ -1,7 +1,7 @@
 class:: StatBalProc
 summary:: Automatic breakbeat cutting algorithm using statistical feedback
 categories:: Libraries>BBCut
-related:: Overviews/BBCut, Classes/StatBalProc2
+related:: Overviews/BBCut, Classes/StatBalStream, Classes/StatBalProc2
 
 description::
 
@@ -38,7 +38,7 @@ beats per sub division. Sets a primitive cut size resolution for choose offset m
 
 examples::
 
-You should substitute your own break sample to hear the effects of this cut procedure more clearly.
+You should substitute your own break sample to hear the effects of this cut procedure more clearly. Either way, the effect is fairly subtle.
 
 code::
 
