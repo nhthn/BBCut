@@ -32,6 +32,13 @@ list::
 ## link::Classes/BufSelector:: - swaps between an array of BBCutBuffers at phrase or block boundaries
 ::
 
+GUI
+
+list::
+## link::Classes/CutLab:: - GUI for audio splicing and reassembly
+## link::Classes/Segmentation:: - GUI for segmentation, preparing soundfiles for use with CutBuf3 in particular, RT and NRT modes
+::
+
 Machine Listening (can also be used independently of the cutters...)
 
 list::
@@ -39,7 +46,6 @@ list::
 ## link::Classes/AnalyseEvents2:: (from sc3-plugins) - on-the-fly event analysis UGen
 ## link::Classes/DrumTrack:: (from sc3-plugins) - experimental beat tracking UGen, tries to spot typical 4/4 drum patterns
 ## link::Classes/AnalyseEventsDatabase:: - form a database of events on-the-fly
-## link::Classes/Segmentation:: - GUI for segmentation, preparing soundfiles for use with CutBuf3 in particular, RT and NRT modes
 ::
 
 Cut Procedures (CutProcs)
