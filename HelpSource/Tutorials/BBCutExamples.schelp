@@ -7,86 +7,84 @@ All examples are part of The BBCut Library, Copyright (C) 2001  Nick M.Collins d
 section:: Automated FX unit swapping
 
 code::
-//FXUnit swapper, up to seven fx units automatically dropping in and out (some n_set failure messages unavoidable, don't worry about it...)
+// FXUnit swapper, up to seven fx units automatically dropping in and out (some n_set failure messages unavoidable, don't worry about it...)
 
-//to obtain the source sample, take the first 48 beats as a loop from track 8 of kid a
+// to obtain the source sample, take the first 48 beats from track 8 (Idioteque) of Radiohead's Kid A
 (
 var sf, clock;
-
-clock= ExternalClock(TempoClock(2.5));  
-        
-clock.play;     
-        
+clock = ExternalClock(TempoClock(2.5));
+clock.play;
 Routine.run({
+    //adding a Limiter before pressing s.record
+    SynthDef(\limiter, {
+        ReplaceOut.ar(0, Limiter.ar(In.ar(0, 2), 0.99))
+    }).play(Group.after(Node.basicNew(s, 1)));
 
-//adding a Limiter before pressing s.record
-SynthDef(\limiter,{ReplaceOut.ar(0,Limiter.ar(In.ar(0,2),0.99))}).play(Group.after(Node.basicNew(s,1)));
-            
-sf= BBCutBuffer("/Users/nickcollins/Desktop/bbcut2demoes/idiosource.wav",48);
+    sf = BBCutBuffer("/Users/nickcollins/Desktop/bbcut2demoes/idiosource.wav", 48);
 
-s.sync; //this forces a wait for the Buffer to load
+    s.sync; // this forces a wait for the Buffer to load
 
-//0.3.coin chance of random offset starting position for cut playback
-BBCut2(CutGroup([CutBuf3(sf,0.3),CutMixer(0,0.9),CutFXSwap1(7,0.9,0.7)],numChannels:2), 
-WarpCutProc1.new).play(clock);
-
-
+    // 0.3.coin chance of random offset starting position for cut playback
+    BBCut2(CutGroup([CutBuf3(sf, 0.3), CutMixer(0, 0.9), CutFXSwap1(7, 0.9, 0.7)], numChannels: 2), WarpCutProc1()).play(clock);
 });
-
 )
 ::
 
 section:: sqpush on sqpush
 
 code::
-//sqpush on sqpush- used to make the SQPusher1 demo, changing FX plus SQPusher1 cutter, on a source which I'd transcribed as part of devising the cutting database- so a recursive sqpushularity...
+// sqpush on sqpush- used to make the SQPusher1 demo, changing FX plus SQPusher1 cutter, on a source which I'd transcribed as part of devising the cutting database- so a recursive sqpushularity...
 
 (
 var sf, clock;
-
-clock= ExternalClock(TempoClock(3.3333));   
-        
-clock.play;     
-        
+clock = ExternalClock(TempoClock(3.3333));
+clock.play;
 Routine.run({
+    //adding a Limiter before pressing s.record
+    SynthDef(\limiter, {
+        ReplaceOut.ar(0, Limiter.ar(In.ar(0, 2), 0.99))
+    }).play(Group.after(Node.basicNew(s, 1)));
 
-//adding a Limiter to the output before record
-SynthDef(\limiter,{ReplaceOut.ar(0,Limiter.ar(In.ar(0,2),0.99))}).play(Group.after(Node.basicNew(s,1)));
-            
-sf= BBCutBuffer("/Volumes/data/audio/gospastic8bar.aif",64);
+    sf= BBCutBuffer("/Volumes/data/audio/gospastic8bar.aif", 64);
 
-s.sync; //this forces a wait for the Buffer to load
+    s.sync; //this forces a wait for the Buffer to load
 
-BBCut2(CutGroup([CutBuf2(sf,0.8,SQPushFXPitch2(0.99,pbchance:0.9)),CutMixer(0,0.9,SQPushFXAmp2(0.05)),CutFXSwap1(2,0.5,0.5)],numChannels:2), 
-SQPusher1(0.4,5,0.4)).play(clock);
-
+    BBCut2(
+        CutGroup([
+            CutBuf2(sf, 0.8, SQPushFXPitch2(0.99, pbchance: 0.9)),
+            CutMixer(0, 0.9, SQPushFXAmp2(0.05)),
+            CutFXSwap1(2, 0.5, 0.5)
+        ], numChannels: 2),
+        SQPusher1(0.4, 5, 0.4)
+    ).play(clock);
 });
-
 )
 
 
 //sqpushertango (you need a tango source file)
 (
 var sf, clock;
-
-clock= ExternalClock(TempoClock(2.1979076268267));  
-        
-clock.play;     
-        
+clock = ExternalClock(TempoClock(2.1979076268267));
+clock.play;
 Routine.run({
+    //adding a Limiter before pressing s.record
+    SynthDef(\limiter, {
+        ReplaceOut.ar(0, Limiter.ar(In.ar(0, 2), 0.99))
+    }).play(Group.after(Node.basicNew(s, 1)));
 
-//adding a Limiter to the output before record
-SynthDef(\limiter,{ReplaceOut.ar(0,Limiter.ar(In.ar(0,2),0.99))}).play(Group.after(Node.basicNew(s,1)));
-            
-sf= BBCutBuffer("sounds/SCsamp/atmos/tango.wav",80);
+    sf = BBCutBuffer("sounds/SCsamp/atmos/tango.wav", 80);
 
-s.sync; //this forces a wait for the Buffer to load
+    s.sync; //this forces a wait for the Buffer to load
 
-BBCut2(CutGroup([CutBuf2(sf,0.5,SQPushFXPitch2(0.96,pbchance:0.8)),CutMixer(0,0.9,SQPushFXAmp2(0.01))],numChannels:2), 
-SQPusher1(0.4,3,0.4)).play(clock);
+    BBCut2(
+        CutGroup([
+            CutBuf2(sf, 0.5, SQPushFXPitch2(0.96, pbchance: 0.8)),
+            CutMixer(0, 0.9, SQPushFXAmp2(0.01))
+        ], numChannels: 2),
+        SQPusher1(0.4, 3, 0.4)
+    ).play(clock);
 
 });
-
 )
 ::
 
@@ -94,7 +92,7 @@ section:: simultaneous beat tracking and event analysis
 
 code::
 //beat induction and event capture from audio in- you set the tempo and provide the source material- beat box away, play an instrument etc
-//warning- because the beat tracker can take some time to adjust to your input (up to 6 seconds) you may have to play against conflicting material at times. 
+//warning- because the beat tracker can take some time to adjust to your input (up to 6 seconds) you may have to play against conflicting material at times.
 
 (
 var trackbus, trackgroup;
@@ -105,12 +103,12 @@ s.latency=0.05;
 OSCresponder.all.do({arg val; if(val.cmdName=='/tr',{OSCresponder.remove(val)}); });
 
 //run a line at a time
-~clock= ServerClock.new;    
-    
+~clock= ServerClock.new;
+
 ~clock.play(100,s); //will wait on trigID 100
-    
-~database=AnalyseEventsDatabase.new;    
-    
+
+~database=AnalyseEventsDatabase.new;
+
 Routine.run({
 
 //adding a Limiter to the output before record
@@ -127,8 +125,8 @@ var source, beep;
 
 source= AudioIn.ar(1);
 
-//see AutoTrack help file
-#trackb,trackh,trackq,tempo=AutoTrack.kr(source, lock);
+//see BeatTrack help file
+#trackb,trackh,trackq,tempo=BeatTrack.kr(source, lock);
 
 beep= SinOsc.ar(1000,0.0,Decay.kr(trackb,0.1));
 
@@ -190,12 +188,12 @@ s.latency=0.05;
 OSCresponder.all.do({arg val; if(val.cmdName=='/tr',{OSCresponder.remove(val)}); });
 
 //run a line at a time
-~clock= ServerClock.new;    
-    
+~clock= ServerClock.new;
+
 ~clock.play(100,s); //will wait on trigID 100
-    
-~database=AnalyseEventsDatabase(10,2,s);    
-    
+
+~database=AnalyseEventsDatabase(10,2,s);
+
 Routine.run({
 
 //adding a Limiter before pressing s.record
@@ -203,9 +201,9 @@ SynthDef(\limiter,{ReplaceOut.ar(0,Limiter.ar(In.ar(0,2),0.99))}).play(Group.aft
 
 //choose a stereo file you want to track
 ~source=Buffer.read(s,"/Users/nickcollins/Music/iTunes/iTunes Music/Unknown Artist/Unknown Album/conscious.wav");
- 
+
 s.sync;
- 
+
 ~trackbus=Bus.audio(s,2);
 
 trackgroup= Group.before(Node.basicNew(s,1));
@@ -217,8 +215,8 @@ var source, beep;
 
 source= PlayBuf.ar(2,~source.bufnum,1.0,1,0,1);
 
-//see AutoTrack help file
-#trackb,trackh,trackq,tempo=AutoTrack.kr(Mix(source), lock);
+//see BeatTrack help file
+#trackb,trackh,trackq,tempo=BeatTrack.kr(Mix(source), lock);
 
 beep= SinOsc.ar(1000,0.0,Decay.kr(trackb,0.1));
 
@@ -275,7 +273,7 @@ f.end;
 
 
 
-//Limiter 
+//Limiter
 //SynthDef(\limiter,{
 //var input;
 //
@@ -298,7 +296,7 @@ s.latency= 0.05;
 var sf;
 
 Routine.run({
-            
+
 sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff", 8);
 
 s.sync; //this forces a wait for the Buffer to load
@@ -404,11 +402,11 @@ code::
 (
 var sf, clock, cutsynth, cutproc;
 
-clock= ExternalClock(TempoClock(2.7725));           
-clock.play;     
-        
+clock= ExternalClock(TempoClock(2.7725));
+clock.play;
+
 Routine.run({
-            
+
 sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break2.aiff",4);
 
 s.sync; //this forces a wait for the Buffer to load
@@ -447,7 +445,7 @@ var sf,cutsynth1, cutsynth2, cutsynth3, cutproc;
 {Out.ar(17,Resonz.ar(Mix.ar(LFTri.ar(Array.fill(3,{arg i; LFNoise0.ar(2.7725*0.25,200,600).round(3.7)}),1)),1000,SinOsc.kr(2.7725*0.125,0,0.3,0.4)))}.play(Group.head(RootNode.new));
 
 Routine.run({
-    
+
 sf=BBCutBuffer(Platform.resourceDir +/+ "sounds/break2.aiff",4);
 
 s.sync;
@@ -478,11 +476,11 @@ code::
 (
 var sf, clock, cutsynth, cutproc;
 
-clock= ExternalClock(TempoClock(2.7725));           
-clock.play;     
-        
+clock= ExternalClock(TempoClock(2.7725));
+clock.play;
+
 Routine.run({
-            
+
 sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break2.aiff",4);
 
 s.sync; //this forces a wait for the Buffer to load
@@ -509,11 +507,11 @@ code::
 ( //test- block speed choice of procedure
 var sf, clock, cutsynth, cutproc;
 
-clock= ExternalClock(TempoClock(2.7725));           
-clock.play;     
-        
+clock= ExternalClock(TempoClock(2.7725));
+clock.play;
+
 Routine.run({
-            
+
 sf= BBCutBuffer.array(["sounds/a11wlk01-44_1.aiff",Platform.resourceDir +/+ "sounds/break.aiff",Platform.resourceDir +/+ "sounds/break2.aiff"],[4,8,4]);
 
 s.sync; //this forces a wait for the Buffer to load
