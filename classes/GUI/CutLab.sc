@@ -14,54 +14,37 @@ CutLab {
 
     +---------------------------+
     |                           |
-    |     logo, soundfile       |
+    |          soundfile        |
     |                           |
     +---------+-----------------+
     |         |                 |
     |         |                 |
-    |  BBCut  |    procedure-   |
-    | globals |     specific    |
-    |         |     settings    |
+    |         |                 |
+    |  synth  |      proc       |
+    |         |                 |
     |         |                 |
     |         |                 |
     +---------+-----------------+
 
     */
 
-    var margin = 10;
-    var globalPanelWidth = 200;
-    var procPanelWidth = 400;
-    var logoHeight = 30;
-    var fileHeight = 20;
-    var sfviewHeight = 100;
-    var playButtonHeight = 30;
-
-    var fileFieldWidth = 200;
-    var fileBrowseButtonWidth = 100;
-    var beatLengthFieldWidth = 150;
-    var fileLoadButtonWidth = 100;
-
-    var knobWidth = 50;
-    var knobHeight = 100;
-
     // GUI elements
     var window;
-    var topPanel;
-    var globalPanel;
+    var synthPanel;
     var procPanel;
-
-    var logoText;
 
     var fileField;
     var fileBrowseButton;
-    var beatLengthField;
     var fileLoadButton;
 
     var sfview;
     var playButton;
     var procMenu;
+    var segmentsKnob;
     var tempoKnob;
     var jumpKnob;
+
+    var knobSize;
 
     // SoundFile
     var sf;
@@ -88,60 +71,72 @@ CutLab {
     }
 
     initCutLab {
-        var topPanelWidth;
-        var bottomPanelY;
-        var windowHeight;
+        var flow;
+        var synthPanel;
+        var synthPanelKnob;
 
         // sound file view variables
         cursorPos = 0.0;
         grainStartPos = 0.0;
         grainDur = 0.0;
 
-        // Messy dimension computations
-        // Can't use Layout, it's Qt only and doesn't work with EZGui
-        topPanelWidth = globalPanelWidth + margin + procPanelWidth;
-        bottomPanelY = margin + logoHeight + margin + fileHeight + margin + sfviewHeight + margin;
-        windowHeight = bottomPanelY + playButtonHeight + margin + knobHeight + margin;
+        knobSize = 50@100;
 
-        // Creating the GUI elements
+        //////////////////// WINDOW ////////////////////
 
-        window = Window("CutLab", Rect(0, 0, margin + topPanelWidth + margin, windowHeight));
+        window = Window("CutLab", 500@350);
+        window.onClose_ {
+            this.cleanUp;
+        };
+        window.addFlowLayout;
 
-        logoText = StaticText(window, Rect(margin, margin, topPanelWidth, logoHeight))
-            .string_("✂ CutLab ✂")
-            .align_(\center)
-            .font_(Font(nil, 30));
+        //////////////////// FILE CONTROLS ////////////////////
 
-        // this is SO awful!!!
-        fileField = TextField(window, Rect(margin, margin + logoHeight + margin, fileFieldWidth, fileHeight))
-            .value_(if(File.exists(Platform.resourceDir +/+ "sounds/break.aiff"), Platform.resourceDir +/+ "sounds/break.aiff", Platform.resourceDir +/+ "sounds/a11wlk01.wav"));
-        fileBrowseButton = Button(window, Rect(margin + fileFieldWidth + margin, margin + logoHeight + margin, fileBrowseButtonWidth, fileHeight))
+        fileField = TextField(window, 200@20)
+            .value_(
+                File.exists(Platform.resourceDir +/+ "sounds/break.aiff").if(
+                    Platform.resourceDir +/+ "sounds/break.aiff",
+                    Platform.resourceDir +/+ "sounds/a11wlk01.wav"
+                )
+            );
+
+        fileBrowseButton = Button(window, 80@20)
             .states_([["Browse..."]])
             .action_ {
                 Dialog.openPanel { |filename|
                     fileField.value = filename;
                 };
             };
-        beatLengthField = EZNumber(
-            window, Rect(margin + fileFieldWidth + margin + fileBrowseButtonWidth + margin, margin + logoHeight + margin, beatLengthFieldWidth, fileHeight),
-            label: "# of beats",
-            numberWidth: 60,
-            controlSpec: ControlSpec(4, 64, \lin, 1, default: 8)
-        );
-        fileLoadButtonWidth = Button(window, Rect(margin + fileFieldWidth + margin + fileBrowseButtonWidth + margin + beatLengthFieldWidth + margin, margin + logoHeight + margin, fileLoadButtonWidth, fileHeight))
-            .states_([["Load"]])
-            .action_ {
-                this.loadBuf(fileField.value, beatLengthField.value);
-            };
 
-        sfview = SoundFileView(window, Rect(margin, margin + logoHeight + margin + fileHeight + margin, topPanelWidth, sfviewHeight))
+        fileLoadButton = Button(window, 80@20)
+            .states_([["Load"]])
+            .action_({
+                this.loadBuf(fileField.value, segmentsKnob.value);
+            })
+            .focus;
+
+        window.view.decorator.nextLine;
+
+        //////////////////// SOUND FILE ////////////////////
+
+        sfview = SoundFileView(window, window.view.decorator.indentedRemaining.width@100)
             .gridOn_(false)
             .setSelectionColor(0, Color.gray(0.2))
             .timeCursorColor_(Color.white);
 
         sfviewRoutFreq = 30;
 
-        playButton = Button(window, Rect(margin, bottomPanelY, globalPanelWidth, playButtonHeight))
+        window.view.decorator.nextLine;
+
+        //////////////////// SYNTH PANEL ////////////////////
+
+        synthPanel = CompositeView(window, 200@300);
+        // Parent already has a margin, so margin is 0
+        synthPanel.addFlowLayout(margin: 0@0);
+
+        //////////////////// PLAY BUTTON ////////////////////
+
+        playButton = Button(synthPanel, synthPanel.decorator.indentedRemaining.width@30)
             .states_([
                 ["▶ Play", nil, Color.green],
                 ["■ Stop", Color.white, Color.red]
@@ -156,35 +151,68 @@ CutLab {
             })
             .enabled_(false);
 
-        tempoKnob = EZKnob(
-            window, Rect(margin, bottomPanelY + playButtonHeight + margin, knobWidth, knobHeight),
-            label: "Tempo",
-            controlSpec: ControlSpec(40, 200, \lin, 2, default: 144),
-            action: { |knob|
+        synthPanel.decorator.nextLine;
+
+        //////////////////// GLOBAL KNOBS ////////////////////
+
+        synthPanelKnob = { |label, controlSpec, initVal, action|
+            var knob;
+            knob = EZKnob(
+                synthPanel, knobSize,
+                layout: \vert2,
+                label: label,
+                initVal: initVal,
+                controlSpec: controlSpec,
+                action: action
+            );
+            knob.labelView
+                .font_(Font(nil, 10));
+            knob.numberView
+                .font_(Font(nil, 10))
+                .align_(\center);
+            knob;
+        };
+
+        segmentsKnob = synthPanelKnob.(
+            "Segments", ControlSpec(4, 64, \lin, 1, default: 8), nil,
+            { |knob|
+                buf.notNil.if {
+                    buf.beatlength = knob.value;
+                    buf.events_();
+                }
+            }
+        );
+
+        tempoKnob = synthPanelKnob.(
+            "Tempo", ControlSpec(40, 200, \lin, 2, default: 144), nil,
+            { |knob|
                 clock.notNil.if {
-                    clock.tempo_(knob.value / 60);
+                    clock.tempo = knob.value / 60;
                 };
                 this.updateCode;
             }
         );
-        tempoKnob.labelView.align_(\center);
 
-        jumpKnob = EZKnob(
-            window, Rect(margin + knobWidth + margin, bottomPanelY + playButtonHeight + margin, knobWidth, knobHeight),
-            label: "Jump",
-            controlSpec: \unipolar,
-            initVal: 0.5,
-            action: { |knob|
+        jumpKnob = synthPanelKnob.(
+            "Jump", \unipolar, 0.5,
+            { |knob|
                 cutsynth.notNil.if {
                     cutsynth.offset = knob.value;
                 };
                 this.updateCode;
             }
         );
-        jumpKnob.labelView.align_(\center);
+
+        //////////////////// PROCEDURE PANEL ////////////////////
+
+        procPanel = CompositeView(window, window.view.decorator.indentedRemaining.width@300);
+        // Parent already has a margin, so margin is 0
+        procPanel.addFlowLayout(margin: 0@0);
+
+        //////////////////// PROCEDURE MENU ////////////////////
 
         procMenu = EZPopUpMenu(
-            window, Rect(margin + globalPanelWidth + margin, bottomPanelY, procPanelWidth, playButtonHeight),
+            procPanel, procPanel.decorator.indentedRemaining.width@30,
             items: cutprocs.collect(_.key),
             initVal: 0,
             globalAction: { |menu|
@@ -195,78 +223,91 @@ CutLab {
             }
         );
 
+        procPanel.decorator.nextLine;
+
+        //////////////////// DISPLAY ////////////////////
+
         window.front;
-        window.onClose_ {
-            this.cleanUp;
-        };
 
     }
 
-    cleanUp {
+    cleanUp { |buffer|
+
         buf.notNil.if { buf.free };
-        sf.notNil.if { sf.free };
-        clock.notNil.if { clock.stop };
-        bbcut.notNil.if { bbcut.free };
-        sfviewRout.notNil.if { sfviewRout.stop; };
         buf = nil;
+
+        sf.notNil.if { sf.free };
         sf = nil;
-        clock = nil;
+
+        bbcut.notNil.if { bbcut.free };
         bbcut = nil;
+
+        sfviewRout.notNil.if { sfviewRout.stop; };
         sfviewRout = nil;
+        
+        clock.notNil.if { clock.stop };
+        clock = nil;
+
     }
 
     loadBuf { |filename, n|
 
-        BBCutBuffer(filename, n, action: { |argBuf|
-            this.cleanUp;
+        Server.default.waitForBoot {
 
-            buf = argBuf;
+            BBCutBuffer(filename, n, action: { |argBuf|
+                this.cleanUp;
 
-            // Synth initialization
-            cutsynth = CutBuf3(buf, 0.3);
-            cutsynth.grainfunc_(e { |whichcut, block, clock, startPos, dur|
-                cursorPos = startPos;
-                grainStartPos = startPos;
-                grainDur = dur * buf.sampleRate;
+                buf = argBuf;
+
+                // Synth initialization
+                cutsynth = CutBuf3(buf, 0.3);
+                cutsynth.grainfunc_(e { |whichcut, block, clock, startPos, dur|
+                    cursorPos = startPos;
+                    grainStartPos = startPos;
+                    grainDur = dur * buf.sampleRate;
+                });
+
+                clock = ExternalClock(TempoClock(2.4)).play;
+                bbcut = BBCut2(CutGroup(cutsynth, numChannels: buf.numChannels), BBCutProc11());
+
+                { playButton.enabled = true }.defer;
+
+                sf = SoundFile();
+                sf.openRead(buf.path);
+
+                { sfview.soundfile_(sf).read.refresh; }.defer;
+
+                sfviewRout = Routine({
+                    loop {
+                        {
+                            sfview.setSelectionStart(0, grainStartPos);
+                            sfview.setSelectionSize(0, grainDur);
+                            sfview.timeCursorPosition_(cursorPos);
+                            sfview.timeCursorOn_(cursorPos <= (grainStartPos + grainDur));
+                        }.defer;
+                        cursorPos = cursorPos + (buf.sampleRate * sfviewRoutFreq.reciprocal);
+                        sfviewRoutFreq.reciprocal.yield;
+                    }
+                });
+
+                sfviewRout.play;
+
+                {
+                    procMenu.doAction;
+                    tempoKnob.doAction;
+                    jumpKnob.doAction;
+                }.defer;
+
             });
 
-            clock = ExternalClock(TempoClock(2.4)).play;
-            bbcut = BBCut2(CutGroup(cutsynth, numChannels: buf.numChannels), BBCutProc11());
-
-            { playButton.enabled = true }.defer;
-
-            sf = SoundFile();
-            sf.openRead(buf.path);
-
-            { sfview.soundfile_(sf).read.refresh; }.defer;
-
-            sfviewRout = Routine({
-                loop {
-                    {
-                        sfview.setSelectionStart(0, grainStartPos);
-                        sfview.setSelectionSize(0, grainDur);
-                        sfview.timeCursorPosition_(cursorPos);
-                        sfview.timeCursorOn_(cursorPos <= (grainStartPos + grainDur));
-                    }.defer;
-                    cursorPos = cursorPos + (buf.sampleRate * sfviewRoutFreq.reciprocal);
-                    sfviewRoutFreq.reciprocal.yield;
-                }
-            });
-
-            sfviewRout.play;
-
-            {
-                procMenu.doAction;
-                tempoKnob.doAction;
-                jumpKnob.doAction;
-            }.defer;
-
-        });
+        };
 
     }
 
     updateCode {
-        "BBCut2(CutBuf3(buf, %), %).play(%)".format(
+        "~buf = BBCutBuffer(%, %);\nBBCut2(CutBuf3(~buf, %), %).play(%);".format(
+            buf.path.asCompileString,
+            segmentsKnob.value,
             jumpKnob.value.asStringPrec(3),
             cutprocs[procMenu.value].value,
             (tempoKnob.value / 60).asStringPrec(3);

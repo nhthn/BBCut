@@ -1,6 +1,7 @@
 ## [Unreleased]
 
 ### Added
+- Introducing CutLab, a GUI tool for BBCut.
 - An easier interface to CampCutStrem and CampStream, supporting place notation.
 - Brought statistical balance classes (cut procedures StatBalProc and StatBalProc2) back from the dead.
 

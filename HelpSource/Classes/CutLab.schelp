@@ -1,0 +1,14 @@
+class:: CutLab
+summary:: GUI interface to BBCut
+categories:: Libraries>BBCut
+related:: Overviews/BBCut
+
+CutLab is an app that provides a GUI interface to the link::Classes/BBCut2:: class. Inspired by LiveCut (a VST plugin by Smartelectronix itself based on BBCut), it boasts a few unique features, namely visualization of cut procedures and automated conversion to SuperCollider code.
+
+At the moment, CutLab is a limited performance tool. It's currently best for prototyping new sounds, and the visuals are useful for debugging custom cut procedures.
+
+classmethods::
+
+method:: new
+
+Start a new CutLab app.
