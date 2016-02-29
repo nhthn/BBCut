@@ -1,24 +1,24 @@
 class:: Segmentation
 summary:: GUI interface for AnalyseEvents2
-categories:: Libraries>BBCut
+categories:: Libraries>BBCut>GUI
 related:: Overviews/BBCut
 
 description::
 
-GUI interface to the AnalyseEvents2 UGen that analyses events in an audio file. Will run in NRT (as fast as possible) if Server off, else RT and audible. 
+GUI interface to the AnalyseEvents2 UGen that analyses events in an audio file. Will run in NRT (as fast as possible) if Server off, else RT and audible.
 
 If you turn the Server on or off after loading a soundfile there is no guarantee this will work. So please reload files whenever going between NRT and RT (ie turning Server on or off).
 
-The facilities for editing the machine discovered onsets are not extensive at the moment, sorry I don't prioritise GUI work. But this class gives you a way to run the AnalyseEvents2 UGen as an NRT operation. You can cannibalise the class code if you want to build batch analysis etc. 
+The facilities for editing the machine discovered onsets are not extensive at the moment, sorry I don't prioritise GUI work. But this class gives you a way to run the AnalyseEvents2 UGen as an NRT operation. You can cannibalise the class code if you want to build batch analysis etc.
 
-If the Server is on and a file has been analysed in RT mode, you can play back segments (when the focus is on the window) by pressing the keys, where a=0, b=1, etc, modulo the number of segments. When there are more than 26 segments, you can use capitals to set the range offset, ie A=0-25, B=26-51, etc. 
+If the Server is on and a file has been analysed in RT mode, you can play back segments (when the focus is on the window) by pressing the keys, where a=0, b=1, etc, modulo the number of segments. When there are more than 26 segments, you can use capitals to set the range offset, ie A=0-25, B=26-51, etc.
 
 classmethods::
 
 method:: new
 
 argument:: server
-Which to run on. 
+Which to run on.
 
 examples::
 

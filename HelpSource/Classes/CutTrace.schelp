@@ -1,11 +1,11 @@
 class:: CutTrace
 summary:: Debugging tool for BBCut2
-categories:: Libraries>BBCut
+categories:: Libraries>BBCut>Cut synths
 related:: Overviews/BBCut
 
 description::
 
-A class to trace the state of cutsynths as they render algorithmically determined cuts. The base behaviour is to post the cut data.  
+A class to trace the state of cutsynths as they render algorithmically determined cuts. The base behaviour is to post the cut data.
 
 classmethods::
 
@@ -29,8 +29,8 @@ var sf, clock, synth;
 
 s=Server.default;
 
-clock= ExternalClock(TempoClock(2.1)).play; 
-        
+clock= ExternalClock(TempoClock(2.1)).play;
+
 Routine.run({
 
 sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break2.aiff",4);
@@ -51,14 +51,14 @@ BBCut2(CutBuf1(sf).trace_(CutTrace(1)), WarpCutProc1.new).play(clock);
 (
 var sf, clock;
 
-clock= ExternalClock(TempoClock(2.8));  
-        
-clock.play;     
-        
+clock= ExternalClock(TempoClock(2.8));
+
+clock.play;
+
 Routine.run({
 
-//given event positions         
-sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break2.aiff",4, [ 0, 16789, 28721, 37166, 41389, 49042, 56783 ]); 
+//given event positions
+sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break2.aiff",4, [ 0, 16789, 28721, 37166, 41389, 49042, 56783 ]);
 
 s.sync; //this forces a wait for the Buffer to load
 

@@ -1,6 +1,6 @@
 class:: WarpCutProc1
 summary:: Oscillator-rate breakbeat cutting
-categories:: Libraries>BBCut
+categories:: Libraries>BBCut>Cut procedures
 related:: Overviews/BBCut
 
 description::
@@ -30,16 +30,16 @@ argument:: rollfunc
 A function returning the number of cuts to subdivide a block in a roll. This function is passed the
 current blocklength as argument in case you want a decision to take account of how much space you divide.
 argument:: probs
-An array of three probabilities (0.0 to 1.0). They are [prob of simple statement, prob of even roll, 
-prob of accelerando rather than decelerando geometric series]. The algorithm cascades through one prob 
-at a time. If a block is not simple, then it is a roll. If it isn't an even roll it is a geometric roll. 
+An array of three probabilities (0.0 to 1.0). They are [prob of simple statement, prob of even roll,
+prob of accelerando rather than decelerando geometric series]. The algorithm cascades through one prob
+at a time. If a block is not simple, then it is a roll. If it isn't an even roll it is a geometric roll.
 argument:: phraselength
 Next length of phrase in beats.
 argument:: accel
 a parameter to control the acceleration rate of the geometric series. Good values are 0.5 to 0.99.
 Do not pass 0.0 or 1.0 without expecting a crash.
 argument:: bpsd
-beats per sub division. Sets a primitive cut size resolution for choose offset messages. 
+beats per sub division. Sets a primitive cut size resolution for choose offset messages.
 
 instancemethods::
 
@@ -51,26 +51,26 @@ Other methods are overrides of BBCutProc base class behaviour. WarpCutProc1 will
 examples::
 
 You'll have to substitute your own break sample to hear the rhythmic aspects of this procedure
-properly perhaps, but the Warp cutter creates such bizarre effects that it's fun on any source. 
+properly perhaps, but the Warp cutter creates such bizarre effects that it's fun on any source.
 
 code::
 
 (   //defaults
 var sf;
 
-Routine.run({   
+Routine.run({
     sf= BBCutBuffer("sounds/a11wlk01.wav",4);
-    
+
     s.sync;
-    
+
     //144 bpm
     BBCut2(CutBuf1(sf),WarpCutProc1.new).play(2.4);
 });
 
 )
 
-(   //oddness on AudioIn 
-BBCut2(CutStream1.new,WarpCutProc1({[1,2,4].wchoose([0.7,0.2,0.1])},{[9,19,29].choose},[0.0,0.5,0.5],100.0,{0.8+(0.15.rand)})).play(2.2); 
+(   //oddness on AudioIn
+BBCut2(CutStream1.new,WarpCutProc1({[1,2,4].wchoose([0.7,0.2,0.1])},{[9,19,29].choose},[0.0,0.5,0.5],100.0,{0.8+(0.15.rand)})).play(2.2);
 )
 
 
@@ -82,39 +82,39 @@ var sf, bbcutter, clock;
 
 data=   //control spec data for ui controls
 [
-["tempo",2,3,\lin,0.1,2.5],             
-["blocklength", 0, 2,\lin,1,1],         
-["roll", 0, 6,\lin,1,0],                
-["simpleprob", 0.0, 1.0,\lin,0.1,0.5],  
-["evenprob", 0.0, 1.0,\lin,0.1,0.5],        
-["accelprob", 0.0, 1.0,\lin,0.1,0.5],       
-["phraselength", 1.0, 5.0,\lin,1.0,2.0],        
-["accelparam", 0.5, 0.99,\lin,0.01,0.9],        
-["restchance", 0.0, 1.0,\lin,0.1,0.0],      
-["ampvariation", 0.0, 1.0,\lin,0.01,1.0],       
-["panvariation", 0.0, 1.0,\lin,0.01,0.0],       
+["tempo",2,3,\lin,0.1,2.5],
+["blocklength", 0, 2,\lin,1,1],
+["roll", 0, 6,\lin,1,0],
+["simpleprob", 0.0, 1.0,\lin,0.1,0.5],
+["evenprob", 0.0, 1.0,\lin,0.1,0.5],
+["accelprob", 0.0, 1.0,\lin,0.1,0.5],
+["phraselength", 1.0, 5.0,\lin,1.0,2.0],
+["accelparam", 0.5, 0.99,\lin,0.01,0.9],
+["restchance", 0.0, 1.0,\lin,0.1,0.0],
+["ampvariation", 0.0, 1.0,\lin,0.01,1.0],
+["panvariation", 0.0, 1.0,\lin,0.01,0.0],
 ["randomoffset", 0.0, 1.0,\lin,0.01,0.0]
 ];
 
 w = SCWindow("WarpCutProc1 demo N.M.Collins 23/08/03", Rect.new(100, 500, 500, (30*(data.size))));
 
-slider= Array.fill(data.size, {arg i; DDSlider.performList(\new,[w, Rect(5,30*i, 300, 30)]++ data.at(i))}); 
+slider= Array.fill(data.size, {arg i; DDSlider.performList(\new,[w, Rect(5,30*i, 300, 30)]++ data.at(i))});
 
-slider.at(1).slider.action_({arg sl; 
+slider.at(1).slider.action_({arg sl;
 var val; val = slider.at(1).spec.map(sl.value);
 val= [1,3,5].at(val.round(1.0).asInteger);
-slider.at(1).string.string_(val); 
-slider.at(1).lastval=val;  
+slider.at(1).string.string_(val);
+slider.at(1).lastval=val;
 });
 
 slider.at(1).lastval= 3;
 slider.at(2).string.string_(3);
 
-slider.at(2).slider.action_({arg sl; 
+slider.at(2).slider.action_({arg sl;
 var val; val = slider.at(2).spec.map(sl.value);
 val= [3,5,7,11,13,17,19].at(val.round(1.0).asInteger);
-slider.at(2).string.string_(val); 
-slider.at(2).lastval=val;  
+slider.at(2).string.string_(val);
+slider.at(2).lastval=val;
 });
 
 slider.at(2).lastval= 3;
@@ -123,9 +123,9 @@ slider.at(2).string.string_(3);
 w.front;
 
 
-Routine.run({   
+Routine.run({
     sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff",8);
-    
+
     s.sync;
 
 bbcutter= BBCut2([
@@ -148,7 +148,7 @@ slider.at(2),   //rollcut
 slider.at(6),   //phraselength
 slider.at(7)    //accelparam
 )
-); 
+);
 
 clock=ExternalClock(slider.at(0).lastval).play;
 

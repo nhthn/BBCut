@@ -1,23 +1,23 @@
 class:: ServerClock
 summary:: A server-controlled clock
-categories:: Libraries>BBCut
+categories:: Libraries>BBCut>Core
 related:: Overviews/BBCut
 
 description::
 
-A scheduling clock driven from OSC Triggers from the Server. Allows the use of a UGen as a beat tracker controlling scheduling. This class assumes a UGen running on the Server, sending OSC trig messages at each beat. 
+A scheduling clock driven from OSC Triggers from the Server. Allows the use of a UGen as a beat tracker controlling scheduling. This class assumes a UGen running on the Server, sending OSC trig messages at each beat.
 
 instancemethods::
 
 method:: play
 
 argument:: trigID
-Trigger OSC message ID number. 
+Trigger OSC message ID number.
 argument:: s
-Server. 
+Server.
 
 method:: stop
-A ServerClock must be stopped to remove the OSC responder that reacts to triggers sent from the Server. 
+A ServerClock must be stopped to remove the OSC responder that reacts to triggers sent from the Server.
 
 examples::
 
@@ -30,14 +30,14 @@ s.latency=0.05; //must be small compared to half beat size in tempo
 //react to an Impulse driven clock on the Server, SendTrig with ID of 100
 SynthDef(\help_ServerClock,{arg tempo=2.3, beepvol=0.0, trigID=100;
     var clocktick, beep;
-    
+
     clocktick=Impulse.ar(tempo);
-    
+
     beep= SinOsc.ar(440,0,0.1)*Decay.ar(clocktick,0.1);
-    
+
     Out.ar(0,Pan2.ar(beepvol*beep,0.0));
-    
-    //trig from clock, trigID 100, always pass current tempo as parameter 
+
+    //trig from clock, trigID 100, always pass current tempo as parameter
     SendTrig.ar(clocktick,trigID,tempo);    //sends with ID of 100 matching what clock expects
 }).send(s);
 )
@@ -84,17 +84,17 @@ s.latency=0.05;
 OSCresponder.all.do({arg val; if(val.cmdName=='/tr',{OSCresponder.remove(val)}); });
 
 //run a line at a time
-~clock= ServerClock.new;    
-    
+~clock= ServerClock.new;
+
 ~clock.play(100,s); //will wait on trigID 100
 
 Routine.run({
-            
+
 ~buffers= BBCutBuffer.array([Platform.resourceDir +/+ "sounds/break.aiff",Platform.resourceDir +/+ "sounds/break2.aiff"],[8,4]);
 
 //choose some file you want to track off your hard drive
 ~source=Buffer.read(s,"/Volumes/data/stevebeattrack/samples/100.wav");
- 
+
 ~trackbus=Bus.audio(s,1);
 
 trackgroup= Group.before(Node.basicNew(s,1));

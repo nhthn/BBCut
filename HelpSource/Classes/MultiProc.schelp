@@ -1,12 +1,12 @@
 class:: MultiProc
 summary:: Allows selection between multiple breakbeat cutting algorithms
-categories:: Libraries>BBCut
+categories:: Libraries>BBCut>Cut procedures
 related:: Overviews/BBCut
 
 description::
 
 With this class you may select which of a number of cut procedures to use on the fly. The selection is from an array of BBCutProc derived objects (which might include a further MultiProc!). The index is chosen on a per phrase, or per block basis, by passed valid index returning functions. If a blockfunc is provided, then the selection is always per block. Otherwise it is per phrase. Note that for convoluted switches between many cut procedures at block rate it becomes very unpredictable when phrases start and end, since multiple phrases are bundled together at once.
-  
+
 classmethods::
 
 method:: new
@@ -14,11 +14,11 @@ method:: new
 argument:: procs
 An array of cut procedure objects.
 argument:: phrasefunc
-a function that returns a valid index into the procs array. 
+a function that returns a valid index into the procs array.
 argument:: blockfunc
 a function that returns a valid index into the procs array.
 
-phrasefunc and blockfunc may be set to nil if unneeded. The default behaviour with all 
+phrasefunc and blockfunc may be set to nil if unneeded. The default behaviour with all
 nil is a phrasefunc that randomly selects any index up to procs.size.
 
 instancemethods::
@@ -27,7 +27,7 @@ method:: initMultiProc
 Arguments as for new.
 
 All other methods override the base to pass messages to the currently selected procedure, and update that procedure based on
-the phrase or block func. 
+the phrase or block func.
 
 examples::
 
@@ -36,11 +36,11 @@ code::
 ( //test- default behaviour (random choice between cutprocs after each phrase)
 var sf, clock, cutsynth, cutproc;
 
-clock= ExternalClock(TempoClock(2.7725));           
-clock.play;     
-        
+clock= ExternalClock(TempoClock(2.7725));
+clock.play;
+
 Routine.run({
-            
+
 sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break2.aiff",4);
 
 s.sync; //this forces a wait for the Buffer to load
@@ -57,11 +57,11 @@ g=BBCut2(cutsynth,cutproc).play(clock);
 ( //test- block speed choice of procedure
 var sf, clock, cutsynth, cutproc;
 
-clock= ExternalClock(TempoClock(2.7725));           
-clock.play;     
-        
+clock= ExternalClock(TempoClock(2.7725));
+clock.play;
+
 Routine.run({
-            
+
 sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break2.aiff",4);
 
 s.sync; //this forces a wait for the Buffer to load
@@ -80,11 +80,11 @@ var sf, clock, cutsynth, cutproc, pseq;
 
 pseq=Pseq([0,0,0,1],inf).asStream;
 
-clock= ExternalClock(TempoClock(2.7725));           
-clock.play;     
-        
+clock= ExternalClock(TempoClock(2.7725));
+clock.play;
+
 Routine.run({
-            
+
 sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break2.aiff",4);
 
 s.sync; //this forces a wait for the Buffer to load
@@ -99,17 +99,17 @@ g=BBCut2(cutsynth,cutproc).play(clock);
 
 
 
-( //fills 2- more complex pattern 
+( //fills 2- more complex pattern
 var sf, clock, cutsynth, cutproc, pseq;
 var x,y;
 
 pseq=Pseq([0,0,0,1,0,0,0,2],inf).asStream;
 
-clock= ExternalClock(TempoClock(2.7725));           
-clock.play;     
-        
+clock= ExternalClock(TempoClock(2.7725));
+clock.play;
+
 Routine.run({
-            
+
 sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break2.aiff",4);
 
 s.sync; //this forces a wait for the Buffer to load

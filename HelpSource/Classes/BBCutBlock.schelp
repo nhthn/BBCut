@@ -1,17 +1,17 @@
 class:: BBCutBlock
 summary:: A block of audio in BBCut2
-categories:: Libraries>BBCut
+categories:: Libraries>BBCut>Core
 related:: Overviews/BBCut
 
 description::
 
-Rendering in BBCut occurs a block at a time. What is a block? You can think of it as a roll where all events share a common buffer starting position. The BBCutBlock holds all messages and functions to be rendered for that roll. These will enter the scheduling queue when renderBlock is called, all being converted to Events that know how to play themselves (each is at least (play:{"do something".postln})  ).  
+Rendering in BBCut occurs a block at a time. What is a block? You can think of it as a roll where all events share a common buffer starting position. The BBCutBlock holds all messages and functions to be rendered for that roll. These will enter the scheduling queue when renderBlock is called, all being converted to Events that know how to play themselves (each is at least (play:{"do something".postln})  ).
 
-A BBCutBlock object is created for each block passed back by the cut procedure, in the main BBCut2 class. 
+A BBCutBlock object is created for each block passed back by the cut procedure, in the main BBCut2 class.
 
 You will not directly need to manipulate the BBCutBlock, except:
 
-If you write your own CutSynths, you must provide a renderBlock function that converts the block data into specific rendering messages / functions. See the existing CutSynth class files for examples. 
+If you write your own CutSynths, you must provide a renderBlock function that converts the block data into specific rendering messages / functions. See the existing CutSynth class files for examples.
 
 If you write arbitrary function inputs to some cutsynths, they get passed block as one argument. This means you can look at any of the information about the current block/roll via that variable. The most useful are listed below:
 
@@ -19,7 +19,7 @@ code::
 var <>blocknum;     //number within a phrase, would indicate a phrase start by 0
 var <>length;       //total length of block in beats
 var <>cuts;         //cut info, an array over cuts where each cut has [ioi, dur, offset, amp]
-var <>iois;     //iois between each cut, 
+var <>iois;     //iois between each cut,
 var <>cumul;        //cumulative ioi over cuts
 var <>offset;   //if there is an offset set by the cut procedure
 var <>phrasepos;    //beats within the current phrase
@@ -33,8 +33,8 @@ code::
 b=BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff",8);
 
 (
-BBCut2(CutBuf2(b, dutycycle:{arg i, block; 
-Post << 
+BBCut2(CutBuf2(b, dutycycle:{arg i, block;
+Post <<
 [
 \cutnum, i,
 \blocknum, block.blocknum,
@@ -43,7 +43,7 @@ Post <<
 \dur, block.cuts[i][1],
 \phrasepos, block.phrasepos,
 ]
-<< nl; 
+<< nl;
 
 0.5
 })).play(2);

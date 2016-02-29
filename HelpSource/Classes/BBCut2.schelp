@@ -1,17 +1,17 @@
 class:: BBCut2
 summary:: splices and reassembles audio
-categories:: Libraries>BBCut
+categories:: Libraries>BBCut>Core
 related:: Overviews/BBCut
 
 description::
 
 This help file is for the BBCut2 class. For an overview of the BBCut2 library, see link:: Overviews/BBCut ::.
 
-BBCut2 provides the central scheduling mechanisms for algorithmic audio cutting running on an external clock. 
- 
-BBCut2 is passed a cut renderer, an algorithmic cutting routine, and an optional quantisation routine. The clock is then passed in via play. 
+BBCut2 provides the central scheduling mechanisms for algorithmic audio cutting running on an external clock.
 
-BBCut2 sends OSC messages ahead of rendering time to the Server so as to maintain perfect time lock without the jitter caused by variable network latency. This is superior to BBCut's 'send message at moment of decision' paradigm. The price is that the events during the next beat are determined a beat in advance and thus interaction with the cutting routines may show a beat or more's delay in response. 
+BBCut2 is passed a cut renderer, an algorithmic cutting routine, and an optional quantisation routine. The clock is then passed in via play.
+
+BBCut2 sends OSC messages ahead of rendering time to the Server so as to maintain perfect time lock without the jitter caused by variable network latency. This is superior to BBCut's 'send message at moment of decision' paradigm. The price is that the events during the next beat are determined a beat in advance and thus interaction with the cutting routines may show a beat or more's delay in response.
 
 classmethods::
 
@@ -19,12 +19,12 @@ method:: new
 
 argument:: cutgroups
 an Array of CutGroups, though this argument can also cope with being passed a CutSynth directly, a single CutGroup, an Array of CutSynths and an Array of Arrays of CutSynths. Now, a proc can have multiple renderers. The CutGroup is a necessary abstraction to select the execution graph and bus requirements of SC3, and you can think of BBCut2 making Group Nodes on the Server for each distinct CutGroup (=cut synthesiser chain).
-    
+
 argument:: proc
-an instance of a class derived from BBCutProc. This is the algorithmic composition routine that will generate cuts. 
+an instance of a class derived from BBCutProc. This is the algorithmic composition routine that will generate cuts.
 
 argument:: quantiser
-An optional quantisation class which imposes a template on the output of the algorithmic cutter. Leave this nil for default behaviour. 
+An optional quantisation class which imposes a template on the output of the algorithmic cutter. Leave this nil for default behaviour.
 
 instancemethods::
 
@@ -38,7 +38,7 @@ method:: resume
 Restart after a pause.
 
 method:: stop
-Stop playing, removing the cutter from the current clock. 
+Stop playing, removing the cutter from the current clock.
 
 method:: end
 Stop and free.
@@ -47,7 +47,7 @@ method:: play
 Start playing on a given clock.
 
 argument:: clk
-A clock class derived from ExternalClock for the event scheduling. ExternalClock is a base class which wraps a TempoClock in SCLang. ServerClock is used for beat induction control from Server side UGens. If a TempoClock is passed in, it gets wrapped in an ExternalClock. If a bps is passed in (eg .play(2)) then a TempoClock is created at that bps and wrapped in an ExternalClock. 
+A clock class derived from ExternalClock for the event scheduling. ExternalClock is a base class which wraps a TempoClock in SCLang. ServerClock is used for beat induction control from Server side UGens. If a TempoClock is passed in, it gets wrapped in an ExternalClock. If a bps is passed in (eg .play(2)) then a TempoClock is created at that bps and wrapped in an ExternalClock.
 
 examples::
 
@@ -77,20 +77,20 @@ b.free; //free any resources left
 //better use, explicit passing of clock, buffer
 (
 var clock= ExternalClock(TempoClock(2));
-var buffer= Buffer.alloc(s,44100,1);    
+var buffer= Buffer.alloc(s,44100,1);
 
 clock.play;
-    
-//runs on first available input channel 
+
+//runs on first available input channel
 BBCut2(CutStream1(s.options.numOutputBusChannels,buffer),BBCutProc11.new).play(clock);
 )
 
 
 (   //the same for a soundfile: you must allow time for the soundfile to load
 var sf;
-        
+
 Routine.run({
-            
+
 sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff",8);
 
 s.sync; //this forces a wait for the Buffer to load
@@ -110,12 +110,12 @@ TempoClock.default.tempo_(2.3)
 (
 var sf, clock;
 
-clock= ExternalClock(TempoClock(2.5));  
-        
-clock.play;     
-        
+clock= ExternalClock(TempoClock(2.5));
+
+clock.play;
+
 Routine.run({
-            
+
 sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff",8);
 
 s.sync; //this forces a wait for the Buffer to load
@@ -134,30 +134,30 @@ SynthDef(\beep,{Out.ar(0,SinOsc.ar(440,0,0.1)*Line.kr(1,0,0.1,doneAction:2))}).l
 
 tempoclock= TempoClock(2.3);
 
-bbcutclock= ExternalClock(tempoclock);  
-        
+bbcutclock= ExternalClock(tempoclock);
+
 Routine.run({
-                
+
     sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff",8);
-    
+
     s.sync; //this forces a wait for the Buffer to load
-    
+
     BBCut2([CutBuf1(sf),CutMixer(0,1.0,1.0,1.0)], BBCutProc11.new).play(bbcutclock);
 });
-        
-bbcutclock.play;        
 
-Task({  
-    
+bbcutclock.play;
+
+Task({
+
     inf.do({
-    
+
     Synth(\beep);
-    
+
     if(0.1.coin,{tempoclock.tempo_(rrand(1.7,2.7))});
-    
+
     1.0.wait;
     });
-    
+
 }).play(tempoclock);
 
 )
@@ -169,25 +169,25 @@ Task({
 //creating CutGroup to choose rendering bus and Group, renders on bus 16 but output on bus 0 due to a hidden CutMixer
 (
 var clock= ExternalClock(TempoClock(2));
-var buffer= Buffer.alloc(s,44100,1);    
+var buffer= Buffer.alloc(s,44100,1);
 var group= Group.head(Node.basicNew(s,1));
 var bus= Bus.audio(s,1); //mono rendering bus
 
 clock.play;
-    
-//runs on first available input channel 
+
+//runs on first available input channel
 BBCut2(CutGroup(CutStream1(nil,buffer),group,bus),BBCutProc11.new).play(clock);
 )
 
 
-//also specifying a CutMixer to choose volume and outbus, but CutGroup will allocate a rendering Bus for you 
+//also specifying a CutMixer to choose volume and outbus, but CutGroup will allocate a rendering Bus for you
 (
 var clock= ExternalClock(TempoClock(2));
-var buffer= Buffer.alloc(s,44100,1);    
+var buffer= Buffer.alloc(s,44100,1);
 var group= Group.head(Node.basicNew(s,1));
 
 clock.play;
-    
+
 BBCut2(CutGroup([CutStream1(nil,buffer),CutMixer(0,0.5,1.0,{1.0.rand2})],group),BBCutProc11.new).play(clock);
 )
 
@@ -252,11 +252,11 @@ a.end;
 (
 var sf, clock1, clock2;
 
-clock1= ExternalClock(TempoClock(2));   
-clock2= ExternalClock(TempoClock(2.7)); 
-    
+clock1= ExternalClock(TempoClock(2));
+clock2= ExternalClock(TempoClock(2.7));
+
 Routine.run({
-            
+
 sf=BBCutBuffer.array([Platform.resourceDir +/+ "sounds/break.aiff",Platform.resourceDir +/+ "sounds/break2.aiff"],[8,4]);
 
 s.sync; //this forces a wait for the Buffer to load
@@ -265,7 +265,7 @@ BBCut2([CutBuf1(sf[0]),CutMixer(0,0.5,1.0,-1.0)], ChooseCutProc(0.25,{[4,2].choo
 BBCut2([CutBuf1(sf[1]),CutMixer(0,0.5,1.0,1.0)], ChooseCutProc(0.25,{[4,2].choose})).play(clock2);
 });
 
-clock1.play;    
+clock1.play;
 clock2.play;
 )
 
@@ -278,12 +278,12 @@ clock2.play;
 (
 var sf, clock;
 
-clock= ExternalClock(TempoClock(2.5));  
-        
-clock.play;     
-        
+clock= ExternalClock(TempoClock(2.5));
+
+clock.play;
+
 Routine.run({
-            
+
 sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff",8);
 
 s.sync; //this forces a wait for the Buffer to load

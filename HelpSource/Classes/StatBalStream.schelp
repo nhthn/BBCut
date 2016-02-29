@@ -1,6 +1,6 @@
 class:: StatBalStream
 summary:: Stream class implementing Charles Ames' method of statistical feedback
-categories:: Libraries>BBCut
+categories:: Libraries>BBCut>Cut procedures
 related:: Overviews/BBCut, Classes/StatBalProc, Classes/StatBalProc2, Classes/StatBalNormStream
 
 Charles Ames' statistical feedback is a type of weighted random number generator that is useful
@@ -18,7 +18,7 @@ list::
 ## Set S to an array of n zeros.
 ## To generate a new output of the stream:
     list::
-    ## Find the weight k so that S[i] + (a + h * rand()) / W[i] is minimized, where rand() generates a random number from 0 to 1 for each index. 
+    ## Find the weight k so that S[i] + (a + h * rand()) / W[i] is minimized, where rand() generates a random number from 0 to 1 for each index.
     ## Add a / W[k] to S[k].
     ## Return k.
     ::
@@ -43,14 +43,14 @@ An array of the states to return
 argument:: weights
 An array of weightings, one for each state. Weights may be zero.
 argument:: heterogeneity
-any positive float. Whilst weightings will be approached in the long term, how quickly 
-this occurs relative to serialism and the tolerance within which a running histogram of results fluctuates 
+any positive float. Whilst weightings will be approached in the long term, how quickly
+this occurs relative to serialism and the tolerance within which a running histogram of results fluctuates
 depends on the ratio of heterogeneity to accent (by default 1).
 
 Heterogeneity 0.0 gives fully deterministic results, like serialism. Increasing heterogeneity increases the
-shuffling of order of appearance of states, that is, less predictability in the short term. 
+shuffling of order of appearance of states, that is, less predictability in the short term.
 
-If heterogenity is really large then floating point problems will eventually occur. 
+If heterogenity is really large then floating point problems will eventually occur.
 argument:: length
 Number of calls to next before returning nil for sequence end. Default is inf for forever.
 

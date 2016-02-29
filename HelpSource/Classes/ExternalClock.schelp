@@ -1,25 +1,25 @@
 class:: ExternalClock
 summary:: Externally driven scheduling
-categories:: Libraries>BBCut
+categories:: Libraries>BBCut>Core
 related:: Overviews/BBCut
 
 description::
 
-Wrapper for a TempoClock that deals with the special scheduling queue required for externally driven scheduling. Subclasses of ExternalClock may deal with the case of a ServerClock (server side clock, as for instance from beat tracking UGens), or control from external applications. 
+Wrapper for a TempoClock that deals with the special scheduling queue required for externally driven scheduling. Subclasses of ExternalClock may deal with the case of a ServerClock (server side clock, as for instance from beat tracking UGens), or control from external applications.
 
-Because of Server latency, perceptual attack time of events and timing groove deviations, the next beat's worth of music must be generated before that beat, and cannot be rescheduled with changes of tempo. You add instances (individual bbcutters, patterns etc) to the clock.  
+Because of Server latency, perceptual attack time of events and timing groove deviations, the next beat's worth of music must be generated before that beat, and cannot be rescheduled with changes of tempo. You add instances (individual bbcutters, patterns etc) to the clock.
 
-Note that the scheduler compensates for latency- it is built for real-time reactions, so the latency is taken into account to avoid network jitter in communicating with the Server, but there is no delay from the required time of an event. Also, perceptual attack time and time deviations (possibly due to groove/expressive timing) of events are factored in. PAT necessitates pre-scheduling, expressive timing can go either way. 
+Note that the scheduler compensates for latency- it is built for real-time reactions, so the latency is taken into account to avoid network jitter in communicating with the Server, but there is no delay from the required time of an event. Also, perceptual attack time and time deviations (possibly due to groove/expressive timing) of events are factored in. PAT necessitates pre-scheduling, expressive timing can go either way.
 
 warnings of undefined behaviour:
 
-Tempo is assumed in a moderate range 1-4 bps say. 
+Tempo is assumed in a moderate range 1-4 bps say.
 
-s.latency must be small, ie 0.05 sec. 
+s.latency must be small, ie 0.05 sec.
 
-Using with Patterns- you can play EventStreams only. See EventStreamPlayer2 class file. 
+Using with Patterns- you can play EventStreams only. See EventStreamPlayer2 class file.
 
-Using as a general scheduler: this scheduler assumes that everything it schedules is an Event that has a \play field, within which is a Function. For default Events this will be the same result as Event.play. For your own special Events you require at least (play:{"something".postln;})  
+Using as a general scheduler: this scheduler assumes that everything it schedules is an Event that has a \play field, within which is a Function. For default Events this will be the same result as Event.play. For your own special Events you require at least (play:{"something".postln;})
 
 classmethods::
 
@@ -39,7 +39,7 @@ s.latency=0.05;
 c=ExternalClock(TempoClock(2.1)).play;
 
 //playExt= play on External Clock
-p=Pbind.new.playExt(c); 
+p=Pbind.new.playExt(c);
 
 q= Pbind(\dur,Pseq([0.25,0.25,0.5],inf),\freq,Pseq([330,330,550],inf),\sustain, 0.1).playExt(c);
 
@@ -50,8 +50,8 @@ p.stop;
 q.stop;
 
 ~buffers= BBCutBuffer.array([Platform.resourceDir +/+ "sounds/break.aiff",Platform.resourceDir +/+ "sounds/break2.aiff"],[8,4]);
-    
-//will be added to run on this clock as soon as made    
+
+//will be added to run on this clock as soon as made
 a=BBCut2(CutBuf2(~buffers[0],0.3), BBCutProc11.new).play(c);
 
 b=BBCut2(CutBuf2(~buffers[1],0.5,dutycycle:0.4), BBCutProc11.new).play(c);

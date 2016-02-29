@@ -1,19 +1,19 @@
 class:: AnalyseEventsDatabase
 summary:: Records events found by the AnalyseEvents2 UGen
-categories:: Libraries>BBCut
+categories:: Libraries>BBCut>Machine listening
 related:: Overviews/BBCut
 
 description::
 
-Database that will store any events discovered in an audio signal using the AnalyseEvents UGen. This works on-the-fly, and you can switch the target input bus. 
+Database that will store any events discovered in an audio signal using the AnalyseEvents UGen. This works on-the-fly, and you can switch the target input bus.
 
-Discovered events are recorded in the database as an array of information of the form: 
+Discovered events are recorded in the database as an array of information of the form:
 
 [timecollected, startPos (buffer sample position), length (in seconds), ... (features of event)]
 
-Note that the event analyser works at a delay of at least the length of each event it discovers. The database is thus often around half a second lagging behind the musical state of play. This is a fundamental limitation- you as a human also post analyse, it's just that predictive processes (like beat tracking, stylistic expectancies) give you the illusion of knowing in advance what things may occur. 
+Note that the event analyser works at a delay of at least the length of each event it discovers. The database is thus often around half a second lagging behind the musical state of play. This is a fundamental limitation- you as a human also post analyse, it's just that predictive processes (like beat tracking, stylistic expectancies) give you the illusion of knowing in advance what things may occur.
 
-Applications: use the collection times to extract rhythms, combine with known beat (perhaps from beat tracking- see AutoTrack) to quantise inputs, assess expressive timing, have a memory fading histogram of event locations, schedule any events in any way that plays with time etc...  
+Applications: use the collection times to extract rhythms, combine with known beat (perhaps from beat tracking- see AutoTrack) to quantise inputs, assess expressive timing, have a memory fading histogram of event locations, schedule any events in any way that plays with time etc...
 
 classmethods::
 
@@ -42,10 +42,10 @@ argument:: group
 Group to run the analysis synth within
 
 argument:: threshold
-Parameter for the analyser, see AnalyseEvents help file. 
+Parameter for the analyser, see AnalyseEvents help file.
 
 argument:: clock
-An ExternalClock. This clock will be used to determine the beat time of any received events, with associated quantisation properties as set for this class. 
+An ExternalClock. This clock will be used to determine the beat time of any received events, with associated quantisation properties as set for this class.
 
 examples::
 
@@ -56,9 +56,9 @@ s=Server.default;
 a=AnalyseEventsDatabase(10, 1, s);
 
 //on my system bus 8 is the first audio in
-a.analyse(8, 77); 
+a.analyse(8, 77);
 
-Post << a.list << nl; 
+Post << a.list << nl;
 
 a.pause;
 a.resume;
@@ -75,16 +75,16 @@ Synth(\AEPlayBuf++(a.numChannels),[\outbus,0, \bufnum, a.soundbuf.bufnum, \start
 
 //using the List in a Task
 (
-t=Task({    
+t=Task({
     var data;
-    
-    inf.do({    
-        
+
+    inf.do({
+
         data= a.list.choose; //use most recently collected
-        
+
         4.do {if(data.notNil,{Synth(\AEPlayBuf++(a.numChannels),[\bufnum, a.soundbuf.bufnum, \startPos, data[1], \length, data[2]]);}); 0.125.wait;};
-        
-    }); 
+
+    });
 });
 )
 
@@ -114,7 +114,7 @@ a.resume;
 
 //look for events in range, convert them to an ioi rhythm in seconds
 //could ask for events that just happened (Main.elapsedTime) but won't be any, since there is a delay of the length of an event
-//for the UGen to tell the database to update 
+//for the UGen to tell the database to update
 //note that the start time is further in the past, the endtime is more recent. Events are stored in the database by the absolute time of their discovery (onset time)
 //the functions return data as [offset,[list of iois terminated by nil, empty if none in range]]
 Post << a.getAbsoluteRhythm(Main.elapsedTime-3.0, Main.elapsedTime-1.0) << nl;
@@ -151,7 +151,7 @@ Out.ar(0,Resonz.ar(Saw.ar(400,0.5).clip2(0.1)*4*Line.kr(1,0,0.1,doneAction:2),Li
 Synth(\kicksynth);
 Synth(\leadsynth);
 
-//setup 
+//setup
 (
 s=Server.default;
 
@@ -168,10 +168,10 @@ a.analyse(8,77,nil,0.34,c);
 //run click track so you know what the timing is
 (
 t.schedAbs(t.beats.ceil+(1.0-(s.latency*t.tempo)), {
-    
+
         //args.postln;
         s.sendBundle(s.latency,["/s_new",\kicksynth, s.nextNodeID, 1, 1]);
-        
+
         1.0;
 });
 )
@@ -184,25 +184,25 @@ t.schedAbs(t.beats.ceil+(1.0-(s.latency*t.tempo)), {
 (
 t.schedAbs(t.beats.ceil+(1.0-(s.latency*t.tempo)), {
     var nextrhythm, seq;
-    
+
     //get nextrhythm from audio in analysis, this works out to 4 to 2 beats ago
     nextrhythm= a.getRhythm(c.lastBeat-3,c.lastBeat-1, false); //no quantisation
-    
+
     nextrhythm.postln;
-    
+
     if(nextrhythm[1].notEmpty,{
-        
+
         seq=Pseq(nextrhythm[1],1).asStream;
-        
+
         t.sched(nextrhythm[0],{
-            
+
             s.sendBundle(s.latency,["/s_new",\leadsynth, s.nextNodeID, 1, 1]);
-            
+
             seq.next;
         });
-        
+
     });
-    
+
     2.0
 });
 )
@@ -218,7 +218,7 @@ c.stop;
 //with GUI display of histogram
 //running histogram of events each bar used to make a probabilistic rhythm machine
 
-//setup 
+//setup
 (
 s=Server.default;
 
@@ -235,9 +235,9 @@ a.analyse(8,77,nil,0.34,c);
 //run click track so you know what the timing is
 (
 t.schedAbs(t.beats.ceil+(1.0-(s.latency*t.tempo)), {
-    
+
         s.sendBundle(s.latency,["/s_new",\kicksynth, s.nextNodeID, 1, 1]);
-        
+
         1.0;
 });
 )
@@ -268,45 +268,45 @@ w.front;
 //-0.1 so always updates ahead of next scheduler, but not so much as to impinge on last semiquaver of previous cycle
 t.schedAbs(t.beats.ceil+(1.0-(s.latency*t.tempo)-0.1), {
     var nextrhythm, newgrid, cumul, iois, index;
-    
+
     //get nextrhythm from audio in analysis, this works out to 6 to 2 beats ago
     nextrhythm= a.getRhythm(c.lastBeat-5,c.lastBeat-1, true); //with quantisation
-    
+
     newgrid=Array.fill(16, {0.0});
 
     iois= nextrhythm[1];
-    
+
     //get event locations in a grid of 16
     if(iois.notEmpty,{
-        
+
         cumul=nextrhythm[0];
-        
+
         //[cumul,iois].postln;
-        
+
         iois.do({arg val;
-        
+
         //quantise is every 0.25 by default
         index= min((cumul*4).round(1.0).asInteger,15);
-        
+
         //[cumul,index].postln;
-        
+
         newgrid[index]=1.0;
-        
+
         if(val.notNil,{cumul=cumul+val;});
-        
+
         });
-                
+
     });
-    
+
     grid=(0.5*newgrid)+(decayfactor*grid);
-    
+
     {msview.value_(grid);}.defer;
-    
+
     4.0
 });
 
 
-//another process to spawn events from the current grid, delayed by a bar to sync up correctly 
+//another process to spawn events from the current grid, delayed by a bar to sync up correctly
 t.schedAbs(t.beats.ceil+(3.0-(s.latency*t.tempo)), {
 
 //[\grid,grid[count], count].postln;
@@ -314,7 +314,7 @@ t.schedAbs(t.beats.ceil+(3.0-(s.latency*t.tempo)), {
 if(grid[count].coin,{
 
     s.sendBundle(s.latency,["/s_new",\leadsynth, s.nextNodeID, 1, 1]);
-            
+
 });
 
 count=(count+1)%16;

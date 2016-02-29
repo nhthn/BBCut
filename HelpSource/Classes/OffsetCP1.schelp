@@ -1,6 +1,6 @@
 class:: OffsetCP1
 summary:: Manual breakbeat specification
-categories:: Libraries>BBCut
+categories:: Libraries>BBCut>Cut procedures
 related:: Overviews/BBCut
 
 description::
@@ -13,7 +13,7 @@ method:: new
 Create a ChooseBlockProc object with the given parameters.
 
 argument:: dofunc
-Duration Offset function. 
+Duration Offset function.
 
 argument:: offsetscale
 
@@ -23,7 +23,7 @@ argument:: phraselength
 Next length of phrase in beats.
 
 argument:: bpsd
-beats per sub division. Sets a primitive cut size resolution for choose offset messages. 
+beats per sub division. Sets a primitive cut size resolution for choose offset messages.
 
 instancemethods::
 
@@ -35,7 +35,7 @@ examples::
 code::
 
 //you must have run this line before any of the examples below
-f= BBCutBuffer.array([Platform.resourceDir +/+ "sounds/break.aiff",Platform.resourceDir +/+ "sounds/break2.aiff"],[8,4]); 
+f= BBCutBuffer.array([Platform.resourceDir +/+ "sounds/break.aiff",Platform.resourceDir +/+ "sounds/break2.aiff"],[8,4]);
 
 
 (   //defaults
@@ -58,7 +58,7 @@ if(block%2==0,
 
 
 
-(   
+(
 BBCut2(CutBuf1(f[1]),OffsetCP1.new(
 {
 arg beatsleft, phraselength,block;
@@ -71,7 +71,7 @@ if(block%2==0,
 )
 
 
-(   
+(
 BBCut2(CutBuf1(f[1]),OffsetCP1.new(
 {
 arg beatsleft, phraselength,block;

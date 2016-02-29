@@ -1,12 +1,12 @@
 class:: ThrashCutProc1
 summary:: Breakbeat cutting inspired by thrash guitar playing
-categories:: Libraries>BBCut
+categories:: Libraries>BBCut>Cut procedures
 related:: Overviews/BBCut
 
 description::
 
 A cut procedure which uses the idea of fast roll figures like demisemiquavers or triplet sixteenth notes
-(as in thrash guitar playing) to form blocks for breakbeat cutting. 
+(as in thrash guitar playing) to form blocks for breakbeat cutting.
 
 classmethods::
 
@@ -14,14 +14,14 @@ method:: new
 
 Create a ThrashCutProc1 object with the given parameters.
 
-This cut procedure usually works in 4/4 bar phrases, but should survive other phraselengths.  
+This cut procedure usually works in 4/4 bar phrases, but should survive other phraselengths.
 
 argument:: kickoffset
 Function returning kick offset positions, offsets being in the range 0.0 to 1.0. So for random
 beats of a 4/4 source, try {([0,1,2,3]/4).choose}
 
 argument:: snareoffset
-choose snare offset positions. 
+choose snare offset positions.
 
 argument:: phraselength
 Typically 4.0 or 8.0.
@@ -36,14 +36,14 @@ Function giving choice of a new rhythmic riff from the database each bar:
 
 argument:: shuffles
 Number of involutions of the source cut sequences to perform, to give some randomisation
-for each play. 
+for each play.
 
 argument:: filltest
 chance of a fill pattern this bar. fills are the inverse of the normal patterns, in that rolls become straight
 and straight become rolls, and kicks becomes snares and snares kicks...
 
 argument:: stopchance
-chance of a zero amplitude block, ie, rest. Only one can happen per bar and the probability 
+chance of a zero amplitude block, ie, rest. Only one can happen per bar and the probability
 tested on every block until it does happen or a new phrase begins.
 
 examples::
@@ -65,7 +65,7 @@ BBCut2(CutBuf1(sf),ThrashCutProc1.new).play(3.33);
 
 
 
-(   //kick and snare offsetting choices- you may need to choose appropriate 
+(   //kick and snare offsetting choices- you may need to choose appropriate
     //ones for your break
 var sf;
 
@@ -101,7 +101,7 @@ filltest:{0.25.coin}    //inverts role of kick and snare
 
 
 
-(   //kick and snare offsetting choices- you may need to choose appropriate 
+(   //kick and snare offsetting choices- you may need to choose appropriate
     //ones for your break
 var sf, clock;
 
@@ -135,7 +135,7 @@ sf= BBCutBuffer("sounds/a11wlk01.wav",8);
 s.sync;
 
 BBCut2(CutBuf2(sf,pbsfunc:CutPBS1(0.95)),
-ThrashCutProc1.new({[0.7,0.2].choose},{[0.125,0.5].choose}, 
+ThrashCutProc1.new({[0.7,0.2].choose},{[0.125,0.5].choose},
 7, {[0.2,0.2,0.1,0.1,0.2,0.2]},{2.rand+2},{5.rand})
 ).play(3);
 
@@ -145,7 +145,7 @@ ThrashCutProc1.new({[0.7,0.2].choose},{[0.125,0.5].choose},
 
 
 //groove in UK Garage style- [0.32,0.18]
-(   
+(
 var sf;
 
 Routine.run({
@@ -155,7 +155,7 @@ s.sync;
 
 //3.33bps= 200 bpm
 BBCut2(CutBuf2(sf,pbsfunc:CutPBS1(0.98)),
-ThrashCutProc1.new({[0,0.25,0.5,0.75].choose},{[0.125,0.375,0.625,0.875].choose}, 
+ThrashCutProc1.new({[0,0.25,0.5,0.75].choose},{[0.125,0.375,0.625,0.875].choose},
 8, {[0.32,0.18]},//groove passed as blockdiv function
 {4.rand},{5.rand})
 ).play(2.4);
@@ -170,14 +170,14 @@ ThrashCutProc1.new({[0,0.25,0.5,0.75].choose},{[0.125,0.375,0.625,0.875].choose}
 (
 var sf;
 var w,chooseriff, shuffles, fillchance, stopchance;
-    
+
 w = SCWindow("ThrashCutProc1 demo", Rect.new(200,200,300,150));
 chooseriff=DDSlider( w, Rect.new(0,0,150,40), "chooseriff", 0, 3, 'linear', 1, 0);
 shuffles=DDSlider( w, Rect.new(0,50,150,40), "shuffles", 0, 10, 'linear', 1, 0);
 fillchance=DDSlider( w, Rect.new(150,0,150,40), "fillchance", 0.0, 1.0, 'linear', 0.01, 0.0);
 stopchance=DDSlider( w, Rect.new(150,50,150,40), "stopchance", 0.0, 1.0, 'linear', 0.01, 0.0);
 
-w.front;    
+w.front;
 
 Routine.run({
 sf= BBCutBuffer("sounds/Sounds/feb21/public9.aif",8);

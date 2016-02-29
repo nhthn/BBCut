@@ -1,11 +1,11 @@
 class:: CutBuf2
 summary:: BBCut2 buffer playback with modulatable grain parameters
-categories:: Libraries>BBCut
+categories:: Libraries>BBCut>Cut synths
 related:: Overviews/BBCut
 
 description::
 
-Playback for a buffer, with individual grains spawned for each cut. Each grain may have associated parameters for playback speed, enveloping and dutycycle (ratio of duration to inter-onset-interval).  
+Playback for a buffer, with individual grains spawned for each cut. Each grain may have associated parameters for playback speed, enveloping and dutycycle (ratio of duration to inter-onset-interval).
 
 classmethods::
 
@@ -15,7 +15,7 @@ All of the arguments apart from bbcutbuf can have more complex objects than Simp
 
 argument:: bbcutbuf
 An instance of BBCutBuffer representing the buffer to be cut-up.
-    
+
 argument:: offset
 A parameter to be passed to any cut playback position determining routine. The default chooseoffset method is in BBCutBuffer and the parameter is a single number from 0.0 to 1.0 giving the chance of a jump to a random event in the source.
 
@@ -23,13 +23,13 @@ argument:: pbsfunc
 Playback speed (rate) control for each cut. This can be a constant, or some other object that responds to .value, which is called for every repeat in a block. The first argument is the repeat number in the block, and the second argument is the block itself. If pbsfunc responds to .updateblock, that will also be called every block with the current block passed as an argument.
 
 argument:: dutycycle
-Ratio of duration to inter-onset-interval (IOI). 0.5 would mean that the duration of grains is only half the length between cut start times. 
+Ratio of duration to inter-onset-interval (IOI). 0.5 would mean that the duration of grains is only half the length between cut start times.
 
 argument:: atkprop
-Enveloping parameter for attack speed. Rated as a proportion of the overall envelope (0.0 to 1.0) 
+Enveloping parameter for attack speed. Rated as a proportion of the overall envelope (0.0 to 1.0)
 
 argument:: relprop
-Enveloping parameter for release speed. Rated as a proportion of the overall envelope (0.0 to 1.0) 
+Enveloping parameter for release speed. Rated as a proportion of the overall envelope (0.0 to 1.0)
 
 argument:: curve
 Envelope curve
@@ -43,10 +43,10 @@ var sf, clock;
 
 s=Server.default;
 
-clock= ExternalClock(TempoClock(2.1)).play; 
-        
+clock= ExternalClock(TempoClock(2.1)).play;
+
 Routine.run({
-            
+
 sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff",8);
 
 s.sync; //this forces a wait for the Buffer to load
@@ -61,10 +61,10 @@ BBCut2(CutBuf2(sf,0.3), BBCutProc11.new).play(clock);
 (
 var sf, clock;
 
-clock= ExternalClock(TempoClock(2.1)).play; 
-        
+clock= ExternalClock(TempoClock(2.1)).play;
+
 Routine.run({
-            
+
 sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff",8);
 
 s.sync; //this forces a wait for the Buffer to load
@@ -79,10 +79,10 @@ BBCut2(CutBuf2(sf,0.3, CutPBS1(0.97,{1.rand2}), 0.5, 0.001, 0.5, -4), WarpCutPro
 (
 var sf, clock;
 
-clock=ExternalClock(TempoClock(3.3)).play;  
-        
+clock=ExternalClock(TempoClock(3.3)).play;
+
 Routine.run({
-            
+
 sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break2.aiff",4);
 
 s.sync; //this forces a wait for the Buffer to load
@@ -96,10 +96,10 @@ BBCut2(CutBuf2(sf,0.3, {rrand(0.9,1.1)}, {arg i, block; var ioi; ioi= block.iois
 (
 var sf, clock;
 
-clock=ExternalClock(TempoClock(3.3)).play;  
-        
+clock=ExternalClock(TempoClock(3.3)).play;
+
 Routine.run({
-            
+
 sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break2.aiff",4);
 
 s.sync; //this forces a wait for the Buffer to load

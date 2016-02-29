@@ -1,6 +1,6 @@
 class:: StatBalNormStream
 summary:: Stream class implementing Charles Ames' method of statistical feedback
-categories:: Libraries>BBCut
+categories:: Libraries>BBCut>Cut procedures
 related:: Overviews/BBCut, Classes/StatBalProc, Classes/StatBalProc2
 
 Stream class implementing Charles Ames' method of statistical feedback.
@@ -35,14 +35,14 @@ An array of the states to return
 argument:: weights
 An array of weightings, one for each state. Weights may be zero.
 argument:: heterogeneity
-any positive float. Whilst weightings will be approached in the long term, how quickly 
-this occurs relative to serialism and the tolerance within which a running histogram of results fluctuates 
+any positive float. Whilst weightings will be approached in the long term, how quickly
+this occurs relative to serialism and the tolerance within which a running histogram of results fluctuates
 depends on the ratio of heterogeneity to accent (by default 1).
 
 Heterogeneity 0.0 gives fully deterministic results, like serialism. Increasing heterogeneity increases the
-shuffling of order of appearance of states, that is, less predictability in the short term. 
+shuffling of order of appearance of states, that is, less predictability in the short term.
 
-If heterogenity is really large then floating point problems will eventually occur. 
+If heterogenity is really large then floating point problems will eventually occur.
 argument:: length
 Number of calls to next before returning nil for sequence end. Default is inf for forever.
 
@@ -65,8 +65,8 @@ weights= [0.6,0.3,0.1,0.0];
 
 sbns= StatBalNormStream.new([0,1,2,3],weights,1.0);
 
-20.do({arg i; 
-"wchoose ".post;[0,1,2,3].wchoose(weights).post; "  statbal ".post;sbns.next.postln; 
+20.do({arg i;
+"wchoose ".post;[0,1,2,3].wchoose(weights).post; "  statbal ".post;sbns.next.postln;
 });
 
 weights=[0.6,0.0,0.1,0.3];
@@ -75,8 +75,8 @@ weights=[0.6,0.0,0.1,0.3];
 
 sbns.weights_(weights);
 
-20.do({arg i; 
-"wchoose ".post;[0,1,2,3].wchoose(weights).post; "  statbal ".post;sbns.next.postln; 
+20.do({arg i;
+"wchoose ".post;[0,1,2,3].wchoose(weights).post; "  statbal ".post;sbns.next.postln;
 });
 )
 ::

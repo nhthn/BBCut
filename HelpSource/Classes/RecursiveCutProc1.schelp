@@ -1,15 +1,15 @@
 class:: RecursiveCutProc1
 summary:: Recursive breakbeat cutting, version 2
-categories:: Libraries>BBCut
+categories:: Libraries>BBCut>Cut procedures
 related:: Overviews/BBCut
 
 description::
 
-This class implements explicit recursive cutting, as described in LMJ13. 
-The level of recursion can be set as a parameter of the cut procedure. 
+This class implements explicit recursive cutting, as described in LMJ13.
+The level of recursion can be set as a parameter of the cut procedure.
 The user chooses cut, repeat and offset functions which are applied through
 successive iteratinos to make new cut sequences. Only the final cut sequence of
-a cut sequence of a cut sequence... is rendered. 
+a cut sequence of a cut sequence... is rendered.
 
 For additional data on the algorithm see
 
@@ -24,15 +24,15 @@ method:: new
 Create a RecursiveCutProc1 object with the given parameters.
 
 argument:: cutfunc
-A user specified function determining the next cut size, passed the arguments 
-phrase length filled so far and current phraselength. 
+A user specified function determining the next cut size, passed the arguments
+phrase length filled so far and current phraselength.
 argument:: repeatfunc
-A user specified function determining the number of repeats of the new cutsize, 
-passed the arguments phrase length determined and current phraselength. 
+A user specified function determining the number of repeats of the new cutsize,
+passed the arguments phrase length determined and current phraselength.
 argument:: offsetfunc
-A user specified function determining the offset for the new block, passed the arguments 
+A user specified function determining the offset for the new block, passed the arguments
 quantise level (= currphraselength/beats per sub division, so one 4/4 bar phrase with bpsd 0.5 gives
-quantise level of 8, ie eighth notes) ,current beats per sub division,phrase completed so far and 
+quantise level of 8, ie eighth notes) ,current beats per sub division,phrase completed so far and
 current phrase length. The default method is
 
 code::
@@ -40,10 +40,10 @@ code::
 ::
 
 argument:: reclevel
-Level of recursion, so 0 gives back the source exactly, 1 is one cutup, 4 is 
+Level of recursion, so 0 gives back the source exactly, 1 is one cutup, 4 is
 four recursive cutups. The higher the reclevel , the greater the performance hit at the start of the phrase.
-Outside realtime rendering is required for very high values, and the output will be increasingly set on one 
-offset at a greatest common divisor cut size (see the paper for technical analysis). Notes however that the 
+Outside realtime rendering is required for very high values, and the output will be increasingly set on one
+offset at a greatest common divisor cut size (see the paper for technical analysis). Notes however that the
 CPU cost is in the language app, not the server. In implicit cutting, the cost is in the Server.
 argument:: phraselength
 Next length of phrase in beats.
@@ -57,16 +57,16 @@ Called internally after a new.
 
 method:: chooseblock
 this uses the setoffset method of BBCutSynth to specify offset jumps relative to the
-current phrase size. In normal use phrasesize will be the same as the beat length of the source you wish 
+current phrase size. In normal use phrasesize will be the same as the beat length of the source you wish
 to cut up. Note that sources which don't respond to setoffset will not be effected by RecCutProc except
-for any enveloping/panning etc caused by blocks. 
+for any enveloping/panning etc caused by blocks.
 
 examples::
 
 code::
 
 //you must have run this line before any of the examples below
-f= BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff",8); 
+f= BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff",8);
 
 
 //defaults
@@ -82,14 +82,14 @@ group=Group.new;
 
 Routine.run({
 
-//f=BBCutBuffer("sounds/a11wlk01.wav",4); 
+//f=BBCutBuffer("sounds/a11wlk01.wav",4);
 
 s.sync;
 
 BBCut2(CutGroup(CutBuf2(f, pbsfunc:{rrand(0.98,1.02)}),Group.before(group)), RecursiveCutProc1.new({[4.0,2.5,1.5].choose},{rrand(1,3)},{[0.0,2.0].choose},20)
 ).play(4);
 
-{var in; 
+{var in;
 
 in= In.ar(0,2);
 
@@ -103,7 +103,7 @@ ReplaceOut.ar(0, CombN.ar(0.3*in, 0.25, 0.25, 20, 1, 0.7*in))}.play(group);
 
 (//recursion level control
 var w,slider;
-    
+
 w = SCWindow("panel", Rect.new(200,200,200,100));
 slider=DDSlider( w, Rect.new(5,5,180,40), "recursion level", 0, 50, 'linear', 1, 0);
 
@@ -133,9 +133,9 @@ BBCut2(CutBuf2(f), RecursiveCutProc1.new(cutfunc, repeatfunc, offsetfunc,3, 8.0)
 //this code assumes 8 out busses 0-7, 8 in (8-15 = 1-8 for AudioIn UGen)
 //then spare audio busses from 16 up
 
-//There will be a delay in hearing output proportional to n since the 
-//various audio capture devices need to be capturing a flow before 
-//the next can capture a flow, passing down to the final one. 
+//There will be a delay in hearing output proportional to n since the
+//various audio capture devices need to be capturing a flow before
+//the next can capture a flow, passing down to the final one.
 (
 var clock, n;
 var source, reccutters;
@@ -145,7 +145,7 @@ group=Group.new;
 
 //number of levels of recursive audio cutting
 //be careful, costs go up for large n...
-n=4; 
+n=4;
 
 clock= ExternalClock(TempoClock(2.6)).play;
 
@@ -155,7 +155,7 @@ source=BBCut2(CutGroup([CutBuf2(f),CutMixer(16,1.0,1.0,0.0)],Group.head(group),n
 
 reccutters= Array.fill(n);
 
-n.do({arg i; 
+n.do({arg i;
 reccutters.put(i, BBCut2(CutGroup([CutStream1((2*i)+16, atkprop:0.02, relprop:0.02),CutMixer((2*i)+18,1.0,1.0,0.0)],Group.tail(group),numChannels:2)));
 });
 

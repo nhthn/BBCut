@@ -1,11 +1,11 @@
 class:: CutProcStream
 summary:: Stream wrapper for a cut procedure
-categories:: Libraries>BBCut
+categories:: Libraries>BBCut>Core
 related:: Overviews/BBCut
 
 description::
 
-Stream wrapper for a cut procedure, for use with Patterns or in your own custom code. 
+Stream wrapper for a cut procedure, for use with Patterns or in your own custom code.
 
 classmethods::
 

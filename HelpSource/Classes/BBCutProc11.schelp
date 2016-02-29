@@ -1,6 +1,6 @@
 class:: BBCutProc11
 summary:: Automatic breakbeat cutting algorithm
-categories:: Libraries>BBCut
+categories:: Libraries>BBCut>Cut procedures
 related:: Overviews/BBCut
 
 description::
@@ -26,12 +26,12 @@ argument:: sdiv
 sub division.  A single measure is cut up into sdiv primitive units. So sdiv=8 over 4 beats gives
 eighth note resolution cutting.
 argument:: barlength
-Normally set to 4.0 beats, for 4/4 bars, this can be altered to allow cuts over a different 
-number of beats. So barlength= 3 gives cuts respecting 3/4. 
+Normally set to 4.0 beats, for 4/4 bars, this can be altered to allow cuts over a different
+number of beats. So barlength= 3 gives cuts respecting 3/4.
 argument:: phrasebars
-The length of the current phrase is barlength*phrasebars. 
+The length of the current phrase is barlength*phrasebars.
 argument:: numrepeats
-Total number of repeats for normal cuts. So 2 corresponds to a particular size cut 
+Total number of repeats for normal cuts. So 2 corresponds to a particular size cut
 at one offset plus one exact repetition.
 argument:: stutterchance
 the tail of a phrase has this chance of becoming a repeating one unit cell stutter
@@ -58,7 +58,7 @@ properly
 code::
 
 //must have run this line before any of the examples
-f= BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff",8); 
+f= BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff",8);
 
 //default cutups
 BBCut2(CutBuf1(f),BBCutProc11.new).play(2.4);
@@ -85,7 +85,7 @@ Out.ar(0,Decay.kr(impulse,0.1)*SinOsc.ar(440,0,0.5))
 
 }).play;
 
-bbcut.play(clock); 
+bbcut.play(clock);
 
 )
 
@@ -114,7 +114,7 @@ data=   //control spec data for ui controls
 [0.0,1.0,\lin, 0.0,0.0],    //panvariation
 [1,5,\lin,1,2],         //numrepeats
 [2.0,6.0,\lin,1.0, 4.0],    //subdivision over x beats
-[0.0,1.0,\lin,0.0, 0.0]     //offsetchance 
+[0.0,1.0,\lin,0.0, 0.0]     //offsetchance
 ];
 
 specs= Array.fill(data.size, {arg i; ControlSpec.performList(\new, data.at(i))});
@@ -126,7 +126,7 @@ w = SCWindow("BBCutProc11 demo N.M.Collins 23/08/03", Rect.new(100, 500, 500, (3
 string= Array.fill(num);
 slider= Array.fill(num);
 //Fill with defaults. This array will hold the updated last value of any GUI element
-lastval= Array.fill(num, {arg i; data.at(i).at(4);}); 
+lastval= Array.fill(num, {arg i; data.at(i).at(4);});
 
 num.do(
 {
@@ -138,8 +138,8 @@ slider.put(i,SCSlider.new( w, Rect.new(105, (30*i)+5, 95,20)));
 slider.at(i).value_(specs.at(i).unmap(data.at(i).at(4)));
 string.put(i, SCStaticText( w, Rect.new(205, (30*i)+5, 95,20)).string_(data.at(i).at(4)));
 
-slider.at(i).action_({arg sl; 
-var val; val = specs.at(i).map(sl.value);  string.at(i).string_(val); 
+slider.at(i).action_({arg sl;
+var val; val = specs.at(i).map(sl.value);  string.at(i).string_(val);
 lastval.put(i, val);  //set associated variable to this value, bbcut code will poll this rather than the slider directly
 });
 
@@ -154,7 +154,7 @@ if(lastval.at(5).coin,  //restchance
 {0},
 {
 rrand(lastval.at(6),1.0)} //amp variation
-)}, 
+)},
 {rrand(-1.0*(lastval.at(7)),lastval.at(7))}) //panvariation
 ],
 BBCutProc11.new(
@@ -177,8 +177,8 @@ SystemClock.sched(0.0,{clock.tempoclock.tempo_(lastval.at(0)); 0.1});
 
 
 
-//If you want fast varying time signatures set phrasebars=1, 
-//and provide interconnected functions updating barlength and sdiv. 
+//If you want fast varying time signatures set phrasebars=1,
+//and provide interconnected functions updating barlength and sdiv.
 (   //default eighth note cutups
 var sf,newbarl,phrasecount;
 

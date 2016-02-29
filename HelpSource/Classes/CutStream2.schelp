@@ -1,15 +1,15 @@
 class:: CutStream2
 summary:: BBCut2 with live input
-categories:: Libraries>BBCut
+categories:: Libraries>BBCut>Cut synths
 related:: Overviews/BBCut
 
 description::
 
-Playback for a stream of audio which can be cut-up, with offsetting relative to the last beat marked by the clock. The stream can be any bus on the Server, so might be a file streamed off disk, a current audio input or some synthesised data. 
+Playback for a stream of audio which can be cut-up, with offsetting relative to the last beat marked by the clock. The stream can be any bus on the Server, so might be a file streamed off disk, a current audio input or some synthesised data.
 
-Each grain may have associated parameters for playback speed, enveloping and dutycycle (ratio of duration to inter-onset-interval).  
+Each grain may have associated parameters for playback speed, enveloping and dutycycle (ratio of duration to inter-onset-interval).
 
-Note that CutStream2 uses In.ar rather than InFeedback.ar, for reaction speed, so execution order is important. you cannot cut-up a stream created later in the execution order. Change the SynthDefs in the class file to InFeedback if you want no execution order worries, at the expense of an audio block's delay (usually 64 samples). 
+Note that CutStream2 uses In.ar rather than InFeedback.ar, for reaction speed, so execution order is important. you cannot cut-up a stream created later in the execution order. Change the SynthDefs in the class file to InFeedback if you want no execution order worries, at the expense of an audio block's delay (usually 64 samples).
 
 classmethods::
 
@@ -17,24 +17,24 @@ method:: new
 
 argument:: inbus
 Bus on the Server to be cut-up.
-    
+
 argument:: bbcutbuf
 A Server side buffer must exist for the use of the UGen- by default one is allocated for you.
 
 argument:: offset
-value to offset from the last recorded beat of the clock. 0 keeps this reference point, 2 would be a reference start time of three beats ago (last recorded, then back another 2). The default is 1. However, the meaning of this parameter changes when setoffset is applied by certain cut procedures; here it determines the region of offsetting in beats. 
+value to offset from the last recorded beat of the clock. 0 keeps this reference point, 2 would be a reference start time of three beats ago (last recorded, then back another 2). The default is 1. However, the meaning of this parameter changes when setoffset is applied by certain cut procedures; here it determines the region of offsetting in beats.
 
 argument:: pbsfunc
 Manipulate playback speed, would usually be 1.0. If greater than 1.0, the playback head can overtake the record head and behaviour may not be what you expect!
 
 argument:: dutycycle
-Ratio of duration to inter-onset-interval (IOI). 0.5 would mean that the duration of grains is only half the length between cut start times. 
+Ratio of duration to inter-onset-interval (IOI). 0.5 would mean that the duration of grains is only half the length between cut start times.
 
 argument:: atkprop
-Enveloping parameter for attack speed. Rated as a proportion of the overall envelope (0.0 to 1.0) 
+Enveloping parameter for attack speed. Rated as a proportion of the overall envelope (0.0 to 1.0)
 
 argument:: relprop
-Enveloping parameter for release speed. Rated as a proportion of the overall envelope (0.0 to 1.0) 
+Enveloping parameter for release speed. Rated as a proportion of the overall envelope (0.0 to 1.0)
 
 argument:: curve
 Envelope curve
@@ -45,7 +45,7 @@ code::
 
 s=Server.default;
 
-    
+
 a=BBCut2(CutStream2.new, ChooseCutProc(0.25,4)).play(2);
 
 a.end;
@@ -57,14 +57,14 @@ a.end;
 (
 var b,buf, clock;
 
-clock= ExternalClock(TempoClock(2.1));  
-        
-clock.play;     
-        
+clock= ExternalClock(TempoClock(2.1));
+
+clock.play;
+
 Routine.run({
-    
-b=BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff",8);    
-            
+
+b=BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff",8);
+
 buf= BBCutBuffer.alloc(s,44100*4,1); //allow 4 seconds worth of buffer space, ie up to 8 beats at 120bpm
 
 s.sync; //this forces a wait for the Buffer to be allocated
@@ -77,24 +77,24 @@ BBCut2(CutBuf1(b), BBCutProc11.new).play(clock);
 )
 
 
-//same for three things at once- break fixed buffer plus stereo synth source and mono audio in streams. Sing/rap along on the beat and listen to what happens: "wanna be in a disco where everything I say gets cut to the beat in a slightly cool way"  
+//same for three things at once- break fixed buffer plus stereo synth source and mono audio in streams. Sing/rap along on the beat and listen to what happens: "wanna be in a disco where everything I say gets cut to the beat in a slightly cool way"
 (
 var b, buf1, buf2, clock, synthgroup, bbcutgroup, synthbus;
 
-clock= ExternalClock(TempoClock(2.1));  
-                        
-synthgroup= Group.head(Node.basicNew(s,1));     
+clock= ExternalClock(TempoClock(2.1));
+
+synthgroup= Group.head(Node.basicNew(s,1));
 bbcutgroup= Group.after(synthgroup);
-        
-synthbus= Bus.audio(s,1);       
-    
-SynthDef(\sourcesound,{Out.ar(synthbus.index,LFSaw.ar([62.9,63.1]*LFNoise0.kr(2.1,0.5,1.0),0,0.5).squared.clip2(0.25))}).play(synthgroup);      
-clock.play;     
-        
+
+synthbus= Bus.audio(s,1);
+
+SynthDef(\sourcesound,{Out.ar(synthbus.index,LFSaw.ar([62.9,63.1]*LFNoise0.kr(2.1,0.5,1.0),0,0.5).squared.clip2(0.25))}).play(synthgroup);
+clock.play;
+
 Routine.run({
-    
-b=BBCutBuffer(Platform.resourceDir +/+ "sounds/break2.aiff",4);   
-            
+
+b=BBCutBuffer(Platform.resourceDir +/+ "sounds/break2.aiff",4);
+
 buf1= BBCutBuffer.alloc(s,44100*4,1);
 buf2= BBCutBuffer.alloc(s,44100*4,2);
 
@@ -102,7 +102,7 @@ s.sync; //this forces a wait for the Buffer to be allocated
 
 BBCut2(CutGroup(CutStream2(s.options.numOutputBusChannels, buf1),Group.head(bbcutgroup)), ChooseCutProc({[0.5,0.25].choose},{[2,4].choose})).play(clock);
 
-//this one uses the offset param as the number of beats within which to jump, given the predetermined offsets of 
+//this one uses the offset param as the number of beats within which to jump, given the predetermined offsets of
 //OffsetCP1
 BBCut2(CutGroup(CutStream2(synthbus.index, buf2, 4),Group.head(bbcutgroup), nil, 2), OffsetCP1(
 {arg beatsleft, phraselength,block;

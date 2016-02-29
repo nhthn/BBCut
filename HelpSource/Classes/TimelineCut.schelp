@@ -1,15 +1,15 @@
 class:: TimelineCut
 summary:: Additive meter breakbeat cutting
-categories:: Libraries>BBCut
+categories:: Libraries>BBCut>Cut procedures
 related:: Overviews/BBCut
 
 description::
 
-A cut procedure inspired by (particularly African or South American clave) use of timelines, or additive meters. The functionality is somewhat confounded herein, but I don't think there is any point just reproducing the existing modes precisely- much better to bounce off in new directions. 
+A cut procedure inspired by (particularly African or South American clave) use of timelines, or additive meters. The functionality is somewhat confounded herein, but I don't think there is any point just reproducing the existing modes precisely- much better to bounce off in new directions.
 
-Justin London notes (J. London. (2004) Hearing in Time (psychological aspects of musical meter), OUP: New York, himself referencing some wider literature on this) the existence of other psychological meters based on certain partitions (the beat-cycle) of an n-cycle. Where the subdivisions are not arranged exactly evenly (but are typically maximally even with respect to n or within some tolerance of this) he calls these Non Isochronous Meters. 
+Justin London notes (J. London. (2004) Hearing in Time (psychological aspects of musical meter), OUP: New York, himself referencing some wider literature on this) the existence of other psychological meters based on certain partitions (the beat-cycle) of an n-cycle. Where the subdivisions are not arranged exactly evenly (but are typically maximally even with respect to n or within some tolerance of this) he calls these Non Isochronous Meters.
 
-So let's explore taking them as guides to our cutting. I don't follow the whole psychological ramifications of the hierarchical sturctures and the suggested durations (ie keeping 100mS as the shortest possible usable subdivision) but just make an open system for experimentation.  
+So let's explore taking them as guides to our cutting. I don't follow the whole psychological ramifications of the hierarchical sturctures and the suggested durations (ie keeping 100mS as the shortest possible usable subdivision) but just make an open system for experimentation.
 
 classmethods::
 
@@ -17,21 +17,21 @@ method:: new
 Create a CageCut object with the given parameters.
 
 argument:: phraselength
-Choose a new phraselength. You can pass a function, which will be called at 
-each new phrase. 
+Choose a new phraselength. You can pass a function, which will be called at
+each new phrase.
 argument:: timelinefunc
 Anything that returns an array of subdivisions when .value is called on it. (This array is normalizeSummed so it always adds up to 1.0). These subdivisions will be applied to the phraselength.
 argument:: blockfunc
 A function which takes a blocksize and turns it into an array of cuts
 argument:: freeze
-A flag to freeze the current timeline if true. Else, keep calling timeline func once per phrase. 
+A flag to freeze the current timeline if true. Else, keep calling timeline func once per phrase.
 
 examples::
 
 code::
 
 //you must have run this line before any of the examples below
-f= BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff",8); 
+f= BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff",8);
 
 TempoClock.default.tempo_(2.3);
 

@@ -1,6 +1,6 @@
 class:: CampCutProc
 summary:: Automatic breakbeat cutting algorithm inspired by change ringing
-categories:: Libraries>BBCut
+categories:: Libraries>BBCut>Cut procedures
 related:: Overviews/BBCut
 
 description::
@@ -26,9 +26,9 @@ x.18.x.18.x.16.x.18.x.18.x.12
 The x stands for 'change all'. Permutations are always of adjacent pairs. It is this limited permutation
 movement that gives the slow undulating changes that characterise change ringing. Like the librarian's
 dilemma problem, the sequence of involutions can take a while to acheive large shifts, but it gets there in the
-end. 
+end.
 
-We need to be more specific - we must write down what does change. However, since we know that a given 
+We need to be more specific - we must write down what does change. However, since we know that a given
 element to be swapped must swap with its adjacent element, we only need list the leftmost of each pair to swap.
 
 code::
@@ -44,17 +44,17 @@ c = [1,3,6]
 d = [2,4,6]
 ::
 
-Then a above was the x in the change ringing notation. The CampStream takes as it's arguments 
+Then a above was the x in the change ringing notation. The CampStream takes as it's arguments
 permdata, method and bells. For the above example the permdata is the array [a, b, c, d] containing all
-the necessary permutations to specify the recipe for the Gainsborough LBM. The method is the 
-sequence of use of these tokens, indexing the permdata array, as a stream, so 
+the necessary permutations to specify the recipe for the Gainsborough LBM. The method is the
+sequence of use of these tokens, indexing the permdata array, as a stream, so
 
 code::
 Pseq([0,1,0,1,0,2,0,1,0,1,0,3],inf).asStream
 ::
 
-The number of bells is 8 for this composition. CampStream allows you (with some effort to rewrite the 
-permutation sequence), to use any change ringing composition. Further, you can easily invent your own 
+The number of bells is 8 for this composition. CampStream allows you (with some effort to rewrite the
+permutation sequence), to use any change ringing composition. Further, you can easily invent your own
 methods (without worrying about the rigour of covering all of a permutation space).
 
 Since BBCut 2.3, you can input place notation directly into the CampStream object using the CampStream.notation class method. The first argument is the number of bells, and the second is the place notation string:
@@ -89,9 +89,9 @@ Called internally after a new.
 
 method:: chooseblock
 this uses the setoffset method of BBCutSynth to specify offset jumps relative to the
-current phrase size. In normal use phrasesize will be the same as the beat length of the source you wish 
+current phrase size. In normal use phrasesize will be the same as the beat length of the source you wish
 to permute. Note that sources which don't respond to setoffset will not be effected by CampCutProc except
-for any enveloping/panning etc caused by blocks. 
+for any enveloping/panning etc caused by blocks.
 
 examples::
 

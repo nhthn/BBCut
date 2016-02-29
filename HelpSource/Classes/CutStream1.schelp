@@ -1,15 +1,15 @@
 class:: CutStream1
 summary:: BBCut2 with live input
-categories:: Libraries>BBCut
+categories:: Libraries>BBCut>Cut synths
 related:: Overviews/BBCut
 
 description::
 
-Playback for a stream of audio which can be cut-up. The stream can be any bus on the Server, so might be a file streamed off disk, a current audio input or some synthesised data. 
+Playback for a stream of audio which can be cut-up. The stream can be any bus on the Server, so might be a file streamed off disk, a current audio input or some synthesised data.
 
-Each grain may have associated parameters for enveloping and dutycycle (ratio of duration to inter-onset-interval).  
+Each grain may have associated parameters for enveloping and dutycycle (ratio of duration to inter-onset-interval).
 
-Note that CutStream1 uses In.ar rather than InFeedback.ar, for reaction speed, so execution order is important. you cannot cut-up a stream created later in the execution order. Change the SynthDefs in the class file to InFeedback if you want no execution order worries, at the expense of an audio block's delay (usually 64 samples). 
+Note that CutStream1 uses In.ar rather than InFeedback.ar, for reaction speed, so execution order is important. you cannot cut-up a stream created later in the execution order. Change the SynthDefs in the class file to InFeedback if you want no execution order worries, at the expense of an audio block's delay (usually 64 samples).
 
 classmethods::
 
@@ -17,18 +17,18 @@ method:: new
 
 argument:: inbus
 Bus on the Server to be cut-up.
-    
+
 argument:: bbcutbuf
 A Server side buffer must exist for the use of the UGen- by default one is allocated for you.
 
 argument:: dutycycle
-Ratio of duration to inter-onset-interval (IOI). 0.5 would mean that the duration of grains is only half the length between cut start times. 
+Ratio of duration to inter-onset-interval (IOI). 0.5 would mean that the duration of grains is only half the length between cut start times.
 
 argument:: atkprop
-Enveloping parameter for attack speed. Rated as a proportion of the overall envelope (0.0 to 1.0) 
+Enveloping parameter for attack speed. Rated as a proportion of the overall envelope (0.0 to 1.0)
 
 argument:: relprop
-Enveloping parameter for release speed. Rated as a proportion of the overall envelope (0.0 to 1.0) 
+Enveloping parameter for release speed. Rated as a proportion of the overall envelope (0.0 to 1.0)
 
 argument:: curve
 Envelope curve
@@ -39,7 +39,7 @@ code::
 
 s=Server.default;
 
-    
+
 a=BBCut2(CutStream1.new).play;
 
 a.end;
@@ -48,12 +48,12 @@ a.end;
 (
 var buf, clock;
 
-clock= ExternalClock(TempoClock(2.1));  
-        
-clock.play;     
-        
+clock= ExternalClock(TempoClock(2.1));
+
+clock.play;
+
 Routine.run({
-            
+
 buf= BBCutBuffer.alloc(s,44100,1);
 
 s.sync; //this forces a wait for the Buffer to be allocated
@@ -69,16 +69,16 @@ BBCut2(CutStream1(s.options.numOutputBusChannels, buf, 0.5, 0.001, 0.5, -4), War
 (
 var buf, clock, synthgroup, bbcutgroup, synthbus;
 
-clock= ExternalClock(TempoClock(2.1));  
-                        
-synthgroup= Group.head(Node.basicNew(s,1));     
+clock= ExternalClock(TempoClock(2.1));
+
+synthgroup= Group.head(Node.basicNew(s,1));
 bbcutgroup= Group.after(synthgroup);
-        
-synthbus= Bus.audio(s,1);       
-        
+
+synthbus= Bus.audio(s,1);
+
 Routine.run({
-        
-SynthDef(\sourcesound,{Out.ar(synthbus.index,Gendy1.ar(1,3,0.2,0.5,LFNoise1.kr(1,100,300),550,0.05,0.07))}).play(synthgroup);           
+
+SynthDef(\sourcesound,{Out.ar(synthbus.index,Gendy1.ar(1,3,0.2,0.5,LFNoise1.kr(1,100,300),550,0.05,0.07))}).play(synthgroup);
 buf= BBCutBuffer.alloc(s,44100,1);
 
 s.sync; //this forces a wait for the Buffer to be allocated
@@ -86,7 +86,7 @@ s.sync; //this forces a wait for the Buffer to be allocated
 BBCut2(CutGroup(CutStream1(synthbus.index, buf, 0.75, 0.01, 0.5, -4),bbcutgroup), WarpCutProc1.new).play(clock);
 });
 
-clock.play;     
+clock.play;
 )
 
 //source on its own for comparison
@@ -98,16 +98,16 @@ SynthDef(\sourcesound,{Out.ar(0,Gendy1.ar(1,3,0.2,0.5,LFNoise1.kr(1,100,300),550
 (
 var buf, clock, synthgroup, bbcutgroup, synthbus;
 
-clock= ExternalClock(TempoClock(2.1));  
-                        
-synthgroup= Group.head(Node.basicNew(s,1));     
+clock= ExternalClock(TempoClock(2.1));
+
+synthgroup= Group.head(Node.basicNew(s,1));
 bbcutgroup= Group.after(synthgroup);
-        
-synthbus= Bus.audio(s,2);       
-        
+
+synthbus= Bus.audio(s,2);
+
 Routine.run({
-        
-SynthDef(\sourcesound,{Out.ar(synthbus.index,0.25*Gendy1.ar(1,3,0.2,0.5,LFNoise1.kr([1.1,1.3],100,300),[650,750],0.05,0.07))}).play(synthgroup);            
+
+SynthDef(\sourcesound,{Out.ar(synthbus.index,0.25*Gendy1.ar(1,3,0.2,0.5,LFNoise1.kr([1.1,1.3],100,300),[650,750],0.05,0.07))}).play(synthgroup);
 buf= BBCutBuffer.alloc(s,44100,2);
 
 s.sync; //this forces a wait for the Buffer to be allocated
@@ -115,7 +115,7 @@ s.sync; //this forces a wait for the Buffer to be allocated
 BBCut2(CutGroup(CutStream1(synthbus.index, buf, 0.75, 0.01, 0.5, -4),bbcutgroup,nil,2), WarpCutProc1.new).play(clock);
 });
 
-clock.play;     
+clock.play;
 )
 
 ::

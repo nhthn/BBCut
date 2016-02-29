@@ -1,41 +1,41 @@
 class:: SQPusher1
 summary:: Squarepusher-inspired breakbeat cutting
-categories:: Libraries>BBCut
+categories:: Libraries>BBCut>Cut procedures
 related:: Overviews/BBCut
 
 description::
 
 This cut procedure is derived from some analysis of the manic breaks work of Squarepusher, aka Tom Jenkinson. His innovation was to push the tempo range to around 200 bpm, and to create constantly varying beats with highly musical jazz inflected drum programming.
 
-   His original work was with sampler/drum machine+sequencer but he uses many effects units and nowadays a laptop in his live shows. To my knowledge, all his programming is by hand, without algorithm.     
+   His original work was with sampler/drum machine+sequencer but he uses many effects units and nowadays a laptop in his live shows. To my knowledge, all his programming is by hand, without algorithm.
   This is an automated routine inspired by his style, which is obviously my take on things and in no way to represent the great  variety of great compositions Tom has created. The routine was inspired by transcribing drum patterns from Alive in Japan (disc 2, do you know squarepusher, warpcd97 2002).
 
-  Note that the original Squarepusher material is created by specifying all the individual drum hits- this routine simulates that sequencing in one single line by cutting up a breakbeat sample, so it works on a sense of rhythmic aggregate, not an analysis of relative positions of kick/snare/hat. 
+  Note that the original Squarepusher material is created by specifying all the individual drum hits- this routine simulates that sequencing in one single line by cutting up a breakbeat sample, so it works on a sense of rhythmic aggregate, not an analysis of relative positions of kick/snare/hat.
 
 classmethods::
 
 method:: new
 Create a SQPusher1 object with the given parameters.
 
-Note that this cut procedure always works in 4/4 with one bar phrases. 
+Note that this cut procedure always works in 4/4 with one bar phrases.
 
 argument:: activity
 Chance of semiquavers rather than quavers.
 
 argument:: fillfreq
 There are two types of bar, normal based on activity from the above parameter,
-and fills based on musical motifs lifted from Squarepusher tracks. The fills occur every fourth bar by default, 
-but change their frequency with this parameter.   
+and fills based on musical motifs lifted from Squarepusher tracks. The fills occur every fourth bar by default,
+but change their frequency with this parameter.
 
 argument:: fillscramble
-chance of a fill being scrambled, rather than played back exactly as stored. 
+chance of a fill being scrambled, rather than played back exactly as stored.
 
 argument:: sqweights
 The chance of a semiquaver bias at each quaver of the bar. Used in combination with the activity
-parameter to make cut sequences for normal non fill bars. 
+parameter to make cut sequences for normal non fill bars.
 
 argument:: bpsd
-beats per sub division. Sets a primitive cut size resolution for choose offset messages. 
+beats per sub division. Sets a primitive cut size resolution for choose offset messages.
 
 instancemethods::
 
@@ -43,9 +43,9 @@ method:: initSQPusher1
 
 examples::
 
-Use your rawest noisest breaks to hear this properly. You won't have all the breaks I use below. Start with something that is running quick so repitching doesn't cause too much chipmunkiness, or double the beats per sample value in BBCutBuffer. 
+Use your rawest noisest breaks to hear this properly. You won't have all the breaks I use below. Start with something that is running quick so repitching doesn't cause too much chipmunkiness, or double the beats per sample value in BBCutBuffer.
 
-Otherwise you'll need to use CutBuf3 to preserve the original pitch and reslice. 
+Otherwise you'll need to use CutBuf3 to preserve the original pitch and reslice.
 
 code::
 
@@ -82,12 +82,12 @@ BBCut2(CutBuf1(sf),SQPusher1.new).play(3.33);
 (
 var sf;
 var w,offset, activity;
-    
+
 w = SCWindow("panel", Rect.new(200,200,230,130));
 offset=DDSlider( w, Rect.new(0,0,200,40), "offset", 0.0, 1.0, 'linear', 0.01, 0.0);
 activity=DDSlider( w, Rect.new(0,50,200,40), "activity", 0.0, 1.0, 'linear', 0.01, 0.0);
 
-w.front;    
+w.front;
 
 Routine.run({
 sf= BBCutBuffer("sounds/Sounds/BOGDAN/dillbeat1",8);
@@ -120,7 +120,7 @@ BBCut2(CutBuf3(sf),SQPusher1.new).play(3.33);
 
 
 
-(   //two at once- sounds great on my machine at least! 
+(   //two at once- sounds great on my machine at least!
 var sf, clock;
 
 clock= ExternalClock(3.4).play;
@@ -173,7 +173,7 @@ SQPusher1(0.5,1, 1.0)
 )
 
 
-(   //alternate normal and fill bars, always scramble fills, sometimes silent 
+(   //alternate normal and fill bars, always scramble fills, sometimes silent
 var sf;
 
 Routine.run({

@@ -1,6 +1,6 @@
 class:: ChooseBlockProc
 summary:: Automatic breakbeat cutting algorithm with a user-specified block size
-categories:: Libraries>BBCut
+categories:: Libraries>BBCut>Cut procedures
 related:: Overviews/BBCut
 
 description::
@@ -8,7 +8,7 @@ description::
 This cut procedure allows the user to specify the block size, and how many subdivisions to
 cut it into. WarpCutProc1 used this paradigm, and this class is a simplification of that class.
 The class was introduce in the BBCut Library paper, which used it to explain adding a new
-cut procedure to the library. 
+cut procedure to the library.
 
 For additional data on the algorithm see
 
@@ -24,17 +24,17 @@ method:: new
 Create a ChooseBlockProc object with the given parameters.
 
 argument:: blocksizefunc
-A function (or something else responding to value) returning the next block length.  
+A function (or something else responding to value) returning the next block length.
 The function will be passed the beats left within the current phrase, and the current phrase length to
 assist judgement. The main code will automatically reduce block lengths where necessary to fit
 the next block into a phrase.
 argument:: numcutfunc
-an object responding to the value message with the number of desired subdivisions of 
+an object responding to the value message with the number of desired subdivisions of
 the new block. Each cut is of even length. The blocklength is passed in.
 argument:: phraselength
 Next length of phrase in beats.
 argument:: bpsd
-beats per sub division. Sets a primitive cut size resolution for choose offset messages. 
+beats per sub division. Sets a primitive cut size resolution for choose offset messages.
 
 instancemethods::
 
@@ -75,7 +75,7 @@ delay= 1/(2.4*2);
 
 prop=1.0;
 
-fx= {arg prp=1.0; var in;  in= 0.5*In.ar(0,2); 
+fx= {arg prp=1.0; var in;  in= 0.5*In.ar(0,2);
 
 ReplaceOut.ar(0,Limiter.ar(in+(prp*CombN.ar(in, delay, delay,delay*2))))
 
@@ -84,7 +84,7 @@ ReplaceOut.ar(0,Limiter.ar(in+(prp*CombN.ar(in, delay, delay,delay*2))))
 //default is add to tail of rootNode, so need to force it to appear before the fx unit
 //Group.head makes a new Group at the head of the RootNode (Nil.asGroup= RootNode.new)
 BBCut2(CutGroup(CutBuf2(sf, dutycycle: {1.1-prop}), Group.before(fxgroup)),ChooseBlockProc({
-arg beatsleft, currphraselength; 
+arg beatsleft, currphraselength;
 
 prop= 1.0-(beatsleft/currphraselength);
 
@@ -93,7 +93,7 @@ fx.set(\prp,prop);
 if((tightenchance.coin) && (prop.coin) && (blocksize>0.015625), {blocksize= blocksize*0.5});
 
 blocksize;
-},{arg blocklength; 
+},{arg blocklength;
 if((blocklength>0.25) && (0.3.coin),{[2,3,5].choose},{1})
 }, {prop=1.0; blocksize=2.0; tightenchance= 1.0.rand; 8.0;})).play(tempo);
 
@@ -116,7 +116,7 @@ data=   //control spec data for ui controls
 
 w = SCWindow("BBCutProc11 demo N.M.Collins 23/08/03", Rect.new(100, 500, 500, (30*(data.size))));
 
-slider= Array.fill(data.size, {arg i; DDSlider.performList(\new,[w, Rect(5,30*i, 300, 30)]++ data.at(i))}); 
+slider= Array.fill(data.size, {arg i; DDSlider.performList(\new,[w, Rect(5,30*i, 300, 30)]++ data.at(i))});
 
 w.front;
 

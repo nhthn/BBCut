@@ -1,24 +1,24 @@
 class:: CutFunc
 summary:: Breakbeat cut rendering with an arbitrary function
-categories:: Libraries>BBCut
+categories:: Libraries>BBCut>Cut synths
 related:: Overviews/BBCut
 
 description::
 
-Cut renderer calling an arbitrary function. The function will be called at s.latency seconds before the cut is timed to occur. This is probably imperceptible for small latencies, though you may wish to compensate. However, in order to send your own OSC messages etc this is a necessary restriction. 
+Cut renderer calling an arbitrary function. The function will be called at s.latency seconds before the cut is timed to occur. This is probably imperceptible for small latencies, though you may wish to compensate. However, in order to send your own OSC messages etc this is a necessary restriction.
 
 classmethods::
 
 method:: new
 
 argument:: cutfunc
-A function to be called for each cut, whichcut (an Integer), block (a BBCutBlock) and the clock (an ExternalClock) are passed in as the arguments. If left nil, it will not be called. 
-    
+A function to be called for each cut, whichcut (an Integer), block (a BBCutBlock) and the clock (an ExternalClock) are passed in as the arguments. If left nil, it will not be called.
+
 argument:: blockfunc
-A function to be called for each new block, block (a BBCutBlock) and the clock (an ExternalClock) are passed in as the arguments. If left nil, it will not be called. 
-    
+A function to be called for each new block, block (a BBCutBlock) and the clock (an ExternalClock) are passed in as the arguments. If left nil, it will not be called.
+
 argument:: phrasefunc
-A function to be called for each new phrase, block (a BBCutBlock) and the clock (an ExternalClock) are passed in as the arguments. If left nil, it will not be called. 
+A function to be called for each new phrase, block (a BBCutBlock) and the clock (an ExternalClock) are passed in as the arguments. If left nil, it will not be called.
 
 argument:: compensate
 Seconds of compensation, pass in s.latency to have the function render at the same time as the cut starts synthesising, else leave 0.0, especially if you are sending your own messages to the Server via the CutFunc
@@ -34,7 +34,7 @@ s=Server.default;
 
 synth=SynthDef(\mysound, {arg freq=440, modulo=0.4; Out.ar(0,Pan2.ar(Resonz.ar(LFSaw.ar(freq),500,0.1)%modulo, 0.0));}).play;
 
-clock= ExternalClock(TempoClock(2.1)).play; 
+clock= ExternalClock(TempoClock(2.1)).play;
 
 BBCut2(CutFunc({arg i, block, clock; "I was called".postln; synth.set(\freq,55+(i*110),\modulo,0.5-((i*0.025).min(0.475)))}), WarpCutProc1.new).play(clock);
 
@@ -51,8 +51,8 @@ s=Server.default;
 
 synth=SynthDef(\mysound, {arg freq=440, modulo=0.4; Out.ar(0,Pan2.ar(Resonz.ar(LFSaw.ar(freq),500,0.1)%modulo, 0.0));}).play;
 
-clock= ExternalClock(TempoClock(2.1)).play; 
-        
+clock= ExternalClock(TempoClock(2.1)).play;
+
 Routine.run({
 
 sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break2.aiff",4);

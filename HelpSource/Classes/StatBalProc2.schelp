@@ -1,19 +1,19 @@
 class:: StatBalProc2
 summary:: Automatic breakbeat cutting algorithm using statistical feedback
-categories:: Libraries>BBCut
+categories:: Libraries>BBCut>Cut procedures
 related:: Overviews/BBCut, Classes/StatBalProc
 
 description::
 
 Extension of ChooseCutProc using Charles Ames' method of statistical feedback
-to control state selection. The essential auxilliary class is StatBalNormStream. 
+to control state selection. The essential auxilliary class is StatBalNormStream.
 This version changes weightings during the phrase itself so as to give changing structure to phrasing.
 Because weights may temporarily go to zero, the normalisation version of statistical feedback is essential.
 See StatBalProc for comparison.
 
 The technique of changing weightings is more noticeable than the influence of statistical feedback.
 See the examples below for a comparison. Set heterogeneity high to simulate Lehmer style
-dispersion characteristics. 
+dispersion characteristics.
 
 For additional data on the algorithm see Nick Collins, "Further Automatic BreakBeat Cutting Methods", Proceedings of Generative Art 2001, reproduced at http://www.cus.cam.ac.uk/~nc272/.
 
@@ -22,11 +22,11 @@ classmethods::
 method:: new
 
 argument:: cutarray
-An array of 3 arrays of form [ [states], [startweights], [endweights ] ] where the states 
-are the possible cutsizes, and the start weights are those for the beginning of the phrase, the 
+An array of 3 arrays of form [ [states], [startweights], [endweights ] ] where the states
+are the possible cutsizes, and the start weights are those for the beginning of the phrase, the
 endweights for the end. Linear interpolation is use internally to work out intermediate weights.
-The endweights are reached at beat position currphraselength=rollallowed. 
-The three arrays must obviously be of the same size. 
+The endweights are reached at beat position currphraselength=rollallowed.
+The three arrays must obviously be of the same size.
 argument:: repeatarray
 As cutarray for the repeats parameter.
 argument:: chet
@@ -41,7 +41,7 @@ argument:: rollallowed
 number of beats within sight of the end of the current phrase within which a roll is permissible.
 Further, position at which final weightings for a phrase will be acheived.
 argument:: bpsd
-beats per sub division. Sets a primitive cut size resolution for choose offset messages. 
+beats per sub division. Sets a primitive cut size resolution for choose offset messages.
 
 examples::
 

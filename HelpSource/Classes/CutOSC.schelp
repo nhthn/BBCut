@@ -1,11 +1,11 @@
 class:: CutOSC
 summary:: BBCut2 OSC output
-categories:: Libraries>BBCut
+categories:: Libraries>BBCut>Cut synths
 related:: Overviews/BBCut
 
 description::
 
-A class to trace the state of cutsynths as they render algorithmically determined cuts. The cut information is sent via OSC to the NetAddr object specified as the third creation argument. Time stamped scheduling with latency guarantees accurate sync. 
+A class to trace the state of cutsynths as they render algorithmically determined cuts. The cut information is sent via OSC to the NetAddr object specified as the third creation argument. Time stamped scheduling with latency guarantees accurate sync.
 
 examples::
 
@@ -19,8 +19,8 @@ var sf, clock, synth;
 
 s=Server.default;
 
-clock= ExternalClock(TempoClock(2.1)).play; 
-        
+clock= ExternalClock(TempoClock(2.1)).play;
+
 Routine.run({
 
 sf= BBCutBuffer("/Volumes/data/audio/toanalyse/reedham.wav",128);
@@ -41,14 +41,14 @@ BBCut2(CutBuf2(sf,1.0).trace_(CutOSC(1,0.0,~fredrik)), ChooseCutProc(1.0,2)).pla
 (
 var sf, clock;
 
-clock= ExternalClock(TempoClock(2.8));  
-        
-clock.play;     
-        
+clock= ExternalClock(TempoClock(2.8));
+
+clock.play;
+
 Routine.run({
 
-//given event positions         
-sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break2.aiff",4, [ 0, 16789, 28721, 37166, 41389, 49042, 56783 ]); 
+//given event positions
+sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break2.aiff",4, [ 0, 16789, 28721, 37166, 41389, 49042, 56783 ]);
 
 s.sync; //this forces a wait for the Buffer to load
 

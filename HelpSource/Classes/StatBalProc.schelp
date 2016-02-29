@@ -1,21 +1,21 @@
 class:: StatBalProc
 summary:: Automatic breakbeat cutting algorithm using statistical feedback
-categories:: Libraries>BBCut
+categories:: Libraries>BBCut>Cut procedures
 related:: Overviews/BBCut, Classes/StatBalStream, Classes/StatBalProc2
 
 description::
 
-Extension of ChooseCutProc using Charles Ames' method of statistical feedback to control selection of  
-cut size and repeat states. The essential auxilliary class is StatBalStream. The theoretical basis of the use of 
-statistical feedback is control over a continuum from Lehmer style random number generation 
-to deterministic behaviour via the heterogeneity parameter. The application to automatic cutting is to 
-promote different types of short term diversity with long term proportions preserved for 
-parameter choices. Note that statistics are slightly perverted by phrases, which may require that only a 
+Extension of ChooseCutProc using Charles Ames' method of statistical feedback to control selection of
+cut size and repeat states. The essential auxilliary class is StatBalStream. The theoretical basis of the use of
+statistical feedback is control over a continuum from Lehmer style random number generation
+to deterministic behaviour via the heterogeneity parameter. The application to automatic cutting is to
+promote different types of short term diversity with long term proportions preserved for
+parameter choices. Note that statistics are slightly perverted by phrases, which may require that only a
 smaller cutsize or number of repeats fits in the available space. Set phraselength very large to avoid that.
 
-It is fair to say that the effect can remain unnoticeable, depending on choices of heterogeneity. Low 
+It is fair to say that the effect can remain unnoticeable, depending on choices of heterogeneity. Low
 heterogeneity statistical feedback restricts the choice of potential cut sequences, avoiding strange
-dispersions of states (that is, rare states possibly cropping up many times in a row). 
+dispersions of states (that is, rare states possibly cropping up many times in a row).
 
 For additional data on the algorithm see Nick Collins, "Further Automatic BreakBeat Cutting Methods", Proceedings of Generative Art 2001, reproduced at http://www.cus.cam.ac.uk/~nc272/.
 
@@ -34,7 +34,7 @@ A probability of a roll near the end of a phrase.
 argument:: rollallowed
 number of beats within sight of the end of the current phrase within which a roll is permissible.
 argument:: bpsd
-beats per sub division. Sets a primitive cut size resolution for choose offset messages. 
+beats per sub division. Sets a primitive cut size resolution for choose offset messages.
 
 examples::
 

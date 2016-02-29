@@ -1,11 +1,11 @@
 class:: BBCPPermute
 summary:: Automatic breakbeat cutting algorithm
-categories:: Libraries>BBCut
+categories:: Libraries>BBCut>Cut procedures
 related:: Overviews/BBCut
 
 description::
 
-A relatively straight forward cut procedure supporting arbitrary user defined permutation of equally divided chunks of the target. 
+A relatively straight forward cut procedure supporting arbitrary user defined permutation of equally divided chunks of the target.
 
 classmethods::
 
@@ -13,20 +13,20 @@ method:: new
 Create a BBCPPermute object with the given parameters.
 
 argument:: phraselength
-Choose a new phraselength. You can pass a function, which will be called at 
-each new phrase. Normally this would be equal to the size in beats of the source to be cut (assuming 
-some fixed signal buffer, sound file) 
+Choose a new phraselength. You can pass a function, which will be called at
+each new phrase. Normally this would be equal to the size in beats of the source to be cut (assuming
+some fixed signal buffer, sound file)
 argument:: subdivfunc
-A function returning the number of equally spaced divisions in which to split a new phrase. 
-The new currphraselength is passed as an argument to your function. 
+A function returning the number of equally spaced divisions in which to split a new phrase.
+The new currphraselength is passed as an argument to your function.
 argument:: permutefunc
-Some mapping function which permutes the normal playback order of slices. 
-If it returned the index passed in, there would be no swapping of chunks of the sample around. 
-Your arbitrary permutation function is passed the index to permute, the current number of subdivisions for the 
+Some mapping function which permutes the normal playback order of slices.
+If it returned the index passed in, there would be no swapping of chunks of the sample around.
+Your arbitrary permutation function is passed the index to permute, the current number of subdivisions for the
 phrase, and the current position in the phrase. If you return values out of range, they'll be put into range for you.
 argument:: stutterfunc
 A function returning the number of subdivisions for the next block. The default is one, giving no stuttering.
-Arguments passed in are the index, the subdivisions , and the position in beats in the current phrase. 
+Arguments passed in are the index, the subdivisions , and the position in beats in the current phrase.
 
 instancemethods::
 
@@ -40,7 +40,7 @@ examples::
 code::
 
 //you must have run this line before any of the examples below
-f= BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff",8); 
+f= BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff",8);
 
 TempoClock.default.tempo_(2.3);
 
@@ -70,7 +70,7 @@ a.end
 
 BBCut2(CutBuf2(f),
 BBCPPermute.new(
-8.0,    //phrase length same as sample length 
+8.0,    //phrase length same as sample length
 16,     //cut in eight notes- 8.0/16= 0.5...
 {arg index, n;  if(index%2==0,{index+1},{index-1})},    //swap strong and weak
 {arg index; if((index==4) || (index==7), 3, 1)}
@@ -85,7 +85,7 @@ var mult;
 BBCut2(CutBuf2(f),
 BBCPPermute.new(
 {mult= [4.31, 1.29, {rrand(5.01, 10.09)}].choose.value;  8.0}, //this is called beginning of every phrase, so use the opportunity to select a new multiplier
-{[8, 16, 32].choose}, 
+{[8, 16, 32].choose},
 {arg index, n;  index*mult},
 {if(0.05.coin,{rrand(2,5)},1)}
 )).play;
@@ -109,8 +109,8 @@ when= 0;
 now=0;
 
 bbcs= [
-CutBuf2(sf, 
-pbsfunc: { if(now>=when,{pitch= ([0.125, 1, 1.05].choose)+ (0.05.rand2)}); pitch+(0.01.rand2)}, 
+CutBuf2(sf,
+pbsfunc: { if(now>=when,{pitch= ([0.125, 1, 1.05].choose)+ (0.05.rand2)}); pitch+(0.01.rand2)},
 dutycycle:{ if(now>=when, {now=0; when= 300.rand; duty= rrand(0.2,10.0)*(rrand(0.5,1.0))}); now=now+1; duty}
 ),
 CutMixer(0,1.0,1.0,{1.0.rand2}),
@@ -143,8 +143,8 @@ clock=ExternalClock(2.3).play;
 
 w = SCWindow("BBCPPermute demo N.M.Collins 5/08/05", Rect(100, 100, 200, 100));
 
-rotate= SCSlider(w, Rect(0,0,100,30), "rotation"); 
-invert= SCButton(w, Rect(0,50,100,30), "invert"); 
+rotate= SCSlider(w, Rect(0,0,100,30), "rotation");
+invert= SCButton(w, Rect(0,50,100,30), "invert");
 
 invert.states= [["invert"],["revert"]];
 rotate.action_({currrot= rotate.value;});
@@ -162,8 +162,8 @@ sf= BBCutBuffer.array([Platform.resourceDir +/+ "sounds/break.aiff",Platform.res
 s.sync;
 
 cutter1= BBCut2([CutBuf2(sf.at(0)),CutMixer(0,0.5,1.0,-1.0)],BBCPPermute.new(
-8.0,16,{arg i,n; 
-var t; 
+8.0,16,{arg i,n;
+var t;
 t=i+((currrot*16-0.001).asInteger);
 
 if((currinv)>0.1, {t= n-t-1});

@@ -1,18 +1,18 @@
 class:: SQPusher2
 summary:: Squarepusher-inspired breakbeat cutting
-categories:: Libraries>BBCut
+categories:: Libraries>BBCut>Cut procedures
 related:: Overviews/BBCut
 
 description::
 
-This cut procedure was created by an automated analysis of track 'Come on my Selector' by Squarepusher, aka Tom Jenkinson. 
+This cut procedure was created by an automated analysis of track 'Come on my Selector' by Squarepusher, aka Tom Jenkinson.
 
 classmethods::
 
 method:: new
 Create a SQPusher1 object with the given parameters.
 
-Note that this cut procedure always works in 4/4 with one bar phrases. 
+Note that this cut procedure always works in 4/4 with one bar phrases.
 
 argument:: barfunc
 Function that selects a bar from SQPusher2.seqdata (all 160 bars of Come On My Selector)
@@ -21,10 +21,10 @@ argument:: repetitionfunc
 Function that determines how to group events in blocks (repetition groups)
 
 argument:: scramble
-chance of a bar being scrambled, rather than played back exactly as stored. 
+chance of a bar being scrambled, rather than played back exactly as stored.
 
 argument:: bpsd
-beats per sub division. Sets a primitive cut size resolution for choose offset messages. 
+beats per sub division. Sets a primitive cut size resolution for choose offset messages.
 
 examples::
 
@@ -83,13 +83,13 @@ BBCut2(CutBuf1(sf),SQPusher2.new).play(3.33);
 (
 var sf;
 var w,curdle, scramble,quant;
-    
+
 w = SCWindow("panel", Rect.new(200,200,230,180));
 curdle=DDSlider( w, Rect.new(0,0,200,40), "curdle", 0.0, 1.0, 'linear', 0.01, 0.0);
 scramble=DDSlider( w, Rect.new(0,50,200,40), "scramble", 0.0, 1.0, 'linear', 0.01, 0.0);
 quant=DDSlider( w, Rect.new(0,100,200,40), "quant", 0.0, 1.0, 'linear', 0.01, 0.0);
 
-w.front;    
+w.front;
 
 Routine.run({
 sf= BBCutBuffer("sounds/Sounds/BOGDAN/dillbeat1",8);
@@ -123,7 +123,7 @@ BBCut2(CutBuf3(sf),SQPusher2.new).play(3.33);
 
 
 
-(   //two at once- sounds great on my machine at least! 
+(   //two at once- sounds great on my machine at least!
 var sf, clock;
 
 clock= ExternalClock(3.4).play;

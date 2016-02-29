@@ -1,11 +1,11 @@
 class:: CutBuf1
 summary:: BBCut2 buffer playback, efficient but inflexible
-categories:: Libraries>BBCut
+categories:: Libraries>BBCut>Cut synths
 related:: Overviews/BBCut
 
 description::
 
-Playback for a buffer, using a single fixed PlayBuf UGen with jump in playback position- cheap for CPU but no enveloping, so it may click, and no individual parameters for different grains are supported.  
+Playback for a buffer, using a single fixed PlayBuf UGen with jump in playback position- cheap for CPU but no enveloping, so it may click, and no individual parameters for different grains are supported.
 
 classmethods::
 
@@ -13,7 +13,7 @@ method:: new
 
 argument:: bbcutbuf
 An instance of BBCutBuffer representing the buffer to be cut-up.
-    
+
 argument:: offset
 A parameter to be passed to any cut playback position determining routine. The default chooseoffset method is in BBCutBuffer and the parameter is a single number from 0.0 to 1.0 giving the chance of a jump to a random event in the source.
 
@@ -24,12 +24,12 @@ code::
 (
 var sf, clock;
 
-clock= ExternalClock(TempoClock(2.1));  
-        
-clock.play;     
-        
+clock= ExternalClock(TempoClock(2.1));
+
+clock.play;
+
 Routine.run({
-            
+
 sf= BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff",8);
 
 s.sync; //this forces a wait for the Buffer to load

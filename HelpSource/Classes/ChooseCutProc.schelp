@@ -1,6 +1,6 @@
 class:: ChooseCutProc
 summary:: Automatic breakbeat cutting algorithm
-categories:: Libraries>BBCut
+categories:: Libraries>BBCut>Cut procedures
 related:: Overviews/BBCut
 
 description::
@@ -21,7 +21,7 @@ method:: new
 Create a ChooseCutProc object with the given parameters.
 
 argument:: cutsizefunc
-A function (or something else responding to value) returning the next primitive cut size.  
+A function (or something else responding to value) returning the next primitive cut size.
 The function will be passed the beat position within the current phrase, and the current phrase length to
 assist judgement. The main code will automatically reduce cut sizes/ num repeats where necessary to fit
 the next block into a phrase.
@@ -38,10 +38,10 @@ argument:: rollchance
 A probability of a roll near the end of a phrase.
 argument:: rollallowed
 number of beats within sight of the end of the current phrase within which a roll is permissible.
-(these two parameters are like stutterchance and stutterarea in BBCutProc11, but since the rollfunc works 
+(these two parameters are like stutterchance and stutterarea in BBCutProc11, but since the rollfunc works
 out any general cut sequence for a roll, there is no stutterspeed)
 argument:: bpsd
-beats per sub division. Sets a primitive cut size resolution for choose offset messages. 
+beats per sub division. Sets a primitive cut size resolution for choose offset messages.
 
 instancemethods::
 
@@ -49,7 +49,7 @@ method:: initChooseCutProc
 Called internally after a new.
 
 method:: chooseblock
-no need to override this central cut procedure in derived classes if you can just  
+no need to override this central cut procedure in derived classes if you can just
 override the default methods cutsizedefault, repeatfuncdefault, rollfuncdefault.
 
 examples::
@@ -57,7 +57,7 @@ examples::
 code::
 
 //you must have run this line before any of the examples below
-f= BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff",8); 
+f= BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff",8);
 
 
 //default cutups at 144bpm
@@ -101,7 +101,7 @@ BBCut2(CutBuf1(f),ChooseCutProc(owncutfunc,ownrepfunc,ownrollfunc,8.0,0.5,3.0,0.
 var sf;
 var w,slider;
 var owncutfunc,ownrepfunc;
-    
+
 w = SCWindow("panel", Rect.new(128, 64, 186, 90));
 slider=DDSlider( w, Rect.new(32, 28, 128, 40), "which cut set", 0, 1, 'linear', 1, 0);
 
