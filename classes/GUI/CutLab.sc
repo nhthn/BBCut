@@ -40,7 +40,7 @@ CutLab {
     var sfview;
     var playButton;
     var procMenu;
-    var segmentsKnob;
+    var segmentsMenu;
     var tempoKnob;
     var jumpKnob;
 
@@ -89,10 +89,11 @@ CutLab {
             this.cleanUp;
         };
         window.addFlowLayout;
+        window.view.palette_(QPalette.dark);
 
         //////////////////// FILE CONTROLS ////////////////////
 
-        fileField = TextField(window, 200@20)
+        fileField = TextField(window, 150@20)
             .value_(
                 File.exists(Platform.resourceDir +/+ "sounds/break.aiff").if(
                     Platform.resourceDir +/+ "sounds/break.aiff",
@@ -111,9 +112,22 @@ CutLab {
         fileLoadButton = Button(window, 80@20)
             .states_([["Load"]])
             .action_({
-                this.loadBuf(fileField.value, segmentsKnob.value);
+                this.loadBuf(fileField.value, segmentsMenu.items[segmentsMenu.value]);
             })
             .focus;
+
+        StaticText(window, 90@20).string_("Segments:");
+
+        segmentsMenu = PopUpMenu(window, window.view.decorator.indentedRemaining.width@20)
+            .items_([4, 5, 6, 7, 8, 10, 12, 16, 32, 48, 64])
+            .action_({ |menu|
+                buf.postln;
+                buf.notNil.if {
+                    var segments = menu.items[menu.value];
+                    buf.beatlength_(segments).events_();
+                };
+            });
+        segmentsMenu.value_(segmentsMenu.items.indexOf(8));
 
         window.view.decorator.nextLine;
 
@@ -138,8 +152,8 @@ CutLab {
 
         playButton = Button(synthPanel, synthPanel.decorator.indentedRemaining.width@30)
             .states_([
-                ["▶ Play", nil, Color.green],
-                ["■ Stop", Color.white, Color.red]
+                ["▶ Play", nil, Color.fromHexString("155814")],
+                ["■ Stop", nil, Color.fromHexString("591c1b")]
             ])
             .action_({ |button|
                 (button.value == 1).if {
@@ -153,7 +167,7 @@ CutLab {
 
         synthPanel.decorator.nextLine;
 
-        //////////////////// GLOBAL KNOBS ////////////////////
+        //////////////////// GLOBAL SETTINGS ////////////////////
 
         synthPanelKnob = { |label, controlSpec, initVal, action|
             var knob;
@@ -166,22 +180,12 @@ CutLab {
                 action: action
             );
             knob.labelView
-                .font_(Font(nil, 10));
+                .font_(Font(nil, 10.5));
             knob.numberView
-                .font_(Font(nil, 10))
+                .font_(Font(nil, 10.5))
                 .align_(\center);
             knob;
         };
-
-        segmentsKnob = synthPanelKnob.(
-            "Segments", ControlSpec(4, 64, \lin, 1, default: 8), nil,
-            { |knob|
-                buf.notNil.if {
-                    buf.beatlength = knob.value;
-                    buf.events_();
-                }
-            }
-        );
 
         tempoKnob = synthPanelKnob.(
             "Tempo", ControlSpec(40, 200, \lin, 2, default: 144), nil,
@@ -244,7 +248,7 @@ CutLab {
 
         sfviewRout.notNil.if { sfviewRout.stop; };
         sfviewRout = nil;
-        
+
         clock.notNil.if { clock.stop };
         clock = nil;
 
@@ -307,7 +311,7 @@ CutLab {
     updateCode {
         "~buf = BBCutBuffer(%, %);\nBBCut2(CutBuf3(~buf, %), %).play(%);".format(
             buf.path.asCompileString,
-            segmentsKnob.value,
+            segmentsMenu.items[segmentsMenu.value],
             jumpKnob.value.asStringPrec(3),
             cutprocs[procMenu.value].value,
             (tempoKnob.value / 60).asStringPrec(3);
