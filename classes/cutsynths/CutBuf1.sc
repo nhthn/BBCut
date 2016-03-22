@@ -20,14 +20,14 @@ CutBuf1 : CutSynth {
 
             2.do({arg i;
 
-                SynthDef.writeOnce(\cb1playbuf++((i+1).asSymbol),{arg bufnum=0,outbus=0,rate=1,startPos=0,trig=1;
+                SynthDef(\cb1playbuf++((i+1).asSymbol),{arg bufnum=0,outbus=0,rate=1,startPos=0,trig=1;
                     var tmp;
 
                     tmp=PlayBuf.ar(i+1,bufnum,BufRateScale.kr(bufnum)*rate,InTrig.kr(trig),startPos,1);
 
                     Out.ar(outbus,tmp);
 
-                });
+                }).add;
 
             });
 

@@ -13,7 +13,7 @@ CutTrig1 : CutSynth {
 
             2.do({arg i;
 
-                SynthDef.writeOnce(\ct1playbuf++((i+1).asSymbol),{arg bufnum=0,outbus=0,rate=1,dur=0.1;
+                SynthDef(\ct1playbuf++((i+1).asSymbol),{arg bufnum=0,outbus=0,rate=1,dur=0.1;
                     var playbuf, env;
 
                     playbuf= PlayBuf.ar(i+1,bufnum,BufRateScale.kr(bufnum)*rate,1,0,0);
@@ -21,7 +21,7 @@ CutTrig1 : CutSynth {
                     env= EnvGen.ar(Env.linen(0.0,dur,0.0,1.0,0),doneAction:2);
 
                     Out.ar(outbus,playbuf*env);
-                });
+                }).add;
             });
 
         });

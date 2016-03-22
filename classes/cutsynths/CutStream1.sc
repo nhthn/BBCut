@@ -98,17 +98,17 @@ CutStream1 : CutSynth {
 
             2.do({arg i;
 
-                SynthDef.writeOnce(\cs1playbuf++((i+1).asSymbol),{arg bufnum=0,outbus=0,dur=0.1;
+                SynthDef(\cs1playbuf++((i+1).asSymbol),{arg bufnum=0,outbus=0,dur=0.1;
                     var tmp;
 
                     tmp= PlayBuf.ar(i+1,bufnum,1,1,0,1);
 
                     Out.ar(outbus,tmp*EnvGen.kr(Env([1,1],[dur]),doneAction:2));
 
-                });
+                }).add;
 
                 //run record buf for duration of block- or just make one and keep retriggering?
-                SynthDef.writeOnce(\cs1recordbuf++((i+1).asSymbol),{arg bufnum=0,inbus=8,outbus=0,dur=0.1, atkprop=0.0,relprop=0.0,curve=0;
+                SynthDef(\cs1recordbuf++((i+1).asSymbol),{arg bufnum=0,inbus=8,outbus=0,dur=0.1, atkprop=0.0,relprop=0.0,curve=0;
                     var in,tmp;
 
                     //used to be InFeedback for safety- must worry about execution order?
@@ -119,7 +119,7 @@ CutStream1 : CutSynth {
 
                     Out.ar(outbus,in);
 
-                });
+                }).add;
 
             });
 

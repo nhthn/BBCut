@@ -18,7 +18,7 @@ CutMixer : CutSynth {
         StartUp.add({
             2.do({arg i;
 
-                SynthDef.writeOnce(\cutmixer++((i+1).asSymbol),{arg outbus=0,inbus=0,amp=1.0,pan=0.0;
+                SynthDef(\cutmixer++((i+1).asSymbol),{arg outbus=0,inbus=0,amp=1.0,pan=0.0;
                     var tmp;
 
                     tmp= amp*In.ar(inbus,i+1); //because of grouping, should just work
@@ -28,7 +28,7 @@ CutMixer : CutSynth {
 
                     Out.ar(outbus,tmp);
 
-                });
+                }).add;
             });
         });
     }

@@ -604,7 +604,7 @@ AnalyseEventsDatabase {
 
             2.do({arg i;
 
-                SynthDef.writeOnce(\analyseeventsdatabase++((i+1).asSymbol),{arg inbus=8, soundbufnum=0, analysisbufnum=1, trigID=101, threshold=0.34;
+                SynthDef(\analyseeventsdatabase++((i+1).asSymbol),{arg inbus=8, soundbufnum=0, analysisbufnum=1, trigID=101, threshold=0.34;
                     var recbuf, input, analysisinput;
 
                     input=In.ar(inbus, i+1);
@@ -615,10 +615,10 @@ AnalyseEventsDatabase {
 
                     AnalyseEvents2.ar(analysisinput, analysisbufnum, threshold, trigID, 1, 0.0);
 
-                });
+                }).add;
 
 
-                SynthDef.writeOnce(\AEPlayBuf++((i+1).asSymbol),{arg outbus=0, bufnum=0, startPos=0, length=0.1, amp=1.0, rate=1.0, pan=0.0;
+                SynthDef(\AEPlayBuf++((i+1).asSymbol),{arg outbus=0, bufnum=0, startPos=0, length=0.1, amp=1.0, rate=1.0, pan=0.0;
                     var playbuf, env,output;
 
                     env=EnvGen.ar(Env([1,1],[length]),doneAction:2);
@@ -627,9 +627,9 @@ AnalyseEventsDatabase {
 
                     output= if(i==0,{Pan2.ar(playbuf*env,pan)},{playbuf*env});
                     Out.ar(outbus, output);
-                });
+                }).add;
 
-                SynthDef.writeOnce(\AEPlayBufEnv++((i+1).asSymbol),{arg outbus=0, bufnum=0, startPos=0, length=0.1, amp=1.0, rate=1.0, envtime=0.01,pan=0.0;
+                SynthDef(\AEPlayBufEnv++((i+1).asSymbol),{arg outbus=0, bufnum=0, startPos=0, length=0.1, amp=1.0, rate=1.0, envtime=0.01,pan=0.0;
                     var playbuf, env,output;
 
                     env=EnvGen.ar(Env([0,1,1,0],[envtime,length-(envtime*2),envtime]),doneAction:2);
@@ -638,7 +638,7 @@ AnalyseEventsDatabase {
 
                     output= if(i==0,{Pan2.ar(playbuf*env,pan)},{playbuf*env});
                     Out.ar(outbus, output);
-                });
+                }).add;
 
 
             });

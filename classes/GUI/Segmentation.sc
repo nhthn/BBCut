@@ -441,7 +441,7 @@ Segmentation {
 
             2.do({arg i;
 
-                SynthDef.writeOnce(\segmentation++((i+1).asSymbol),{arg playbufnum, analysisbufnum, length, threshold=0.34;
+                SynthDef(\segmentation++((i+1).asSymbol),{arg playbufnum, analysisbufnum, length, threshold=0.34;
                     var env, input;
 
                     env=EnvGen.ar(Env([1,1,0,0],[length,0.5]),doneAction:2);
@@ -452,7 +452,7 @@ Segmentation {
 
                     AnalyseEvents2.ar(input*env, analysisbufnum, threshold,0,0);
 
-                });
+                }).add;
 
             });
 

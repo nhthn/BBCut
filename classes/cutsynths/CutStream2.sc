@@ -138,14 +138,14 @@ CutStream2 : CutSynth {
             //CutBuf2 \cb2playbuf1 and 2 used for playback of slices
             2.do({arg i;
 
-                SynthDef.writeOnce(\cs2recordbuf++((i+1).asSymbol),{arg bufnum=0,inbus=8;
+                SynthDef(\cs2recordbuf++((i+1).asSymbol),{arg bufnum=0,inbus=8;
                     var in;
 
                     in=In.ar(inbus,i+1);
 
                     RecordBuf.ar(in,bufnum,0,1,0,1,1,1);
 
-                });
+                }).add;
 
             });
         });

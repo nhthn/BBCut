@@ -16,7 +16,7 @@ CutBuf2 : CutSynth {
 
             2.do({arg i;
 
-                SynthDef.writeOnce(\cb2playbuf++((i+1).asSymbol),{arg bufnum=0,outbus=0,rate=1,startPos=0,dur=0.1,atkprop=0.005, relprop=0.005, curve=0;
+                SynthDef(\cb2playbuf++((i+1).asSymbol),{arg bufnum=0,outbus=0,rate=1,startPos=0,dur=0.1,atkprop=0.005, relprop=0.005, curve=0;
                     var playbuf, env;
 
                     playbuf= PlayBuf.ar(i+1,bufnum,BufRateScale.kr(bufnum)*rate,1,startPos,1);
@@ -24,7 +24,7 @@ CutBuf2 : CutSynth {
                     env= EnvGen.ar(Env.linen(atkprop*dur,(1.0-atkprop-relprop)*dur,relprop*dur, 1.0, curve),doneAction:2);
 
                     Out.ar(outbus,playbuf*env);
-                });
+                }).add;
             });
 
         });
