@@ -56,7 +56,7 @@ list::
 ## link::Classes/MultiProc:: - a procedure that selects between other cut procedures algorithmically
 ## link::Classes/OffsetCP1:: - choose next block and associated offset
 ## link::Classes/RecCutProc:: - first version of a recursive cut procedure
-## link::Classes/RecursiveCutProc1:: - explicit recursive cut procedure plus demo of implicit using CutStream1 
+## link::Classes/RecursiveCutProc1:: - explicit recursive cut procedure plus demo of implicit using CutStream1
 ## link::Classes/SQPusher1:: - simulation of Squarepusher drum programming via cut decisions
 ## link::Classes/SQPusher2:: - simulation of Squarepusher drum programming auto-transcribed from Come On My Selector
 ## link::Classes/TimelineCut:: - inspired by choosing a fundamental timeline as block stricture on cuts
@@ -74,11 +74,11 @@ list::
 ## link::Classes/CutTrig1:: - trigger samples from cuts (which may come from a set of buffers)
 ## link::Classes/CutStream1:: - cut up a stream, via an intermediary buffer that holds the most recent cut for repeating
 ## link::Classes/CutStream2:: - cut up a stream, via an intermediary buffer that allows offsetting from the most recent clock beat
-## link::Classes/CutStream3:: - cut up a stream, using on-the fly event analysis and relative to the clock's beat positions 
-## link::Classes/CutBuf1:: - cheap CPU buffer playback head jumping cutsynth, but no enveloping 
-## link::Classes/CutBuf2:: - spawns an enveloped grain Synth for each cut 
+## link::Classes/CutStream3:: - cut up a stream, using on-the fly event analysis and relative to the clock's beat positions
+## link::Classes/CutBuf1:: - cheap CPU buffer playback head jumping cutsynth, but no enveloping
+## link::Classes/CutBuf2:: - spawns an enveloped grain Synth for each cut
 ## link::Classes/CutBuf3:: - uses knowledge of the analysed position of events in a buffer when rendering splices
-## link::Classes/CutFunc:: - call arbitrary functions at a new phrase, block or for individual cuts.  
+## link::Classes/CutFunc:: - call arbitrary functions at a new phrase, block or for individual cuts.
 ## link::Classes/CutTrace:: - (experimental) posts status, may be overridden later for OSC messaging of state to other apps
 ::
 
@@ -97,6 +97,7 @@ list::
 ## link::Classes/CutMod1:: - ring modulator effect
 ## link::Classes/CutRev1:: - reverb effect
 ## link::Classes/CutFXSwap1:: - add and remove random effects
+## link::Classes/CutTape:: - tape slowdown effect
 ::
 
 Scheduling
@@ -105,7 +106,7 @@ list::
 ## link::Classes/ExternalClock:: - using bbcut2 and EventStreams with an external clock
 ## link::Classes/ServerClock:: - running the controlling clock on the Server; shows beat tracking
 ## link::Classes/EventStreamPlayer2:: - support for using Streams with an ExternalClock
-## link::Classes/CutProcStream:: - Use a cut procedure as a stream, and within Patterns library 
+## link::Classes/CutProcStream:: - Use a cut procedure as a stream, and within Patterns library
 ::
 
 Auxiliary classes
@@ -137,7 +138,7 @@ Please ask questions or file bugs at https://github.com/snappizz/BBCut/issues.
 
 section:: Acknowledgements
 
-Version 2: Thanks to the many academic researchers whose work has been an inspiration, and to my PhD supervisors Ian Cross and Alan Blackwell for giving me the time to work on this project. Funding from AHRC. 
+Version 2: Thanks to the many academic researchers whose work has been an inspiration, and to my PhD supervisors Ian Cross and Alan Blackwell for giving me the time to work on this project. Funding from AHRC.
 
 Version 1: Thanks to Charles Ames, MDX Sonic Arts, the SuperCollider List and James McCartney.
 

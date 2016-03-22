@@ -1,0 +1,28 @@
+class:: CutTape
+summary:: BBCut2 tape slow effect
+categories:: Libraries>BBCut>Cut FX
+related:: Overviews/BBCut
+
+description::
+
+CutTape adds a tape slow effect to a BBCut2 block.
+
+All arguments can be constant values, but they can also be anything that responds to .value. In the latter case, .value is called every block, with the current block as an argument.
+
+classmethods::
+
+method:: new
+
+argument:: choicefunc
+Run the effect whenever this is true. Defaults to code::{ 0.1.coin }::.
+
+argument:: dutyfunc
+Determines the duty cycle of the tape slow effect, from 0 to 1. Defaults to 0.7.
+
+examples::
+
+code::
+~buf = BBCutBuffer(Platform.resourceDir +/+ "sounds/break.aiff", 8);
+
+BBCut2(CutGroup([CutBuf3(~buf, 0.3), CutRev1(0.3, 0.3), CutTape()]), BBCutProc11()).play(2.5);
+::
