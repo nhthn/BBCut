@@ -3,6 +3,7 @@
 ### Added
 - An easier interface to CampCutStream and CampStream, supporting place notation.
 - Brought statistical balance classes (cut procedures StatBalProc and StatBalProc2) back from the dead.
+- Added CutTape, a tape slowdown effect.
 
 ## [2.2] - 2016-02-21
 
