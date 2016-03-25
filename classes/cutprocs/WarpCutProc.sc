@@ -114,11 +114,10 @@ WarpCutProc1 : BBCutProc
                 )
         });
 
-        //offsets are now decided by cut renderer
-        bbcutsynth.chooseoffset(phrasepos,beatspersubdiv,currphraselength);
+        roll = rollon;
 
-        this.updateblock(rollon);
-
+        
+        
         this.endBlockAccounting;
     }
 

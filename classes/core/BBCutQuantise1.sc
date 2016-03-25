@@ -16,12 +16,10 @@ BBCutQuantise1 {
         ^super.new.swing_(swing).phrasetotal_(0.0);
     }
 
-    value {arg block, proc;
+    value {arg block;
         var copyiois,pos,lastpos, keptindices;
 
         //startpos= block.phrasepos;
-
-        //work out a satisfactory cutlength from b.phrasepos and proc.phrasepos
 
         //block.length;
 
@@ -73,7 +71,7 @@ BBCutQuantise1 {
         //trust length works out, else no sweat
         //
         //end of phrase, must add up to correct amount here if possible
-        if((proc.currphraselength-0.001)<(proc.phrasepos),{
+        if((block.currphraselength-0.001) < (block.phrasepos + block.length),{
 
             //reset for new phrase
             phrasetotal=0.0;

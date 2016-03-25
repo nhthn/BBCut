@@ -4,6 +4,11 @@
 - An easier interface to CampCutStream and CampStream, supporting place notation.
 - Brought statistical balance classes (cut procedures StatBalProc and StatBalProc2) back from the dead.
 - Added CutTape, a tape slowdown effect.
+- Began work on internals documentation.
+- Allowed arguments to CutFXSwap1 to be functions.
+
+### Changed
+- Refactored BBCutProc for a more consistent API.
 
 ## [2.2] - 2016-02-21
 

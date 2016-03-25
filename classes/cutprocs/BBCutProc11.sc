@@ -141,18 +141,17 @@ BBCutProc11 : BBCutProc
 
         });
 
-        //offsets are now decided by cut renderer
-        bbcutsynth.chooseoffset(phrasepos,beatspersubdiv,currphraselength);
-
         //ACCOUNTING
         //for floating point errors use difference between phrasepos and currphraselength for final blocks- done above
 
         //calculate cuts and block size from this directly!
         //using unitproj as temp variable
-        unitproj=unitblock*beatspersubdiv;	//beat length of a repeat
-        cuts= Array.fill(repeats,{unitproj});
+        unitproj = unitblock*beatspersubdiv; //beat length of a repeat
+        cuts = Array.fill(repeats,{unitproj});
 
-        this.updateblock(stutteron);
+        roll = stutteron;
+
+        
 
         this.endBlockAccounting;
     }

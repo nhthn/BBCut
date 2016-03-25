@@ -2,30 +2,60 @@
 
 //BBCutBlock 24/12/04  by N.M.Collins
 
-//The unit of cut sequence creation and rendering
-
-//all beat based durations
-
-//msgs get attached by renderers
-
-//can add variables for phraseprop etc
-
 BBCutBlock {
-    var <>blocknum; //number within a phrase, would indicate a phrase start by 0
+    // Index of the block in phrase (0 is start of phrase, 1 is second block in phrase, etc.)
+    var <>blocknum;
+    // Length of the block in clock time
     var <>length;
+    // Array of cut data of the form [ioi, dur, offsetparam, amp]
     var <>cuts;
-    var <>iois;
-    var <>cumul;
-    var <>msgs; //msgs exactly on cuts
-    var <>timedmsgs; //msgs timed from start of block, may be within cuts
-    //use this for functions which must be scheduled...
-    var <>functions;
+    // Buffer offset position
+    // If nil, use the time since start of phrase modulo buffer size
     var <>offset;
+    // Clock time at the beginning of the buffer since start of phrase
     var <>phrasepos;
+    // Flag to mark this block as a roll
     var <>isroll;
+    // Length of current phrase in clock beats
+    var <>currphraselength;
+
+    // Inter-onset intervals (derived from cuts)
+    var <>iois;
+    // Cumulative times (derived from iois)
+    var <>cumul;
+    // Current fraction of phrase that has been covered, 0..1
     var <>phraseprop;
+
+    // OSC messages exactly on cuts
+    var <>msgs;
+    // Messages timed from start of block, may be within cuts
+    var <>timedmsgs;
+    // Functions that must be scheduled
+    var <>functions;
+
+    // Not 100% sure what this is, BBCut2 uses it to timestamp the block I think? -NH
     var <>startbeat;
 
+    *new {
+        ^super.new.initBBCutBlock;
+    }
+
+    initBBCutBlock {
+        timedmsgs = List();
+        functions = List();
+    }
+
+    scaleDurations { |factor|
+        cuts.do { |cut|
+            cut[1] = cut[1] * factor;
+        };
+    }
+
+    update {
+        msgs = cuts.size.collect { List() };
+        iois = cuts.collect(_[0]);
+        cumul = cuts.size.collect { |i| iois.copyRange(0, i - 1).sum };
+    }
 
     //timedelay is groovedeviation- perceptual attack time
     addtimedmsgtocut {arg whichcut,beatdelay, timedelay, msg;

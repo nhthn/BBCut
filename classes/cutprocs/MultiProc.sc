@@ -61,16 +61,8 @@ MultiProc : BBCutProc
 
         cuts=currproc.cuts;
         blocklength=currproc.blocklength;
-
-        //this.updateblock; //won't be called twice- let cutprocs independentally call updateblock
-
+        
         this.endBlockAccounting;
-    }
-
-    attachsynth
-    {
-        arg bbcs;
-        procs.do({arg val; val.attachsynth(bbcs)});
     }
 
     phraseover

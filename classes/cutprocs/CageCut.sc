@@ -1,29 +1,37 @@
 //This file is part of The BBCut Library. Copyright (C) 2001  Nick M.Collins distributed under the terms of the GNU General Public License full notice in file BBCutLibrary.help
 
-//TimelineCut N.M.Collins 31/8/05
+//CageCut N.M.Collins 11/8/05
 
-TimelineCut : BBCutProc {
-    var <>timelinefunc,<>blockfunc,<>freeze;
+//following John Cage's square root form in miniature- really a recursive or fractal construction like Cantor set
+
+//sets up uneven blocks but with a common offset
+
+//necessarily calculates a phrase at a time
+
+//perhaps don't want bpsd quantise
+
+CageCut : BBCutProc {
+    var <>subdivfunc,<>permutefunc;
 
     //variables persisting between spawns
     var beatsleft;
-    var currform;
+    var currform; //subdiv
     var blockarray;
 
     *new {
-        arg phraselength=4.0,timelinefunc,blockfunc,freeze;
+        arg phraselength=8.0,subdivfunc,permutefunc;
 
-        ^super.new(0.5,phraselength).initCageCut(timelinefunc,blockfunc,freeze);
+        ^super.new(0.5,phraselength).initCageCut(subdivfunc,permutefunc);
     }
 
     initCageCut {
-        arg tlf,bf,f;
+        arg sdf,pf,of;
 
-        timelinefunc= tlf ?? {[3,3,2]}; //archetypal default
+        subdivfunc=sdf ?? {[0.5,0.25,0.25]};
 
-        blockfunc=bf ? {arg dur, blocknum; [dur]};
+        //default do nothing permutation
+        permutefunc=pf ? {arg array; array};
 
-        freeze=f ? false;
     }
 
 
@@ -36,14 +44,12 @@ TimelineCut : BBCutProc {
             //may choose new phraselength
             this.newPhraseAccounting;
 
-            if(not(freeze.value) || (currform.isNil),{
+            //new cutsize?
+            //subdiv= subdivfunc.value(currphraselength).round(1.0).asInteger;	//integers only
 
-                currform= currphraselength*(timelinefunc.value(currphraselength).normalizeSum); //always normalize to make safe
-                blockarray= Array.fill(currform.size,{arg i; blockfunc.value(currform[i],i)});
+            currform= subdivfunc.value(currphraselength).normalizeSum; //always normalize to make safe
 
-                //Post << [currform, blockarray] << nl;
-
-            });
+            blockarray= Array.fill(currform.size,{arg i; (currform[i])*currphraselength*currform});
 
             //beatspersubdiv=currphraselength/subdiv;
 
@@ -53,7 +59,7 @@ TimelineCut : BBCutProc {
         beatsleft= currphraselength- phrasepos;
 
         //could call permutefunc on each block
-        cuts= blockarray[block];
+        cuts= permutefunc.value(blockarray[block]);
 
         //cuts.postln;
 
@@ -84,12 +90,9 @@ TimelineCut : BBCutProc {
         });
 
         //if(offsetflag,{});
-        //bbcutsynth.setoffset(currform[block]);
+        //offset = currform[block];
 
-        //offsets are now decided by cut renderer
-        bbcutsynth.chooseoffset(phrasepos,beatspersubdiv,currphraselength);
-
-        this.updateblock;
+        
 
         this.endBlockAccounting;
     }

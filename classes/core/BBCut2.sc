@@ -12,7 +12,6 @@ BBCut2 {
     var <cutgroups, <proc, <clock, <quantiser;
     var cache; //material temporarily held here
     var upto;
-    var phraseprop, offset, isroll; //backwards compatability
     var <>playflag;
     var <alive; //special flag set to false once killed, checked by scheduler
 
@@ -58,14 +57,9 @@ BBCut2 {
 
         quantiser=q; //may be nil if no quantising to do
 
-        //done for backwards compatability purposes
-        proc.attachsynth(this);
-
         //scheduling queue preparation
         upto=0.0;
         cache=LinkedList.new;   //could use a PriorityQueue but cheaper to avoid any searches of position
-
-        offset=nil; //only used by setoffset;
 
         playflag=true;
 
@@ -161,10 +155,7 @@ BBCut2 {
 
         //other killed by garbage collector
         proc=p ?? {BBCutProc11.new};
-
-        //done for backwards compatability purposes
-        proc.attachsynth(this);
-
+        
         //will be initial lateness in first beat since should have scheduled at latency already
         upto=0.0;
         cache=LinkedList.new;
@@ -342,86 +333,21 @@ BBCut2 {
     }
 
 
-
-
-    //make BBCutBlock here for now, later cut procedures can just make them directly (add a test in this method)
-    //each block just has one offset, don't need [ioi, dur, offset, amp form]
     getBlock {
-        var convert,b, cuts;
-        var tmp;
-        proc.chooseblock;
+        // Retrieve block from cut procedure
+        var block = proc.getBlock;
 
-        //Post << blocks << "  blocklength    " << nextBeat << nl <<"cuts   " <<bbcutproc.cuts<< nl;
+        // quantise must occur here, must adjust b.length too
+        quantiser.notNil.if { quantiser.value(block) };
 
-        cuts= proc.cuts;
+        // used to be clock.tempoclock.tempo
+        // so ioi in beats but dur is in seconds, needed for rendering - is it?
+        block.scaleDurations(clock.tempo.reciprocal);
 
-        //backwards compatability
-        if(not(cuts[0].isKindOf(Array)),{
+        // Set properties: msgs, iois, cumul
+        block.update;
 
-            cuts= Array.fill(cuts.size,{arg i; [cuts[i],cuts[i], nil,1.0]});
-        });
-
-        //put into a BBCutBlock for rendering purposes
-
-        b=BBCutBlock.new;
-        b.length=proc.blocklength; //in beats
-        b.blocknum=proc.block;
-        b.phrasepos=proc.phrasepos-b.length; //this is phrasepos at start of block, for offset calc
-        b.offset=offset; //if setoffset, may place here then wipe
-        b.phraseprop= phraseprop;
-        b.isroll= isroll;
-        b.cuts=cuts;
-
-        //quantise must occur here, must adjust b.length too
-        if(quantiser.notNil,{quantiser.value(b, proc)});
-
-        //clock.tempoclock.tempo //used to be
-        convert= clock.tempo.reciprocal;
-
-        //so ioi in beats but dur is in seconds, needed for rendering- is it?
-        b.cuts.do({arg val,i; val[1]= convert*val[1]; b.cuts[i]= val; });
-
-        //reset offset to receive another
-        if(offset.notNil,{offset=nil;});
-
-        //probably unnecessary
-        b.iois=Array.fill(b.cuts.size,{arg i; b.cuts[i][0]});
-
-        tmp=0.0;
-        //cumulative start positions useful for timed msgs and scheduling code
-        b.cumul= Array.fill(b.cuts.size,{arg i; var prev; prev=tmp; tmp= tmp+(b.cuts[i][0]); prev;});
-
-        b.timedmsgs=List.new;
-        b.functions=List.new;
-
-        //empty Lists awaits msgs for each cut (could also allow mix of functions and messages)
-        //LinkedList more efficient?
-        b.msgs=Array.fill(cuts.size,{List.new}); //used to make LinkedList.new
-
-        ^b
-    }
-
-    //backwards compatability, not passed on to cutgroups, cutsynths, may remove- requires BBCutProc revision though
-    // doesn't make sense now since choosing block is
-    //independent of rendering time
-    updatephrase { arg phrase, currphraselength;
-    }
-
-    chooseoffset{ arg phrasepos,beatspersubdiv,currphraselength;
-    }
-
-    updateblock { arg block,pp,cuts,ir;
-
-        phraseprop= pp;
-        isroll=ir;
-
-    }
-
-    //setoffset backwards compat for older cut procs
-    setoffset {
-        arg prop,phraselength;
-
-        offset=prop;
+        ^block;
     }
 
 }

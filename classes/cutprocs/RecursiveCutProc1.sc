@@ -75,10 +75,10 @@ RecursiveCutProc1 : BBCutProc
         blocklength=next.at(0);
         cuts=[blocklength];
 
-        this.updateblock;
-
         //proportionate- will be taken as percentage through sample
-        bbcutsynth.setoffset(next.at(1)/currphraselength);
+        offset = next.at(1)/currphraselength;
+
+        
 
         this.endBlockAccounting;
     }

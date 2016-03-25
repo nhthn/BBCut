@@ -16,9 +16,6 @@ CutProcStream : Stream {
 
     init {
         cache=LinkedList.new;
-
-        //done for backwards compatability purposes
-        proc.attachsynth(this);
     }
 
 
@@ -76,29 +73,6 @@ CutProcStream : Stream {
         phrasepos=proc.phrasepos-blocklength; //this is phrasepos at start of block, for offset calc
 
         cutnum=0;
-    }
-
-    //backwards compatability, not passed on to cutgroups, cutsynths, may remove- requires BBCutProc revision though
-    // doesn't make sense now since choosing block is
-    //independent of rendering time
-    updatephrase { arg phrase, currphraselength;
-    }
-
-    chooseoffset{ arg phrasepos,beatspersubdiv,currphraselength;
-    }
-
-    updateblock { arg block,pp,cuts,ir;
-
-        phraseprop= pp;
-        isroll=ir;
-
-    }
-
-    //setoffset backwards compat for older cut procs
-    setoffset {
-        arg prop,phraselength;
-
-        offset=prop;
     }
 
 

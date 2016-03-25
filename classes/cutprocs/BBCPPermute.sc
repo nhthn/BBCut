@@ -77,11 +77,12 @@ BBCPPermute : BBCutProc
 
         temp= (temp%subdiv)*prop;
 
-        bbcutsynth.setoffset(temp);
+        offset = temp;
 
         //flags if a stutter is happening
-        this.updateblock(if((repeats-1)>0, 1, 0));
-
+        roll = if((repeats - 1) > 0, 1, 0);
+        
+        
         this.endBlockAccounting;
     }
 

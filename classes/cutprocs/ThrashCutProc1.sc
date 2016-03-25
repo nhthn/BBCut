@@ -201,8 +201,10 @@ ThrashCutProc1 : BBCutProc
         //offsets are part of this routine so already done everything
 
         //is roll if block has more than 2 elemnts
-        this.updateblock(if(cuts.size>1,1,0));
+        roll = if(cuts.size>1, 1, 0);
 
+        
+        
         this.endBlockAccounting;
     }
 
