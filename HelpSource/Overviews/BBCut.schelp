@@ -14,8 +14,6 @@ BBCut used to come with three server plugins -- AnalyzeEvents2, AutoTrack, and D
 
 section:: Contents
 
-A quick note on naming: the second version of BBCut uses a weird naming scheme so that versions 1 and 2 can coexist without any conflicts. (For example, the main class is called BBCut2.) This is no longer needed because the modern quarks system can take care of multiple versions. The next major version of BBCut will fix the naming scheme.
-
 Tutorials
 
 list::
