@@ -8,7 +8,7 @@
 - Allowed arguments to CutFXSwap1 to be functions.
 
 ### Changed
-- Refactored BBCutProc for a more consistent API.
+- Refactored BBCutProc for a more consistent structure. BBCutProc now inherits from Stream and is no longer codependent on a BBCut2 instance.
 
 ## [2.2] - 2016-02-21
 

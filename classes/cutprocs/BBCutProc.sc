@@ -13,7 +13,7 @@
 
 //base class is also the NoCutProc (or the OneCutProc= whole phrase)
 
-BBCutProc {
+BBCutProc : Stream {
     var <phrase,<block,<totalbeatsdone;
     var <cuts,<blocklength,<phrasepos,<beatspersubdiv;
     var <phraseprop, <offset, <roll;
@@ -45,7 +45,7 @@ BBCutProc {
         this.endBlockAccounting;
     }
 
-    getBlock {
+    next {
         var b;
 
         // The current setup is to set properties of the CutProc and them copy them over to the block.
@@ -73,6 +73,11 @@ BBCutProc {
         b.update;
 
         ^b;
+    }
+
+    // backward compatibility
+    getBlock {
+        ^this.next;
     }
     
     phraseover {

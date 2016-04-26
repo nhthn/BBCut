@@ -335,7 +335,7 @@ BBCut2 {
 
     getBlock {
         // Retrieve block from cut procedure
-        var block = proc.getBlock;
+        var block = proc.next;
 
         // quantise must occur here, must adjust b.length too
         quantiser.notNil.if { quantiser.value(block) };
