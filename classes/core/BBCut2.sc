@@ -27,25 +27,31 @@ BBCut2 {
             Error("Server must be booted before creating BBCut2.").throw;
         };
 
-        cutgroups= if(cg.isKindOf(Array),{
+        cutgroups = cg.isKindOf(Array).if {
+            cg[0].isKindOf(Array).if {
+                // cg is an array of arrays -- make a CutGroup out of each one.
+                cg.collect(CutGroup(_));
+            } {
+                cg[0].isKindOf(CutSynth).if {
+                    // cg is an array of CutSynths -- make a CutGroup out of them.
+                    CutGroup(cg);
+                } {
+                    // Dunno.
+                    cg;
+                };
+            };
+        } {
+            // if nil
+            cg = cg ?? { CutGroup(CutSynth()) };
 
-            if(cg[0].isKindOf(Array),{
-                Array.fill(cg.size,{arg i; CutGroup(cg[i])});
-            },{
-                if(cg[0].isKindOf(CutSynth), {CutGroup(cg)}, {cg});
-            });
-        },
-        {
+            cg.isKindOf(CutSynth).if {
+                CutGroup(cg);
+            } {
+                cg;
+            };
+        };
 
-            //if nil
-            cg= cg ?? {CutGroup(CutSynth.new)};
-
-            if(cg.isKindOf(CutSynth),{
-                CutGroup(cg)
-            },{cg})
-        });
-
-        proc=p ?? {BBCutProc11.new};
+        proc = p ?? { BBCutProc11() };
 
         //
         //		clock=c ?? {
@@ -55,17 +61,16 @@ BBCut2 {
         //		}; //should pass in a clock
         //
 
-        quantiser=q; //may be nil if no quantising to do
+        quantiser = q; // may be nil if no quantising to do
 
         //scheduling queue preparation
-        upto=0.0;
-        cache=LinkedList.new;   //could use a PriorityQueue but cheaper to avoid any searches of position
+        upto = 0.0;
+        cache = LinkedList();   //could use a PriorityQueue but cheaper to avoid any searches of position
 
-        playflag=true;
+        playflag = true;
 
         //ready, so add myself to the clock
         //clock.addslave(this);
-
     }
 
     //start playing on given clock
