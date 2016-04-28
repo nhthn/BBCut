@@ -36,6 +36,9 @@ BBCutBlock {
     // Not 100% sure what this is, BBCut2 uses it to timestamp the block I think? -NH
     var <>startbeat;
 
+    // Block-specific FX
+    var <>fx;
+
     *new {
         ^super.new.initBBCutBlock;
     }
@@ -43,6 +46,7 @@ BBCutBlock {
     initBBCutBlock {
         timedmsgs = List();
         functions = List();
+        fx = List();
     }
 
     scaleDurations { |factor|

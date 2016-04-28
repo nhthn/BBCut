@@ -1,13 +1,13 @@
-//This file is part of The BBCut Library. Copyright (C) 2016 Nathan Ho distributed under the terms of the GNU General Public License
+// This file is part of The BBCut Library.
+// Copyright (C) 2016 Nathan Ho distributed under the terms of the GNU General Public License
 
-CutTape : CutSynth {
-    var synthdef;
+CutTape : CutFX {
     var <>choicefunc, <>dutyfunc;
 
     *initClass {
         StartUp.add({
             (1..2).do({ |n|
-                SynthDef("cuttapechan" ++ n.asSymbol, {
+                SynthDef("BBCutTape" ++ n.asSymbol, {
                     |inbus = 0, outbus = 0, dur, duty = 0.7|
                     var snd, stopdur, t;
                     snd = In.ar(inbus, n);
@@ -18,6 +18,8 @@ CutTape : CutSynth {
                     ReplaceOut.ar(outbus, snd);
                 }).add;
             });
+
+            CutFX.register(\tape, "BBCutTape");
         });
     }
 
@@ -30,27 +32,15 @@ CutTape : CutSynth {
         dutyfunc = argDutyfunc ? 0.7;
     }
 
-    setup {
-        synthdef = \cuttapechan ++ cutgroup.numChannels.asSymbol;
-    }
-
-    renderBlock { |block, clock|
+    next { |block|
         var msg;
         choicefunc.value(block).if {
-            msg = [
-                \s_new,
-                synthdef,
-                -1, // Node ID
-                1, // Add to tail
-                cutgroup.fxgroup.nodeID, // Group to add to
-                // Synth args
-                \inbus, cutgroup.index,
-                \outbus, cutgroup.index,
-                \dur, block.length / clock.tempo,
-                \duty, dutyfunc.value(block)
-            ];
-            block.timedmsgs.add([0.0, 0.0, msg]);
+            block.fx.add((
+                name: \tape,
+                args: [\duty, dutyfunc.value]
+            ));
         };
+        ^block;
     }
 
 }

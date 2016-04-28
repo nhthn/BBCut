@@ -105,4 +105,8 @@ BBCutProc : Stream {
         block = block + 1;
     }
 
+    -> { |other|
+        ^other <> this;
+    }
+
 }
