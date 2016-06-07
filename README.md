@@ -1,6 +1,6 @@
 # BBCut #
 
-BBCut is a SuperCollider package originally by Nick Collins for automated event analysis, beat induction and algorithmic audio splicing.
+BBCut is a SuperCollider quark originally by Nick Collins for automated event analysis, beat induction and algorithmic audio splicing. Its terse syntax and hot-swappable design make it suitable for live coding applications.
 
 ## Installation ##
 
