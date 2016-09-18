@@ -1,0 +1,9 @@
+(
+  name: "BBCut",
+  summary: "✀ live algorithmic breakbeats ✀",
+  version: "2.2.0",
+  schelp: "BBCut",
+  ext_dependency: "sc3-plugins"
+  license: "GPL",
+  copyright: "Nick Collins, Nathan Ho 2016"
+)
